@@ -16,6 +16,11 @@ multilingual: true
 </div>
 
  <!-- English Version 此处去除英文版，与中文版代码相同，zh换成en而已 -->
+<div class="en post-container">
+    {% capture about_en %}{% include about/en.md %}{% endcapture %}
+    {{ about_en | markdownify }}
+</div>
+
 
 {% if site.disqus_username %}
 <!-- disqus 评论框 start -->
