@@ -9,6 +9,17 @@ catalog:   true
 tags:
     - 学习
 ---
+
+## 202311106更新
+
+将以下代码插入head中，即可引用google font 思源宋体字体。
+
+>   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;700;900&family=Roboto+Mono&display=swap" rel="stylesheet">
+
+---
+
 Google Fonts 分别在 11 月 18 日和 12 月 07 日提供了思源黑体和思源宋体的简繁支持，而且高达 6 种字重支持，其中思源宋体更是高达 7 种字重。这可了不得啊！更重要的是：它支持了目前电子显示屏上稀缺的宋体，这将会是一个伟大的进步！要知道，对于中文书籍，宋体一直是正文印刷的标准字体，而不是目前电子显示屏上普遍的黑体，因为宋体的衬线更适合长时间阅读。
 
 ## 优势
