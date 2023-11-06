@@ -69,12 +69,12 @@ netease_comment: false
 # ba_track_id: [your track id]
 
 # Google Analytics
-ga_track_id: "UA-49627206-1" # Format: UA-xxxxxx-xx
-ga_domain: auto
+# ga_track_id: "UA-49627206-1" # Format: UA-xxxxxx-xx
+# ga_domain: auto
 
 # Sidebar settings
 sidebar: true # whether or not using Sidebar.
-sidebar-about-description: "言宜慢，心宜善！"
+sidebar-about-description: "言宜慢，心宜善，事宜缓！"
 sidebar-avatar: /img/about-Ajiao.jpg # use absolute URL, seeing it's used in both `/` and `/about/`
 
 # Featured Tags
