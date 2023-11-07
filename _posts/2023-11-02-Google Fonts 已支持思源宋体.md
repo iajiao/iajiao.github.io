@@ -4,10 +4,10 @@ title:     Google Fonts 支持思源宋体
 subtitle:   字体之美，大爱宋体
 date:       2023-11-02
 author:     ajiao
-header-img: img/home-bg.jpg
+header-img: img/post-bg-4.jpg
 catalog:   true
 tags:
-    - 学习
+    - 网络
 ---
 
 ## 20231106更新
