@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:     Google font 加速访问
+title:     Google Fonts加速访问
 subtitle:   前端 CDNJS 库及 Google Fonts、Ajax 和 Gravatar 国内加速服务
 date:       2023-11-07
 author:     BY
