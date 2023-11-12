@@ -24,14 +24,14 @@
 <script src="./jquery.min.js"></script>
 <script>
     $(function () {
-        const COLUMN = 4; // 4ÁĞ
-        let arr = []; // ´æ´¢4ÁĞli
-        let minHeight = [] // ´æ´¢4ÁĞµÄ¸ß¶È
+        const COLUMN = 4; // 4åˆ—
+        let arr = []; // å­˜å‚¨4åˆ—li
+        let minHeight = [] // å­˜å‚¨4åˆ—çš„é«˜åº¦
 
         create();
 
         function create() {
-            // ´´½¨ul li×÷ÎªÃ¿Ò»ÁĞµÄÈİÆ÷
+            // åˆ›å»ºul liä½œä¸ºæ¯ä¸€åˆ—çš„å®¹å™¨
             $("<ul></ul>").appendTo($("body")).css("width", "100%");
             for (let i = 0; i < COLUMN; i++) {
                 var li = document.createElement("li");
@@ -50,27 +50,27 @@
         function createImg() {
             let img = new Image();
             img.num = 2;
-            img.src = `./images/img/${img.num}-.jpg`; // ËØ²ÄÍ¼Æ¬µÄ¹æÂÉÎª 2-.jpg 3-.jpg 4-.jpg ...
+            img.src = `./img/${img.num}.jpg`; // ç´ æå›¾ç‰‡çš„è§„å¾‹ä¸º 2-.jpg 3-.jpg 4-.jpg ...
             $(img).css("width", "100%");
-            // µ±Í¼Æ¬¼ÓÔØÍêºó
+            // å½“å›¾ç‰‡åŠ è½½å®Œå
             $(img).on("load", loadHandler);
         }
 
         function loadHandler() {
-            // ¸ß¶ÈÊı×éµÄ×îĞ¡Öµ
+            // é«˜åº¦æ•°ç»„çš„æœ€å°å€¼
             let min = Math.min.apply(null, minHeight);
-            // ¸ß¶ÈÊı×éµÄ×îĞ¡ÖµË÷Òı
+            // é«˜åº¦æ•°ç»„çš„æœ€å°å€¼ç´¢å¼•
             let minIndex = minHeight.indexOf(min);
-            // ¿ËÂ¡Ò»·İÍ¼Æ¬
+            // å…‹éš†ä¸€ä»½å›¾ç‰‡
             let im = this.cloneNode(true);
-            // ½«Í¼Æ¬¼ÙÈç¶ÔÓ¦×îĞ¡ÖµË÷ÒıµÄÈİÆ÷ÖĞ
+            // å°†å›¾ç‰‡å‡å¦‚å¯¹åº”æœ€å°å€¼ç´¢å¼•çš„å®¹å™¨ä¸­
             arr[minIndex].append(im);
-            // ¸üĞÂ×îĞ¡ÖµË÷ÒıµÄÈİÆ÷µÄ¸ß¶È
+            // æ›´æ–°æœ€å°å€¼ç´¢å¼•çš„å®¹å™¨çš„é«˜åº¦
             minHeight[minIndex] += im.getBoundingClientRect().height;
 
             this.num++;
 
-            // Í¼Æ¬µÄ¸öÊıÖ»ÓĞ79ÕÅ
+            // å›¾ç‰‡çš„ä¸ªæ•°åªæœ‰79å¼ 
             if (this.num > 79) {
                 $(this).off("load", loadHandler);
                 return;
