@@ -18,8 +18,21 @@
                 "source": true
               }
             }
+          },
+          {
+            "id": "48feeac72529e61b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/2023-12.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -72,7 +85,8 @@
           "state": {}
         }
       }
-    ]
+    ],
+    "currentTab": 0
   },
   "right": {
     "id": "f9b4e49176514df2",
@@ -84,7 +98,7 @@
         "state": {
           "type": "backlink",
           "state": {
-            "file": "_posts/2023-10-27-建站程序作者By的说明.md",
+            "file": "_posts/2023-12.md",
             "collapseAll": false,
             "extraContext": false,
             "sortOrder": "alphabetical",
@@ -101,7 +115,7 @@
         "state": {
           "type": "outgoing-link",
           "state": {
-            "file": "_posts/2023-10-27-建站程序作者By的说明.md",
+            "file": "_posts/2023-12.md",
             "linksCollapsed": false,
             "unlinkedCollapsed": true
           }
@@ -113,7 +127,7 @@
         "state": {
           "type": "outline",
           "state": {
-            "file": "_posts/2023-10-27-建站程序作者By的说明.md"
+            "file": "_posts/2023-12.md"
           }
         }
       }
@@ -130,9 +144,9 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "ed086f9053111fc9",
+  "active": "48feeac72529e61b",
   "lastOpenFiles": [
-    "未命名.md",
-    "_posts/2023-10-27-建站程序作者By的说明.md"
+    "_posts/2023-10-27-建站程序作者By的说明.md",
+    "_posts/2023-12.md"
   ]
 }
