@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "3b481bc3432c6174",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "未命名.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "2023-11-22-渭南第七届丝博会推介词.md",
+                "file": "未命名.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "2023-11-22-渭南第七届丝博会推介词.md",
+                "file": "未命名.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "2023-11-22-渭南第七届丝博会推介词.md"
+                "file": "未命名.md"
               }
             }
           }
@@ -147,11 +160,12 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "37f2f638bd04210b",
+  "active": "3b481bc3432c6174",
   "lastOpenFiles": [
+    "2023-11-22-渭南第七届丝博会推介词.md",
+    "未命名.md",
     "2023-10-28-在Github上搭建免费个人博客网站（基础篇）.md",
     "2023-10-27-建站程序作者By的说明.md",
-    "2023-11-22-渭南第七届丝博会推介词.md",
     "2023-11-21-甘肃日报-坚定不移推进“四强”行动落地见效.md",
     "2023-10-29-小冰河期对历史的影响.md",
     "2023-10-29-在Github上搭建免费个人博客网站（进阶篇）.md",
