@@ -3,5 +3,6 @@
   "enabledCssSnippets": [
     "2_字体"
   ],
-  "baseFontSize": 22
+  "baseFontSize": 22,
+  "cssTheme": "Typewriter"
 }
