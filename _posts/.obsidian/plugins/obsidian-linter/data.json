@@ -25,7 +25,7 @@
     },
     "insert-yaml-attributes": {
       "enabled": true,
-      "text-to-insert": "aliases: \ntags: "
+      "text-to-insert": "---\nlayout: post\ntitle: 建站程序作者BY的说明\nsubtitle: 详细\ndate: \nauthor: \nheader-img: img/post-bg-4.jpg\ncatalog: true\ntags:\n  - \n"
     },
     "move-tags-to-yaml": {
       "enabled": false,
