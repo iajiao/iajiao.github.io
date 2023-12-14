@@ -21,5 +21,10 @@
     "editor:unindent-list",
     "editor:redo",
     "editor:configure-toolbar"
+  ],
+  "userIgnoreFilters": [
+    "css/",
+    "img/",
+    "_includes/"
   ]
 }
