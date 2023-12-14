@@ -26,5 +26,7 @@
     "css/",
     "img/",
     "_includes/"
-  ]
+  ],
+  "newFileLocation": "folder",
+  "newFileFolderPath": "_posts"
 }
