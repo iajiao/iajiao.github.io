@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "2023-10-28-在Github上搭建免费个人博客网站（基础篇）.md",
+                "file": "2023-10-27-建站程序作者By的README.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "2023-10-28-在Github上搭建免费个人博客网站（基础篇）.md",
+                "file": "2023-10-27-建站程序作者By的README.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "2023-10-28-在Github上搭建免费个人博客网站（基础篇）.md",
+                "file": "2023-10-27-建站程序作者By的README.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "2023-10-28-在Github上搭建免费个人博客网站（基础篇）.md"
+                "file": "2023-10-27-建站程序作者By的README.md"
               }
             }
           }
@@ -148,6 +148,7 @@
   },
   "active": "37f2f638bd04210b",
   "lastOpenFiles": [
+    "2023-10-28-在Github上搭建免费个人博客网站（基础篇）.md",
     "2023-10-27-建站程序作者By的README.md"
   ]
 }
