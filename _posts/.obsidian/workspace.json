@@ -4,47 +4,18 @@
     "type": "split",
     "children": [
       {
-        "id": "0ac32348ffd44b8c",
+        "id": "6ec43fdc55facc9d",
         "type": "tabs",
         "children": [
           {
-            "id": "37f2f638bd04210b",
+            "id": "9db17509eb9c197d",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "2023-11-22-渭南第七届丝博会推介词.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "3b481bc3432c6174",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "2023-12-14-秋日回乡偶记.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "65af7525977f1930",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "2023-11-17-黑底白字对眼镜更友好.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -110,7 +81,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "2023-11-17-黑底白字对眼镜更友好.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +97,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "2023-11-17-黑底白字对眼镜更友好.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -149,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "2023-11-17-黑底白字对眼镜更友好.md"
-              }
+              "state": {}
             }
           }
         ],
@@ -172,10 +139,12 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "65af7525977f1930",
+  "active": "9db17509eb9c197d",
   "lastOpenFiles": [
-    "2023-12-14-学习的乐趣.md",
+    "2023-11-22-渭南第七届丝博会推介词.md",
     "2023-12-14-秋日回乡偶记.md",
+    "2023-11-17-黑底白字对眼镜更友好.md",
+    "2023-12-14-学习的乐趣.md",
     "2023-12-14-柠檬是个爱读书的好宝宝.md",
     "2023-12-14-大唐忘亡于天谴？.md",
     "2023-11-07-上海、苏州、合肥科技创新工作考察报告.md",
@@ -183,7 +152,6 @@
     "2023-11-04-美国眼科学会告诉你保护眼睛的正确方法.md",
     "2023-10-27-建站程序作者By的说明.md",
     "2023-11-11-一蓑烟雨任平生.md",
-    "2023-11-22-渭南第七届丝博会推介词.md",
     "2023-11-21-甘肃日报-坚定不移推进“四强”行动落地见效.md",
     "2023-11-01-不满一周岁的宝宝.md",
     "2023-11-02-罗素：我如何写作.md",
