@@ -23,9 +23,9 @@
     "editor:configure-toolbar"
   ],
   "userIgnoreFilters": [
-    "css/",
     "img/",
-    "_includes/"
+    "_includes/",
+    "less/"
   ],
   "newFileLocation": "folder",
   "newFileFolderPath": "_posts"
