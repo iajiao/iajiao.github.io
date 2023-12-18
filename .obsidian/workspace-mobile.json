@@ -85,8 +85,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2023-12-15-金庸群侠极简史.md",
-                "mode": "preview",
+                "file": "_posts/2023-12-27-有哪些生意从一开始就注定失败？.md",
+                "mode": "source",
                 "source": false
               }
             }
@@ -158,7 +158,7 @@
         "state": {
           "type": "backlink",
           "state": {
-            "file": "_posts/2023-12-15-金庸群侠极简史.md",
+            "file": "_posts/2023-12-27-有哪些生意从一开始就注定失败？.md",
             "collapseAll": false,
             "extraContext": false,
             "sortOrder": "alphabetical",
@@ -175,7 +175,7 @@
         "state": {
           "type": "outgoing-link",
           "state": {
-            "file": "_posts/2023-12-15-金庸群侠极简史.md",
+            "file": "_posts/2023-12-27-有哪些生意从一开始就注定失败？.md",
             "linksCollapsed": false,
             "unlinkedCollapsed": true
           }
@@ -187,7 +187,7 @@
         "state": {
           "type": "outline",
           "state": {
-            "file": "_posts/2023-12-15-金庸群侠极简史.md"
+            "file": "_posts/2023-12-27-有哪些生意从一开始就注定失败？.md"
           }
         }
       }
@@ -206,6 +206,7 @@
   },
   "active": "89580c541e43a4b6",
   "lastOpenFiles": [
+    "_posts/2023-12-15-金庸群侠极简史.md",
     "_posts/2023-12-27-有哪些生意从一开始就注定失败？.md",
     "_posts/2023-12-17-全局思源宋体.md",
     "_posts/2023-12-14-秋日回乡偶记.md",
@@ -214,7 +215,6 @@
     "_posts/2023-10-28-在Github上搭建免费个人博客网站（基础篇）.md",
     "_posts/2023-10-27-建站程序作者By的说明.md",
     "_posts/2023-12-15-入冬后的首场雪.md",
-    "_posts/2023-12-15-金庸群侠极简史.md",
     "_posts/2023-11-03-新华夜读：相信美好，终会遇见美好.md",
     "_posts/2023-11-02-Google Fonts 已支持思源宋体.md",
     "_posts/2023-11-02-罗素：我如何写作.md",
