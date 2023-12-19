@@ -11,8 +11,12 @@
             "id": "47a98476b02e0839",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "_posts/2023-12-16-隆重的生日.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -81,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "_posts/2023-12-16-隆重的生日.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "_posts/2023-12-16-隆重的生日.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +124,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "_posts/2023-12-16-隆重的生日.md"
+              }
             }
           }
         ]
@@ -139,5 +147,11 @@
     }
   },
   "active": "47a98476b02e0839",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "_posts/2023-12-14-大唐亡于天谴？.md",
+    "_posts/2023-12-16-隆重的生日.md",
+    "_posts/2023-12-14-学习的乐趣.md",
+    "_posts/2023-12-14-秋日回乡偶记.md",
+    "_posts/2023-12-14-柠檬是个爱读书的好宝宝.md"
+  ]
 }
