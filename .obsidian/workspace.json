@@ -56,7 +56,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -106,7 +106,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 286.5015983581543
+    "width": 286.5015983581543,
+    "collapsed": true
   },
   "right": {
     "id": "9a551a7fe8ca23c5",
@@ -122,7 +123,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -139,7 +140,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -162,16 +163,24 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_includes/about/zh.md"
+                "file": "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md"
               }
             }
+          },
+          {
+            "id": "e0ec85d578cdc95a",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {}
+            }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -183,19 +192,19 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "95ce35827962607d",
+  "active": "acbbcb38df980ea8",
   "lastOpenFiles": [
+    "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md",
     "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
+    "_includes/about/zh.md",
     "_posts/2023-12-20-建筑周宣传图.md",
     "_posts/2023-12-20-“科技国度” 一个在科技领域创造奇迹的贫穷农业国家.md",
-    "_includes/about/zh.md",
     "_includes/about/en.md",
     "_posts/2023-11-21-甘肃日报-坚定不移推进“四强”行动落地见效.md",
     "_posts/().md",
     "_posts/2023-11-22-渭南第七届丝博会推介词.md",
     "_posts/2023-12-16-今年过了一个隆重的生日.md",
     "_posts/2023-12-17-全局思源宋体.md",
-    "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md",
     "_posts/2023-12-14-学习的乐趣.md",
     "_posts/2023-12-14-秋日回乡偶记.md",
     "_posts/2023-12-15-金庸群侠极简史.md",
