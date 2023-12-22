@@ -20,6 +20,18 @@
             }
           },
           {
+            "id": "a3e40aeec10e42e9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
             "id": "acbbcb38df980ea8",
             "type": "leaf",
             "state": {
@@ -55,7 +67,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -121,7 +134,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_includes/about/en.md",
+                "file": "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -138,7 +151,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_includes/about/en.md",
+                "file": "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -161,7 +174,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_includes/about/en.md"
+                "file": "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md"
               }
             }
           },
@@ -190,10 +203,11 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "c93a70bf56a31e82",
+  "active": "a3e40aeec10e42e9",
   "lastOpenFiles": [
-    "_includes/about/zh.md",
     "_includes/about/en.md",
+    "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
+    "_includes/about/zh.md",
     "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md",
     "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
     "_posts/2023-12-20-建筑周宣传图.md",
