@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_includes/about/en.md",
                 "mode": "source",
                 "source": false
               }
@@ -121,7 +121,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_includes/about/en.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -138,7 +138,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_includes/about/en.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -161,7 +161,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_includes/about/zh.md"
+                "file": "_includes/about/en.md"
               }
             }
           },
@@ -178,8 +178,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -191,10 +190,10 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "47a98476b02e0839",
+  "active": "c93a70bf56a31e82",
   "lastOpenFiles": [
-    "_includes/about/en.md",
     "_includes/about/zh.md",
+    "_includes/about/en.md",
     "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md",
     "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
     "_posts/2023-12-20-建筑周宣传图.md",
