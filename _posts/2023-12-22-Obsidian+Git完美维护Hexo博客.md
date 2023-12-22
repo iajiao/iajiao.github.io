@@ -337,4 +337,4 @@ Ctrl+P打开命令面板，输入Shell commands即可找到我们定义好的命
 
 ## 7.参考
 
-[Hexo + Obsidian + Git 完美的博客部署与编辑方案 | EsunR-Blog](https://link.zhihu.com/?target=https%3A//blog.esunr.xyz/2022/07/e9b42b453d9f.html)
+[Hexo + Obsidian + Git 完美的博客部署与编辑方案>EsunR-Blog](https://link.zhihu.com/?target=https%3A//blog.esunr.xyz/2022/07/e9b42b453d9f.html)
