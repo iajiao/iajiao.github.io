@@ -55,8 +55,7 @@
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -123,7 +122,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
+                "file": "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -140,7 +139,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
+                "file": "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -163,7 +162,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md"
+                "file": "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md"
               }
             }
           },
@@ -192,10 +191,10 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "acbbcb38df980ea8",
+  "active": "47a98476b02e0839",
   "lastOpenFiles": [
-    "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md",
     "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
+    "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md",
     "_includes/about/zh.md",
     "_posts/2023-12-20-建筑周宣传图.md",
     "_posts/2023-12-20-“科技国度” 一个在科技领域创造奇迹的贫穷农业国家.md",
