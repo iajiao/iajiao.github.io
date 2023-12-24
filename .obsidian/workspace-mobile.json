@@ -13,13 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2023-12-20-建筑周宣传图.md",
+                "file": "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "1bbf9c48f3f3de8b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/未命名.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
         "state": {
           "type": "backlink",
           "state": {
-            "file": "_posts/2023-12-20-建筑周宣传图.md",
+            "file": "_posts/未命名.md",
             "collapseAll": false,
             "extraContext": false,
             "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
         "state": {
           "type": "outgoing-link",
           "state": {
-            "file": "_posts/2023-12-20-建筑周宣传图.md",
+            "file": "_posts/未命名.md",
             "linksCollapsed": false,
             "unlinkedCollapsed": true
           }
@@ -114,7 +127,7 @@
         "state": {
           "type": "outline",
           "state": {
-            "file": "_posts/2023-12-20-建筑周宣传图.md"
+            "file": "_posts/未命名.md"
           }
         }
       }
@@ -131,13 +144,14 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "e712c4704192bf5f",
+  "active": "1bbf9c48f3f3de8b",
   "lastOpenFiles": [
+    "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
+    "_posts/未命名.md",
+    "_posts/2023-12-20-建筑周宣传图.md",
     "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
     "_posts/2023-12-20-“科技国度” 一个在科技领域创造奇迹的贫穷农业国家.md",
     "_posts/2023-12-16-今年过了一个隆重的生日.md",
-    "_posts/2023-12-20-建筑周宣传图.md",
-    "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
     "_posts/2023-10-29-在Github上搭建免费个人博客网站（延伸篇）.md",
     "img/in-post/post-alitrip-pd/post-alitrip-pd.029.jpg",
     "img/in-post/post-f-f-weibo.png",
