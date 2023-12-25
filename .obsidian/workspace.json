@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
+                "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
                 "mode": "source",
                 "source": false
               }
@@ -134,7 +134,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
+                "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -151,7 +151,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
+                "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -174,7 +174,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md"
+                "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md"
               }
             }
           },
@@ -200,14 +200,16 @@
       "canvas:新建白板": false,
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
-      "command-palette:打开命令面板": false
+      "command-palette:打开命令面板": false,
+      "cmdr:Obsidian Git: Commit all changes": false,
+      "cmdr:Obsidian Git: Push": false
     }
   },
   "active": "a3e40aeec10e42e9",
   "lastOpenFiles": [
-    "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语。.md",
-    "_includes/about/zh.md",
     "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
+    "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
+    "_includes/about/zh.md",
     "_includes/about/en.md",
     "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md",
     "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
