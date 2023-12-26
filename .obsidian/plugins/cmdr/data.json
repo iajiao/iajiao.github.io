@@ -29,6 +29,12 @@
       "icon": "arrow-up",
       "name": "Obsidian Git: Push",
       "mode": "any"
+    },
+    {
+      "id": "obsidian-linter:lint-file",
+      "icon": "lint-file",
+      "name": "Linter: 格式化当前文件",
+      "mode": "any"
     }
   ],
   "rightRibbon": [],
