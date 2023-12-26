@@ -20,18 +20,6 @@
             }
           },
           {
-            "id": "a3e40aeec10e42e9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "README.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
             "id": "acbbcb38df980ea8",
             "type": "leaf",
             "state": {
@@ -67,8 +55,7 @@
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -134,7 +121,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "README.md",
+                "file": "_includes/about/en.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -151,7 +138,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "README.md",
+                "file": "_includes/about/en.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -174,7 +161,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "README.md"
+                "file": "_includes/about/en.md"
               }
             }
           },
@@ -207,11 +194,11 @@
       "cmdr:Linter: 格式化当前文件": false
     }
   },
-  "active": "a3e40aeec10e42e9",
+  "active": "47a98476b02e0839",
   "lastOpenFiles": [
+    "README.md",
     "_",
     "_includes/about/zh.md",
-    "README.md",
     "新建 Text Document.txt",
     "_doc/README.zh.md",
     "_posts/2023-12-20-建筑周宣传图.md",
