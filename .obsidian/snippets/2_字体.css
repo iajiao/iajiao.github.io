@@ -1,9 +1,0 @@
-@import url('https://cdn.staticfile.org/lxgw-wenkai-screen-webfont/1.6.0/lxgwwenkaiscreen.css');
-@import url('https://fonts.loli.net/css2?family=Noto+Serif+SC:wght@500;700&display=swap');
-
-.nav-file-title, .nav-folder-title{
-  font-family: "LXGW WenKai Screen", sans-serif;
-}
-.cm-sizer{
-  font-family: "Noto Serif SC", sans-serif;
-}
