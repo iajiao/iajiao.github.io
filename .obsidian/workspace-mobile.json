@@ -1,0 +1,184 @@
+{
+  "main": {
+    "id": "7bdee42ccbc652a5",
+    "type": "split",
+    "children": [
+      {
+        "id": "54eb8d1083fcef57",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e712c4704192bf5f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "1bbf9c48f3f3de8b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "bd59279fd5442fb4",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "d188dfc2061807d7",
+        "type": "leaf",
+        "state": {
+          "type": "file-explorer",
+          "state": {
+            "sortOrder": "alphabeticalReverse"
+          }
+        }
+      },
+      {
+        "id": "1b0053011cc4605b",
+        "type": "leaf",
+        "state": {
+          "type": "search",
+          "state": {
+            "query": "",
+            "matchingCase": false,
+            "explainSearch": false,
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical"
+          }
+        }
+      },
+      {
+        "id": "8e69f86942342444",
+        "type": "leaf",
+        "state": {
+          "type": "tag",
+          "state": {
+            "sortOrder": "frequency",
+            "useHierarchy": true
+          }
+        }
+      },
+      {
+        "id": "1ffc2674e295343b",
+        "type": "leaf",
+        "state": {
+          "type": "bookmarks",
+          "state": {}
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "right": {
+    "id": "fedb812f9b5d97ed",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "bd442858d709aeaf",
+        "type": "leaf",
+        "state": {
+          "type": "backlink",
+          "state": {
+            "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical",
+            "showSearch": false,
+            "searchQuery": "",
+            "backlinkCollapsed": false,
+            "unlinkedCollapsed": true
+          }
+        }
+      },
+      {
+        "id": "0e7995c5ee9b5396",
+        "type": "leaf",
+        "state": {
+          "type": "outgoing-link",
+          "state": {
+            "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
+            "linksCollapsed": false,
+            "unlinkedCollapsed": true
+          }
+        }
+      },
+      {
+        "id": "b2747bc8ff2f11f8",
+        "type": "leaf",
+        "state": {
+          "type": "outline",
+          "state": {
+            "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md"
+          }
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "cmdr:Obsidian Git: Commit all changes": false,
+      "cmdr:Obsidian Git: Push": false,
+      "cmdr:Linter: 格式化当前文件": false,
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false
+    }
+  },
+  "active": "1bbf9c48f3f3de8b",
+  "lastOpenFiles": [
+    "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
+    "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
+    "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语。.md",
+    "_posts/2023-12-20-建筑周宣传图.md",
+    "_posts/2023-12-20-“科技国度” 一个在科技领域创造奇迹的贫穷农业国家.md",
+    "_posts/2023-12-16-今年过了一个隆重的生日.md",
+    "_posts/2023-10-29-在Github上搭建免费个人博客网站（延伸篇）.md",
+    "img/in-post/post-alitrip-pd/post-alitrip-pd.029.jpg",
+    "img/in-post/post-f-f-weibo.png",
+    "less/mixins.less",
+    "js/jquery.min.js",
+    "fonts/glyphicons-halflings-regular.eot",
+    "img/in-post/post-nextgen-web-pwa/qcon-trend.png",
+    "_doc/README.zh.md",
+    "_doc",
+    "js/hux-blog.min.js",
+    "img/in-post/post-kuaidi-1.jpg",
+    "img/bg-me-2022.jpg",
+    "_includes/about/zh.md",
+    "_includes/about",
+    "img/in-post/post-eleme-pwa/before-skeleton.jpg",
+    "js/bootstrap.min.js",
+    "img/post-bg-4.jpg",
+    "img/in-post/post-alitrip-pd/post-alitrip-pd.014.jpg",
+    "img/in-post/post-eleme-pwa/PRECACHE-future-routes.jpg",
+    "Rakefile",
+    "img/post-bg-xx.jpg",
+    "_includes/head.html",
+    "Gemfile",
+    "_posts/2023-10-27-建站程序作者By的说明.md",
+    "_posts/2023-11-22-渭南第七届丝博会推介词.md"
+  ]
+}
