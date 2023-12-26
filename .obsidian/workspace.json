@@ -20,6 +20,16 @@
             }
           },
           {
+            "id": "918ec6ecb2449183",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.5.3"
+              }
+            }
+          },
+          {
             "id": "acbbcb38df980ea8",
             "type": "leaf",
             "state": {
@@ -55,7 +65,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -194,7 +205,7 @@
       "cmdr:Linter: 格式化当前文件": false
     }
   },
-  "active": "47a98476b02e0839",
+  "active": "918ec6ecb2449183",
   "lastOpenFiles": [
     "_includes/about/zh.md",
     "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
