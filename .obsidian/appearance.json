@@ -5,5 +5,7 @@
     "思源宋体"
   ],
   "baseFontSize": 17,
-  "cssTheme": "Obsidian Nord"
+  "cssTheme": "Obsidian Nord",
+  "theme": "obsidian",
+  "textFontFamily": "思源宋体 CN"
 }

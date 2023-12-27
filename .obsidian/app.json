@@ -27,8 +27,13 @@
   ],
   "userIgnoreFilters": [
     "img/",
-    "_includes/",
-    "less/"
+    "less/",
+    "css/",
+    "fonts/",
+    "js/",
+    "pwa/",
+    "_doc/",
+    "_layouts/"
   ],
   "newFileLocation": "folder",
   "newFileFolderPath": "_posts"
