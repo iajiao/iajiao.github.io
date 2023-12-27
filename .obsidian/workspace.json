@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
+                "file": "_posts/2023-12-20-建筑周宣传图.md",
                 "mode": "source",
                 "source": false
               }
@@ -98,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
+                "file": "_posts/2023-12-20-建筑周宣传图.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
+                "file": "_posts/2023-12-20-建筑周宣传图.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md"
+                "file": "_posts/2023-12-20-建筑周宣传图.md"
               }
             }
           },
@@ -173,8 +173,8 @@
   },
   "active": "918ec6ecb2449183",
   "lastOpenFiles": [
-    "conflict-files-obsidian-git.md",
     "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
+    "conflict-files-obsidian-git.md",
     "_",
     "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
     "_posts/2023-12-20-建筑周宣传图.md",
