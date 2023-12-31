@@ -16,6 +16,8 @@ tags:
 > [Ping.cn](https://www.ping.cn/dns/github.com)
 
 点击DNS查询，点击A记录，查找解析时间最短的网址。
+
+![](https://img-blog.csdnimg.cn/20210530001706605.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3l3OTk5OTk=,size_16,color_FFFFFF,t_70#pic_center)
 #### 修改配置文件
 
 在C:\Windows\System32\drivers\etc文件夹下修改或者添加host
