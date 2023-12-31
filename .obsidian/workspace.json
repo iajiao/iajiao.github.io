@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
+                "file": "_posts/2023-12-29-米粮川记.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
+                "file": "_posts/2023-12-29-米粮川记.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
+                "file": "_posts/2023-12-29-米粮川记.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md"
+                "file": "_posts/2023-12-29-米粮川记.md"
               }
             }
           },
@@ -152,18 +152,18 @@
       "canvas:新建白板": false,
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
-      "cmdr:Linter: 格式化当前文件": false,
       "command-palette:打开命令面板": false,
       "cmdr:Obsidian Git: Commit all changes": false,
-      "cmdr:Obsidian Git: Push": false
+      "cmdr:Obsidian Git: Push": false,
+      "cmdr:Linter: 格式化当前文件": false
     }
   },
   "active": "918ec6ecb2449183",
   "lastOpenFiles": [
+    "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
     "_posts/2023-12-29-米粮川记.md",
     "_posts/2023-12-17-全局思源宋体.md",
     "_posts/2023-12-20-建筑周宣传图.md",
-    "_posts/2023-12-24-神秘预言！“精准”预言李渊、刘秀能当皇帝的谶纬之语.md",
     "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
     "_includes/about/zh.md",
     "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
