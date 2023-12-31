@@ -24,8 +24,9 @@ tags:
 (路径应该是这样C:\Windows\System32\drivers\etc\host)：
 
 一般格式 ip+空格+github.com，切记不要加www
-> 192.30.255.112  github.com git 
-185.31.16.184 github.global.ssl.fastly.net  12
+
+`192.30.255.112  github.com git` 
+`185.31.16.184 github.global.ssl.fastly.net  12`
 
 #### 刷新配置
 
