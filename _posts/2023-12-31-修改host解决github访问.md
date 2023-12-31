@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 修改hpst解决github访问难题
-subtitle: 
+title: 修改Host解决Github访问难题
+subtitle: Github无法访问，怎么办？
 date: 2023-12-31
 author: Ajiao
 header-img: img/post-bg-3.jpg
