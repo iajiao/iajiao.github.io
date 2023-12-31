@@ -9,7 +9,7 @@ catalog: true
 tags:
   - 学习
 ---
-### Github访问不上
+### Github访问不上，怎么办？
 
 #### 找到解析时间最短的地址
 
