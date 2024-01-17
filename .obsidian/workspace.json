@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "bb16c7598bbc06c9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "conflict-files-obsidian-git.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2023-12-29-米粮川记.md",
+                "file": "conflict-files-obsidian-git.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2023-12-29-米粮川记.md",
+                "file": "conflict-files-obsidian-git.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2023-12-29-米粮川记.md"
+                "file": "conflict-files-obsidian-git.md"
               }
             }
           },
@@ -158,12 +171,13 @@
       "cmdr:Linter: 格式化当前文件": false
     }
   },
-  "active": "9523bfff39c57e21",
+  "active": "bb16c7598bbc06c9",
   "lastOpenFiles": [
+    "_posts/2023-12-29-米粮川记.md",
+    "conflict-files-obsidian-git.md",
     "_posts/2024-1-13-记承天寺夜游.md",
     "_posts/2024-1-14-年末岁尾，一段巨忙时光！.md",
     "_posts/2023-12-20-应对美国创新 中国科技复兴的完整叙事.md",
-    "_posts/2023-12-29-米粮川记.md",
     "_posts/2023-12-20-建筑周宣传图.md",
     "_posts/2023-12-22-Obsidian+Git完美维护Hexo博客.md",
     "_posts/2023-12-24-预言李渊、刘秀能当皇帝的谶纬之语.md",
@@ -184,7 +198,6 @@
     "_posts/2023-12-31-修改host解决github访问.md",
     "_includes/about/zh.md",
     "_posts/2023-12-14-秋日回乡偶记.md",
-    "conflict-files-obsidian-git.md",
     "_",
     "_includes/about/en.md",
     "README.md",
