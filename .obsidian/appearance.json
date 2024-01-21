@@ -1,21 +1,11 @@
 {
   "accentColor": "",
   "enabledCssSnippets": [
-<<<<<<< HEAD
-    "2_字体"
-=======
     "2_字体",
     "思源宋体"
->>>>>>> origin/master
   ],
   "baseFontSize": 17,
   "cssTheme": "Obsidian Nord",
   "theme": "obsidian",
-<<<<<<< HEAD
-  "textFontFamily": "霞鹜文楷,思源宋体 CN",
-  "nativeMenus": false,
-  "interfaceFontFamily": "思源黑体"
-=======
   "textFontFamily": "思源宋体 CN"
->>>>>>> origin/master
 }
