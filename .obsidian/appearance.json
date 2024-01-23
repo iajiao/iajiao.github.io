@@ -1,15 +1,3 @@
 {
-<<<<<<< HEAD
   "accentColor": ""
-=======
-  "accentColor": "",
-  "enabledCssSnippets": [
-    "2_字体",
-    "思源宋体"
-  ],
-  "baseFontSize": 17,
-  "cssTheme": "Obsidian Nord",
-  "theme": "obsidian",
-  "textFontFamily": "思源宋体 CN"
->>>>>>> origin/master
 }
