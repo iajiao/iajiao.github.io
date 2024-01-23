@@ -8,30 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "9523bfff39c57e21",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_posts/2024-1-14-年末岁尾，一段巨忙时光！.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "1ff3c49ce58bce4e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_posts/2024-1-23-大秦！大秦！.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
             "id": "18b9ebd591d424c0",
             "type": "leaf",
             "state": {
@@ -43,8 +19,7 @@
               }
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
