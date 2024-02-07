@@ -1,3 +1,6 @@
 {
-  "accentColor": ""
+  "accentColor": "",
+  "theme": "obsidian",
+  "cssTheme": "Obsidian Nord",
+  "textFontFamily": "思源宋体 CN"
 }

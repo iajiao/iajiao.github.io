@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "134021fb5126204a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/童年记忆.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2024-1-21-致敬罗马主帅穆里尼奥.md",
+                "file": "_posts/童年记忆.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2024-1-21-致敬罗马主帅穆里尼奥.md",
+                "file": "_posts/童年记忆.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2024-1-21-致敬罗马主帅穆里尼奥.md"
+                "file": "_posts/童年记忆.md"
               }
             }
           },
@@ -158,12 +171,13 @@
       "cmdr:Linter: 格式化当前文件": false
     }
   },
-  "active": "18b9ebd591d424c0",
+  "active": "134021fb5126204a",
   "lastOpenFiles": [
+    "_posts/2024-1-21-致敬罗马主帅穆里尼奥.md",
+    "_posts/童年记忆.md",
     "_posts/2024-1-21-将进酒.md",
     "conflict-files-obsidian-git.md",
     "_posts/2024-1-21-致敬罗马的穆里尼奥.md",
-    "_posts/2024-1-21-致敬罗马主帅穆里尼奥.md",
     "_posts/2024-1-14-年末岁尾，一段巨忙时光！.md",
     "_posts/2024-1-23-大秦！大秦！.md",
     "_",
@@ -189,7 +203,6 @@
     "_posts/2023-12-20-“科技国度” 一个在科技领域创造奇迹的贫穷农业国家.md",
     "_posts/2023-12-31-修改host解决github访问.md",
     "_includes/about/zh.md",
-    "_posts/2023-12-14-秋日回乡偶记.md",
     "新建 Text Document.txt"
   ]
 }
