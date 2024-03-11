@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2023-12-29-米粮川记.md",
+                "file": "_posts/20240307-渭南03年大洪水.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2023-12-29-米粮川记.md",
+                "file": "_posts/20240307-渭南03年大洪水.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2023-12-29-米粮川记.md",
+                "file": "_posts/20240307-渭南03年大洪水.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2023-12-29-米粮川记.md"
+                "file": "_posts/20240307-渭南03年大洪水.md"
               }
             }
           },
@@ -160,12 +160,13 @@
   },
   "active": "9523bfff39c57e21",
   "lastOpenFiles": [
+    "_posts/2024-3-7-渭南03年大洪水.md",
+    "_posts/2023-12-29-米粮川记.md",
     "_posts/2024-1-14-年末岁尾，一段巨忙时光！.md",
     "_posts/2024-1-13-记承天寺夜游.md",
     "_posts/2023-12-24-预言李渊、刘秀能当皇帝的谶纬之语.md",
     "_posts/2023-10-27-jekyll建站程序作者By的说明.md",
     "i0.wp.com/tvax4.sinaimg.cn/large/0089JD2uly1hll0dqltenj30gm0mngmu.jpg.md",
-    "_posts/2023-12-29-米粮川记.md",
     "i0.wp.com/tvax4.sinaimg.cn/large",
     "i0.wp.com/tvax4.sinaimg.cn",
     "i0.wp.com",
@@ -189,7 +190,6 @@
     "_includes/about/en.md",
     "README.md",
     "新建 Text Document.txt",
-    "_doc/README.zh.md",
-    "_posts/2023-11-21-甘肃日报-坚定不移推进“四强”行动落地见效.md"
+    "_doc/README.zh.md"
   ]
 }
