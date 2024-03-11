@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/20240307-渭南03年大洪水.md",
+                "file": "_posts/2024-3-7-渭南03年大洪水.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/20240307-渭南03年大洪水.md",
+                "file": "_posts/2024-3-7-渭南03年大洪水.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/20240307-渭南03年大洪水.md",
+                "file": "_posts/2024-3-7-渭南03年大洪水.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/20240307-渭南03年大洪水.md"
+                "file": "_posts/2024-3-7-渭南03年大洪水.md"
               }
             }
           },
@@ -160,6 +160,7 @@
   },
   "active": "9523bfff39c57e21",
   "lastOpenFiles": [
+    "_posts/20240307-渭南03年大洪水.md",
     "_posts/2024-3-7-渭南03年大洪水.md",
     "_posts/2023-12-29-米粮川记.md",
     "_posts/2024-1-14-年末岁尾，一段巨忙时光！.md",
@@ -189,7 +190,6 @@
     "_",
     "_includes/about/en.md",
     "README.md",
-    "新建 Text Document.txt",
-    "_doc/README.zh.md"
+    "新建 Text Document.txt"
   ]
 }
