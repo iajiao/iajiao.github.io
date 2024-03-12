@@ -69,7 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 344.49999618530273
+    "width": 200
   },
   "right": {
     "id": "9a551a7fe8ca23c5",
@@ -160,8 +160,9 @@
   },
   "active": "9523bfff39c57e21",
   "lastOpenFiles": [
-    "_posts/20240307-渭南03年大洪水.md",
+    "_posts/2024-2-14-免费图床.md",
     "_posts/2024-3-7-渭南03年大洪水.md",
+    "_posts/20240307-渭南03年大洪水.md",
     "_posts/2023-12-29-米粮川记.md",
     "_posts/2024-1-14-年末岁尾，一段巨忙时光！.md",
     "_posts/2024-1-13-记承天寺夜游.md",
@@ -189,7 +190,6 @@
     "conflict-files-obsidian-git.md",
     "_",
     "_includes/about/en.md",
-    "README.md",
     "新建 Text Document.txt"
   ]
 }
