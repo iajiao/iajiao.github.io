@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "3d4dc28476d4386e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/新华社：告别过去，珍惜当下.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2024-3-7-渭南03年大洪水.md",
+                "file": "_posts/新华社：告别过去，珍惜当下.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2024-3-7-渭南03年大洪水.md",
+                "file": "_posts/新华社：告别过去，珍惜当下.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2024-3-7-渭南03年大洪水.md"
+                "file": "_posts/新华社：告别过去，珍惜当下.md"
               }
             }
           },
@@ -153,15 +166,18 @@
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
       "command-palette:打开命令面板": false,
+      "cmdr:Linter: 格式化当前文件": false,
       "cmdr:Obsidian Git: Commit all changes": false,
-      "cmdr:Obsidian Git: Push": false,
-      "cmdr:Linter: 格式化当前文件": false
+      "cmdr:Obsidian Git: Push": false
     }
   },
-  "active": "9523bfff39c57e21",
+  "active": "3d4dc28476d4386e",
   "lastOpenFiles": [
-    "_posts/2024-2-14-免费图床.md",
     "_posts/2024-3-7-渭南03年大洪水.md",
+    "_posts/新华社：告别过去，珍惜当下.md",
+    "_posts/2024-2-9-萌娃立志.md",
+    "_posts/2024-2-14-免费图床.md",
+    "_posts/2024-2-13-锅巴往事.md",
     "_posts/20240307-渭南03年大洪水.md",
     "_posts/2023-12-29-米粮川记.md",
     "_posts/2024-1-14-年末岁尾，一段巨忙时光！.md",
@@ -186,10 +202,7 @@
     "_posts/2023-12-20-“科技国度” 一个在科技领域创造奇迹的贫穷农业国家.md",
     "_posts/2023-12-31-修改host解决github访问.md",
     "_includes/about/zh.md",
-    "_posts/2023-12-14-秋日回乡偶记.md",
-    "conflict-files-obsidian-git.md",
     "_",
-    "_includes/about/en.md",
     "新建 Text Document.txt"
   ]
 }
