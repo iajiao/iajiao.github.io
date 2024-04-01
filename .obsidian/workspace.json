@@ -49,7 +49,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2023-11-02-Google Fonts 已支持思源宋体.md",
+                "file": "_posts/2023-12-17-全局思源宋体.md",
                 "mode": "source",
                 "source": false
               }
@@ -97,7 +97,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "思源宋体",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -114,7 +114,8 @@
               "state": {}
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -134,7 +135,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2023-11-02-Google Fonts 已支持思源宋体.md",
+                "file": "_posts/2023-12-17-全局思源宋体.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -151,7 +152,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2023-11-02-Google Fonts 已支持思源宋体.md",
+                "file": "_posts/2023-12-17-全局思源宋体.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -174,7 +175,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2023-11-02-Google Fonts 已支持思源宋体.md"
+                "file": "_posts/2023-12-17-全局思源宋体.md"
               }
             }
           },
@@ -209,6 +210,7 @@
   },
   "active": "6b20f4173e138598",
   "lastOpenFiles": [
+    "_posts/2023-11-02-Google Fonts 已支持思源宋体.md",
     "_posts/2024-3-21-邦国同志是如何抓住牛鼻子？.md",
     "_posts/2024-3-21-在延安文艺座谈会上的讲话.md",
     "_posts/2024-3-19-湖南农民运动考察报告.md",
@@ -237,7 +239,6 @@
     "_posts/2023-12-20-建筑周宣传图.md",
     "_posts/2023-12-17-全局思源宋体.md",
     "_posts/2023-12-17-有哪些生意从一开始就注定失败？.md",
-    "_posts/2023-12-15-入冬后的首场雪.md",
     "_",
     "新建 Text Document.txt"
   ]
