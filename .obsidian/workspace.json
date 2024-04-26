@@ -37,7 +37,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_includes/about/en.md",
                 "mode": "source",
                 "source": false
               }
@@ -110,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_includes/about/en.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_includes/about/en.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_includes/about/zh.md"
+                "file": "_includes/about/en.md"
               }
             }
           },
@@ -185,6 +185,7 @@
   },
   "active": "0d377c83b922a6fb",
   "lastOpenFiles": [
+    "_includes/about/zh.md",
     "_doc/README.zh.md",
     "_doc/Manual.md",
     "_posts/2024-4-22-中国式饭局的真相.md",
@@ -213,7 +214,6 @@
     "i0.wp.com/tvax4.sinaimg.cn/large",
     "i0.wp.com/tvax4.sinaimg.cn",
     "i0.wp.com",
-    "_posts/2024-1-3-win10和win11数字许可证激活.md",
     "_",
     "新建 Text Document.txt"
   ]
