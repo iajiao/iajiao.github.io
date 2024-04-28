@@ -37,7 +37,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_includes/about/en.md",
+                "file": "_includes/about/zh.md",
                 "mode": "source",
                 "source": false
               }
@@ -110,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_includes/about/en.md",
+                "file": "_includes/about/zh.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_includes/about/en.md",
+                "file": "_includes/about/zh.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_includes/about/en.md"
+                "file": "_includes/about/zh.md"
               }
             }
           },
@@ -185,6 +185,7 @@
   },
   "active": "0d377c83b922a6fb",
   "lastOpenFiles": [
+    "_includes/about/en.md",
     "_includes/about/zh.md",
     "_doc/README.zh.md",
     "_doc/Manual.md",
@@ -210,7 +211,6 @@
     "_posts/2024-1-13-记承天寺夜游.md",
     "_posts/2023-12-24-预言李渊、刘秀能当皇帝的谶纬之语.md",
     "_posts/2023-10-27-jekyll建站程序作者By的说明.md",
-    "i0.wp.com/tvax4.sinaimg.cn/large/0089JD2uly1hll0dqltenj30gm0mngmu.jpg.md",
     "i0.wp.com/tvax4.sinaimg.cn/large",
     "i0.wp.com/tvax4.sinaimg.cn",
     "i0.wp.com",
