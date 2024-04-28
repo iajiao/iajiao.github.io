@@ -37,7 +37,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_posts/2024-4-26-Github问题汇集.md",
                 "mode": "source",
                 "source": false
               }
@@ -110,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_posts/2024-4-26-Github问题汇集.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_includes/about/zh.md",
+                "file": "_posts/2024-4-26-Github问题汇集.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_includes/about/zh.md"
+                "file": "_posts/2024-4-26-Github问题汇集.md"
               }
             }
           },
@@ -185,8 +185,8 @@
   },
   "active": "0d377c83b922a6fb",
   "lastOpenFiles": [
-    "_includes/about/en.md",
     "_includes/about/zh.md",
+    "_includes/about/en.md",
     "_doc/README.zh.md",
     "_doc/Manual.md",
     "_posts/2024-4-22-中国式饭局的真相.md",
