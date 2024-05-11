@@ -9,11 +9,11 @@ catalog: true
 tags:
   - 网络
 ---
-## 项目地址：
+## 项目地址
 
 https://github.com/WindowsAddict/IDM-Activation-Script
 
-## 激活步骤：
+## 激活步骤
 
 - Right-click on the Windows start menu and select PowerShell or Terminal (Not CMD).
 - Copy-paste the below code and press enter  
