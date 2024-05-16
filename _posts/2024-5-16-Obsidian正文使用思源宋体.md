@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Obsidian正文使用思源宋体代码
+title: Obsidian正文使用思源宋体
 subtitle: 大爱思源宋体
 date: 2024-05-16
 author: Ajiao
