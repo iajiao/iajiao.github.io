@@ -10,7 +10,7 @@ tags:
   - 网络
 ---
 
-在外观设置中选择css片段，具体内容如下：
+在**外观设置**中选择**css片段**，具体内容如下：
 
 `@import url('https://fonts.loli.net/css2?family=Noto+Serif+SC:wght@500;700&display=swap');`
 
