@@ -30,9 +30,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "4dc05c2302d016f7",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/未命名.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -98,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2024-7-1-克拉玛依那些事儿.md",
+                "file": "_posts/未命名.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2024-7-1-克拉玛依那些事儿.md",
+                "file": "_posts/未命名.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2024-7-1-克拉玛依那些事儿.md"
+                "file": "_posts/未命名.md"
               }
             }
           },
@@ -171,13 +183,14 @@
       "cmdr:Linter: 格式化当前文件": false
     }
   },
-  "active": "1691dd6fe40f870f",
+  "active": "4dc05c2302d016f7",
   "lastOpenFiles": [
+    "_posts/2024-7-1-克拉玛依那些事儿.md",
+    "_posts/未命名.md",
     "_posts/2024-4-30-中年改命最高明的方法.md",
     "_posts/2024-5-10-IDM-Activation-Script.md",
     "_posts/2024-5-16-Obsidian正文使用思源宋体.md",
     "_posts/2024-6-5-工业的革命静悄悄.md",
-    "_posts/2024-7-1-克拉玛依那些事儿.md",
     "_posts/2024-4-26-Github问题汇集.md",
     "本地磁盘 (F) - 快捷方式.lnk",
     "_posts/2024-5-16-Obsidian正文使用思源宋体代码.md",
@@ -199,7 +212,6 @@
     "_posts/2024-3-7-历险罗纹河.md",
     "_posts/新华社：告别过去，珍惜当下.md",
     "_posts/2024-3-7-渭南03年大洪水.md",
-    "_posts/2024-2-14-免费图床.md",
     "i0.wp.com/tvax4.sinaimg.cn/large",
     "i0.wp.com/tvax4.sinaimg.cn",
     "i0.wp.com",
