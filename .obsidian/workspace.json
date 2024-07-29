@@ -4,59 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "d994e36103981632",
+        "id": "8f7c0c93dc726bef",
         "type": "tabs",
         "children": [
           {
-            "id": "9da7e23b856ca49d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_posts/2024-6-5-工业的革命静悄悄.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "1691dd6fe40f870f",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_posts/2024-7-1-克拉玛依那些事儿.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "4dc05c2302d016f7",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_posts/2024-7-11-在七月.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "ae26a8e2ca64a1a1",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_posts/2024-7-17-5：2轻断食“疗效”超越二甲双胍！.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "f924c50f84ab9597",
+            "id": "316391dc0313fd5d",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -67,8 +19,7 @@
               }
             }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "vertical"
@@ -207,17 +158,17 @@
       "cmdr:Linter: 格式化当前文件": false
     }
   },
-  "active": "f924c50f84ab9597",
+  "active": "316391dc0313fd5d",
   "lastOpenFiles": [
     "_posts/2024-7-18-睡不着，就不要硬睡了.md",
     "_posts/2024-7-17-5：2轻断食“疗效”超越二甲双胍！.md",
+    "_posts/2024-6-5-工业的革命静悄悄.md",
+    "_posts/2024-7-1-克拉玛依那些事儿.md",
+    "_posts/2024-7-11-在七月.md",
     "_posts/2024-4-26-Github问题汇集.md",
     "_posts/2024-4-30-中年改命最高明的方法.md",
     "_posts/2024-5-10-IDM-Activation-Script.md",
     "_posts/2024-5-16-Obsidian正文使用思源宋体.md",
-    "_posts/2024-6-5-工业的革命静悄悄.md",
-    "_posts/2024-7-1-克拉玛依那些事儿.md",
-    "_posts/2024-7-11-在七月.md",
     "本地磁盘 (F) - 快捷方式.lnk",
     "_posts/2024-5-16-Obsidian正文使用思源宋体代码.md",
     "_posts/2024-4-22-中国式饭局的真相.md",
