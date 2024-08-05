@@ -14,7 +14,8 @@ tags:
 
 >
 @import url('https://fonts.loli.net/css2?family=Noto+Serif+SC:wght@500;700&display=swap');
-.cm-sizer{`
+
+`.cm-sizer{`
   `/* Screen version */`
   `font-family:'Georgia', 'Noto Serif SC', serif;`
   `font-style:normal;`
@@ -22,4 +23,4 @@ tags:
   `line-height:35px;`
   `font-weight:400;`
   `letter-spacing: -1px; /* 设置字母间距为2像素 */`
-}
+`}`
