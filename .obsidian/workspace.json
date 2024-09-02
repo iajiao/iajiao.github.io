@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_doc/Manual.md",
+                "file": "_posts/2024-8-19-灭蟑记.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_doc/Manual.md",
+                "file": "_posts/2024-8-19-灭蟑记.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_doc/Manual.md",
+                "file": "_posts/2024-8-19-灭蟑记.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_doc/Manual.md"
+                "file": "_posts/2024-8-19-灭蟑记.md"
               }
             }
           },
@@ -160,8 +160,8 @@
   },
   "active": "34f090420a087dff",
   "lastOpenFiles": [
-    "_doc/README.zh.md",
     "_doc/Manual.md",
+    "_doc/README.zh.md",
     "img/in-post/post-alitrip-pd/post-alitrip-pd.031.jpg",
     "img/404-bg.jpg",
     "img/about-Ajiao.jpg",
