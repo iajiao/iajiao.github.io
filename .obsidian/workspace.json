@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_includes/about/en.md",
+                "file": "_doc/Manual.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_includes/about/en.md",
+                "file": "_doc/Manual.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_includes/about/en.md",
+                "file": "_doc/Manual.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_includes/about/en.md"
+                "file": "_doc/Manual.md"
               }
             }
           },
@@ -160,6 +160,16 @@
   },
   "active": "34f090420a087dff",
   "lastOpenFiles": [
+    "_doc/README.zh.md",
+    "_doc/Manual.md",
+    "img/in-post/post-alitrip-pd/post-alitrip-pd.031.jpg",
+    "img/404-bg.jpg",
+    "img/about-Ajiao.jpg",
+    "img/avatar-hux.jpg",
+    "img/contact-bg.jpg",
+    "img/post-bg-2.jpg",
+    "img/post-bg-1.jpg",
+    "_includes/about/en.md",
     "_includes/about/zh.md",
     "_posts/2024-8-7-陕西省科学技术奖提名工作分析报告.md",
     "_posts/2024-8-15-黄奇帆：新质生产力的逻辑内涵与实施路径.md",
@@ -183,9 +193,6 @@
     "_posts/2023-11-03-新华夜读：相信美好，终会遇见美好.md",
     "_posts/2023-11-04-美国眼科学会告诉你保护眼睛的正确方法.md",
     "_posts/2023-11-07-关于赴浙江大学参加县域经济高质量发展培训班的一些体会和思考.md",
-    "_posts/2023-11-07-前端 CDNJS 库及 Google Fonts、Ajax 和 Gravatar 国内加速服务.md",
-    "_posts/2023-11-07-上海、苏州、合肥科技创新工作考察报告.md",
-    "_posts/2023-11-11-言宜慢，心宜善.md",
     "本地磁盘 (F) - 快捷方式.lnk",
     "i0.wp.com/tvax4.sinaimg.cn/large",
     "i0.wp.com/tvax4.sinaimg.cn",
