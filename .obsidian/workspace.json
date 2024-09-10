@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "20073c919c24d54c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/未命名.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2024-8-19-灭蟑记.md",
+                "file": "_posts/未命名.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2024-8-19-灭蟑记.md",
+                "file": "_posts/未命名.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2024-8-19-灭蟑记.md"
+                "file": "_posts/未命名.md"
               }
             }
           },
@@ -158,10 +171,11 @@
       "cmdr:Linter: 格式化当前文件": false
     }
   },
-  "active": "34f090420a087dff",
+  "active": "20073c919c24d54c",
   "lastOpenFiles": [
-    "_posts/2024-9-2-初心与坚守：一部我们自己的商业史.md",
     "_posts/2024-8-19-灭蟑记.md",
+    "_posts/未命名.md",
+    "_posts/2024-9-2-初心与坚守：一部我们自己的商业史.md",
     "_doc/Manual.md",
     "_doc/README.zh.md",
     "img/in-post/post-alitrip-pd/post-alitrip-pd.031.jpg",
@@ -192,7 +206,6 @@
     "_posts/2023-11-02-罗素：我如何写作.md",
     "_posts/2023-11-02-Google Fonts 已支持思源宋体.md",
     "_posts/2023-11-03-新华夜读：相信美好，终会遇见美好.md",
-    "_posts/2023-11-04-美国眼科学会告诉你保护眼睛的正确方法.md",
     "本地磁盘 (F) - 快捷方式.lnk",
     "i0.wp.com/tvax4.sinaimg.cn/large",
     "i0.wp.com/tvax4.sinaimg.cn",
