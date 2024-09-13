@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2024-4-22-中国式饭局的真相.md",
+                "file": "_posts/2024-8-15-黄奇帆：新质生产力的逻辑内涵与实施路径.md",
                 "mode": "source",
                 "source": false
               }
@@ -98,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2024-4-22-中国式饭局的真相.md",
+                "file": "_posts/2024-8-15-黄奇帆：新质生产力的逻辑内涵与实施路径.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2024-4-22-中国式饭局的真相.md",
+                "file": "_posts/2024-8-15-黄奇帆：新质生产力的逻辑内涵与实施路径.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2024-4-22-中国式饭局的真相.md"
+                "file": "_posts/2024-8-15-黄奇帆：新质生产力的逻辑内涵与实施路径.md"
               }
             }
           },
@@ -171,8 +171,11 @@
       "cmdr:Linter: 格式化当前文件": false
     }
   },
-  "active": "20073c919c24d54c",
+  "active": "c93a70bf56a31e82",
   "lastOpenFiles": [
+    "_posts/2024-8-19-灭蟑记.md",
+    "_posts/2024-9-2-初心与坚守：一部我们自己的商业史.md",
+    "_posts/2024-4-22-中国式饭局的真相.md",
     "_posts/2024-3-21-邦国同志是如何抓住牛鼻子？.md",
     "_posts/2023-10-27-Jekyll建站程序作者By的说明.md",
     "_posts/2024-8-15-黄奇帆：新质生产力的逻辑内涵与实施路径.md",
@@ -182,8 +185,6 @@
     "_posts/2023-12-14-柠檬是个爱读书的好宝宝.md",
     "_posts/2023-12-6-柠檬是个爱读书的好宝宝.md",
     "_posts/2023-12-14-大唐亡于天谴？.md",
-    "_posts/2024-8-19-灭蟑记.md",
-    "_posts/2024-9-2-初心与坚守：一部我们自己的商业史.md",
     "_doc/Manual.md",
     "_doc/README.zh.md",
     "img/in-post/post-alitrip-pd/post-alitrip-pd.031.jpg",
@@ -205,7 +206,6 @@
     "_posts/2024-7-29-一位正国级是如何讲清道理的？.md",
     "_posts/2023-11-01-不满一周岁的宝宝.md",
     "_posts/2023-10-28-在Github上搭建免费个人博客网站（基础篇）.md",
-    "_posts/2023-10-29-在Github上搭建免费个人博客网站（进阶篇）.md",
     "本地磁盘 (F) - 快捷方式.lnk",
     "i0.wp.com/tvax4.sinaimg.cn/large",
     "i0.wp.com/tvax4.sinaimg.cn",

@@ -93,7 +93,7 @@
       "enabled": false
     },
     "auto-correct-common-misspellings": {
-      "enabled": false,
+      "enabled": true,
       "ignore-words": ""
     },
     "blockquote-style": {
