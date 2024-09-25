@@ -8,30 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "34f090420a087dff",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_posts/2024-8-19-灭蟑记.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "20073c919c24d54c",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_posts/2024-9-2-初心与坚守：一部我们自己的商业史.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
             "id": "521533f1a6c4f58b",
             "type": "leaf",
             "state": {
@@ -43,8 +19,7 @@
               }
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
