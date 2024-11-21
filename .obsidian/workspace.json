@@ -65,8 +65,7 @@
               "state": {}
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -159,7 +158,7 @@
       "cmdr:Linter: 格式化当前文件": false
     }
   },
-  "active": "6736ec01c98a78cc",
+  "active": "c93a70bf56a31e82",
   "lastOpenFiles": [
     "_posts/2024-10-27-损伤性骨关节炎.md",
     "_posts/2024-11-21-渭南市招商引资能力提升专题培训心得体会.md",
