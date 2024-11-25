@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Obsidian+Git完美维护Hexo博客
+title: Obsidian+Git维护Hexo博客
 subtitle: 转载自知乎专栏：晚阳Crown
 date: 2023-12-22
 author: Ajiao
