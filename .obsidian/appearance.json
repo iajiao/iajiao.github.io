@@ -5,6 +5,6 @@
   ],
   "baseFontSize": 21,
   "cssTheme": "Typora-Vue",
-  "theme": "obsidian",
-  "textFontFamily": "思源宋体 CN,Georgia,Noto Serif SC"
+  "theme": "moonstone",
+  "textFontFamily": "思源宋体,Georgia,Noto Serif SC"
 }
