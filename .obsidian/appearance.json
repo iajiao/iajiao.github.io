@@ -1,10 +1,11 @@
 {
   "accentColor": "",
   "enabledCssSnippets": [
-    "2_字体"
+    "2_字体",
+    "思源宋体"
   ],
   "baseFontSize": 21,
   "cssTheme": "Typora-Vue",
-  "theme": "moonstone",
+  "theme": "obsidian",
   "textFontFamily": "思源宋体,Georgia,Noto Serif SC"
 }
