@@ -1,5 +1,6 @@
-@import url('https://font.sec.miui.com/font/css?family=Source_Han_Serif:400,600:Source_Han_Serif');
-*{font-family:'Georgia', 'Source_Han_Serif',sans-serif;
+@import url("https://font.sec.miui.com/font/css?family=Source_Han_Serif:400,600:Source_Han_Serif");
+.workspace-tab-container
+{font-family:'Georgia', 'Source_Han_Serif',sans-serif;
   font-size:21px;
   font-weight:400;
   line-height:35px;
