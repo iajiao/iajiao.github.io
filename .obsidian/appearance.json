@@ -1,11 +1,10 @@
 {
   "accentColor": "",
   "enabledCssSnippets": [
-    "2_字体",
-    "思源宋体"
+    "2_字体"
   ],
   "baseFontSize": 21,
   "cssTheme": "Typora-Vue",
   "theme": "obsidian",
-  "textFontFamily": ""
+  "textFontFamily": "思源宋体 CN"
 }
