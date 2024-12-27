@@ -6,5 +6,6 @@
   "baseFontSize": 21,
   "cssTheme": "Typora-Vue",
   "theme": "obsidian",
-  "textFontFamily": "思源宋体 CN"
+  "textFontFamily": "思源宋体 CN",
+  "nativeMenus": false
 }
