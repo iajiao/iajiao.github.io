@@ -20,8 +20,23 @@
               "icon": "lucide-file",
               "title": "2024-12-12-江南烟雨，小桥流水"
             }
+          },
+          {
+            "id": "c5cb434cc0326908",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/未命名.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "未命名"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -176,8 +191,10 @@
       "cmdr:Obsidian Git: Push": false
     }
   },
-  "active": "498977cdd4c314ef",
+  "active": "c5cb434cc0326908",
   "lastOpenFiles": [
+    "_posts/2024-12-12-江南烟雨，小桥流水.md",
+    "_posts/未命名.md",
     "_posts/2024-8-19-灭蟑记.md",
     "_posts/2024-8-15-黄奇帆：新质生产力的逻辑内涵与实施路径.md",
     "_posts/2024-4-22-中国式饭局的真相.md",
@@ -185,7 +202,6 @@
     "_posts/2024-10-16-繁忙的日子.md",
     "_posts/2024-11-21-渭南市招商引资能力提升专题培训心得体会.md",
     "_posts/2024-11-28-创新驱动发展成效显著 科技强国建设有力推进.md",
-    "_posts/2024-12-12-江南烟雨，小桥流水.md",
     "_posts/2024-10-27-损伤性骨关节炎.md",
     "_posts/2024-9-25-极度诡异的匈奴人.md",
     "_posts/2023-12-22-Obsidian+Git维护Hexo博客.md",
@@ -203,7 +219,6 @@
     "_posts/2023-11-22-渭南第七届丝博会推介词.md",
     "_posts/2023-11-21-甘肃日报-坚定不移推进“四强”行动落地见效.md",
     "_posts/2023-11-17-黑底白字对眼镜更友好.md",
-    "_posts/2023-11-11-一蓑烟雨任平生.md",
     "img/in-post/post-alitrip-pd/post-alitrip-pd.031.jpg",
     "img/404-bg.jpg",
     "img/about-Ajiao.jpg",
