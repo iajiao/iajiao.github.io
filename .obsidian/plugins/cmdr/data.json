@@ -40,7 +40,32 @@
   "rightRibbon": [],
   "titleBar": [],
   "statusBar": [],
-  "pageHeader": [],
+  "pageHeader": [
+    {
+      "id": "app:open-settings",
+      "icon": "lucide-settings",
+      "name": "打开设置",
+      "mode": "any"
+    },
+    {
+      "id": "obsidian-git:commit",
+      "icon": "activity",
+      "name": "Git: Commit all changes",
+      "mode": "any"
+    },
+    {
+      "id": "obsidian-git:push2",
+      "icon": "arrow-up",
+      "name": "Git: Push",
+      "mode": "any"
+    },
+    {
+      "id": "obsidian-linter:lint-file",
+      "icon": "baseline",
+      "name": "Linter: 格式化当前文件",
+      "mode": "any"
+    }
+  ],
   "macros": [],
   "explorer": [],
   "hide": {
