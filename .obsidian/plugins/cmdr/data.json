@@ -64,6 +64,12 @@
       "icon": "baseline",
       "name": "Linter: 格式化当前文件",
       "mode": "any"
+    },
+    {
+      "id": "app:open-vault",
+      "icon": "vault",
+      "name": "打开其他仓库",
+      "mode": "any"
     }
   ],
   "macros": [],
