@@ -77,8 +77,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 355.5,
-    "collapsed": true
+    "width": 355.5
   },
   "right": {
     "id": "9a551a7fe8ca23c5",
@@ -177,7 +176,7 @@
       "cmdr:Obsidian Git: Push": false
     }
   },
-  "active": "498977cdd4c314ef",
+  "active": "c93a70bf56a31e82",
   "lastOpenFiles": [
     "_posts/2024-12-12-江南烟雨，小桥流水.md",
     "_posts/未命名.md",
