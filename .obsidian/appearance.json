@@ -6,5 +6,6 @@
   "baseFontSize": 21,
   "cssTheme": "Zen",
   "theme": "obsidian",
-  "textFontFamily": "思源宋体 CN"
+  "textFontFamily": "思源宋体 CN",
+  "showRibbon": false
 }
