@@ -29,9 +29,9 @@ jobs:
         # ref: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token
         # so you should set another token
         img_store_github_token: ${{ secrets.CHECKOUT_TOKEN }}
-        img_store_github_repo: akkuman/pic
+        img_store_github_repo: iajiao/picx-images-hosting
         img_store_github_branch: master
-        # md_store_path_prefix: ${{ secrets.MD_STORE_PATH_PREFIX }}
+        md_store_path_prefix: ${{ secrets.MD_STORE_PATH_PREFIX }}
 
     - name: push to github
       uses: EndBug/add-and-commit@v7
