@@ -1,33 +1,18 @@
-name: notion2hugo
+name: sync-notion-to-github
+
 on:
- schedule:
-   - cron: "0 */12 * * *"  #每12小时拉取一次
- workflow_dispatch: ~
+  schedule:
+    - cron: '0 0 * * *' # every day at 00:00 UTC
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
 jobs:
- sync:
-   name: notion to hugo
-   runs-on: ubuntu-latest
-   steps:
-     - name: checkout
-       uses: actions/checkout@v3  #拉取hugo仓库
-       with:
-         submodules: true  # Fetch Hugo themes (true OR recursive)
-         fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
-     - name: notion-site
-       uses: pkwenda/notion-site@master    #拉取notion database 转换成 markdown
-       env:
-         NOTION_SECRET : ${{ secrets.NOTION_SECRET }}
-     - name: Check if there are any changes
-       id: verify_diff
-       run: |
-         [ -z "$(git status -s .)" ] || echo "changed=true" >> $GITHUB_OUTPUT
-     - name: Commit files                 #推送新文章到hugo 仓库
-       if: steps.verify_diff.outputs.changed == 'true'
-       run: |
-         git config user.email "action@github.com"
-         git config user.name "GitHub Actions"
-         git add --all
-         git commit -m "sync article from notion"
-         git config pull.rebase false
-         git pull
-         git push
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: notion-sync
+      uses: YouXam/Notion-GitHub-Sync@v1
+      with:
+        notion_token: ${{ secrets.NOTION_TOKEN }}
