@@ -1,40 +1,33 @@
-name: Notion To Blog
-
+name: notion2hugo
 on:
-  issues:
-    types: [opened]
-
+ schedule:
+   - cron: "0 */12 * * *"  #每12小时拉取一次
+ workflow_dispatch: ~
 jobs:
-  notion-to-blog:
-    if: ${{ github.event.issue.user.login == github.actor && contains(github.event.issue.title, 'notion-ci') }}
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        # Workflows are only triggered when commits (and tags I think, but it would need to be tested) are created pushed using a Personal Access Token (PAT).
-        # ref: https://github.com/EndBug/add-and-commit/issues/311#issuecomment-948749635
-        token: ${{ secrets.CHECKOUT_TOKEN }}
-
-    - name: Markdown From Notion
-      uses: akkuman/notion_to_github_blog@master
-      with:
-        notion_token: ${{ secrets.NOTION_TOKEN }}
-        notion_database_id: ${{ secrets.NOTION_DATABASE_ID }}
-        img_store_type: github
-        img_store_path_prefix: notionimg
-        # img_store_url_path_prefix: ${{ secrets.IMG_STORE_URL_PATH_PREFIX }}
-        # Actions run as an user, but when they are running in a fork there are potential security problems, so they are degraded to "read-only"
-        # ref: https://github.com/actions/first-interaction/issues/10#issuecomment-546628432
-        # ref: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token
-        # so you should set another token
-        img_store_github_token: ${{ secrets.CHECKOUT_TOKEN }}
-        img_store_github_repo: iajiao/picx-images-hosting
-        img_store_github_branch: master
-        md_store_path_prefix: ${{ secrets.MD_STORE_PATH_PREFIX }}
-
-    - name: push to github
-      uses: EndBug/add-and-commit@v7
-      with:
-        branch: master
-        message: 'Notion CI'
+ sync:
+   name: notion to hugo
+   runs-on: ubuntu-latest
+   steps:
+     - name: checkout
+       uses: actions/checkout@v3  #拉取hugo仓库
+       with:
+         submodules: true  # Fetch Hugo themes (true OR recursive)
+         fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+     - name: notion-site
+       uses: pkwenda/notion-site@master    #拉取notion database 转换成 markdown
+       env:
+         NOTION_SECRET : ${{ secrets.NOTION_SECRET }}
+     - name: Check if there are any changes
+       id: verify_diff
+       run: |
+         [ -z "$(git status -s .)" ] || echo "changed=true" >> $GITHUB_OUTPUT
+     - name: Commit files                 #推送新文章到hugo 仓库
+       if: steps.verify_diff.outputs.changed == 'true'
+       run: |
+         git config user.email "action@github.com"
+         git config user.name "GitHub Actions"
+         git add --all
+         git commit -m "sync article from notion"
+         git config pull.rebase false
+         git pull
+         git push
