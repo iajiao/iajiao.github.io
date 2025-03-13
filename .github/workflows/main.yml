@@ -1,18 +1,38 @@
-name: sync-notion-to-github
-
+# .github/workflows/notion-sync.yml
+name: Sync Notion to Jekyll
 on:
   schedule:
-    - cron: '0 0 * * *' # every day at 00:00 UTC
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+    - cron: "0 12 * * *"  # 每天UTC时间12点执行
+  workflow_dispatch:       # 支持手动触发
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-    - name: notion-sync
-      uses: YouXam/Notion-GitHub-Sync@v1
-      with:
-        notion_token: ${{ secrets.NOTION_TOKEN }}
+      # 步骤1：拉取仓库代码
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 步骤2：使用现成 Action 转换 Notion 到 Markdown
+      - name: Sync Notion to Markdown
+        uses: cocomine/notion-sync-action@v1
+        with:
+          database_id: ${{ secrets.NOTION_DATABASE_ID }}
+          notion_token: ${{ secrets.NOTION_TOKEN }}
+          output_dir: "_posts"  # 关键！指定输出目录为 Jekyll 的 _posts
+          filename: "{Date}-{Slug}.md"  # 按 Jekyll 格式命名文件
+          frontmatter: |
+            layout: post
+            title: "{Title}"
+            date: "{Date}"
+            categories: [{Categories}]
+            tags: [{Tags}]
+          filter: |
+            Status == "Published"  # 仅同步已发布文章
+
+      # 步骤3：自动提交更改
+      - name: Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Auto-sync posts from Notion"
+          file_pattern: "_posts/*"  # 仅追踪 _posts 目录的变动
