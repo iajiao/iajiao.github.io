@@ -1,120 +1,116 @@
 # .github/workflows/notion-sync.yml
-name: Notion to Jekyll Sync
+name: Notion Page Content to Jekyll
 on:
   schedule:
-    - cron: "0 12 * * *"  # 每天UTC时间12点自动同步
-  workflow_dispatch:       # 支持手动触发
+    - cron: "0 12 * * *"
+  workflow_dispatch:
 
 jobs:
-  sync-notion:
+  sync-notion-pages:
     runs-on: ubuntu-latest
     steps:
-      # ----------- 步骤1：拉取仓库代码 -----------
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ----------- 步骤2：设置Python环境 -----------
-      - name: Set up Python 3.10
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # ----------- 步骤3：安装依赖库（固定版本避免兼容性问题） -----------
       - name: Install dependencies
         run: |
           pip install \
             notion-client==2.2.0 \
             python-frontmatter==1.0.0 \
-            PyYAML==6.0.1
+            requests==2.31.0 \
+            notion-to-md==2.5.0
 
-      # ----------- 步骤4：执行同步脚本（核心逻辑） -----------
-      - name: Run Notion to Jekyll converter
+      - name: Run Notion Page Converter
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 创建Python脚本文件
           cat << 'EOF' > notion_to_jekyll.py
           import os
           import logging
           from notion_client import Client
+          from notion_to_md import NotionToMarkdown
           import frontmatter
           from datetime import datetime
 
-          # 配置日志
           logging.basicConfig(level=logging.INFO)
           logger = logging.getLogger(__name__)
 
+          def download_image(url, path):
+              """下载图片到本地（需安装 requests）"""
+              import requests
+              response = requests.get(url)
+              with open(path, "wb") as f:
+                  f.write(response.content)
+
           def main():
-              # 初始化Notion客户端
               notion = Client(auth=os.environ["NOTION_TOKEN"])
               database_id = os.environ["NOTION_DATABASE_ID"]
 
               # 查询已发布文章
               try:
-                  results = notion.databases.query(
+                  pages = notion.databases.query(
                       database_id,
                       filter={"property": "Status", "select": {"equals": "Published"}}
-                  )
+                  ).get("results", [])
               except Exception as e:
-                  logger.error(f"Notion API查询失败: {str(e)}")
-                  raise
+                  logger.error(f"查询数据库失败: {str(e)}")
+                  return
 
-              # 处理每篇文章
-              for page in results.get("results", []):
+              for page in pages:
                   try:
                       # 提取基础字段
                       title = page["properties"]["Title"]["title"][0]["plain_text"].strip()
                       slug = page["properties"]["Slug"]["rich_text"][0]["plain_text"].strip()
                       date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
+                      page_id = page["id"]
 
-                      # 处理分类（兼容字段不存在的情况）
-                      categories = []
-                      if "Categories" in page["properties"]:
-                          categories = [
-                              tag["name"] 
-                              for tag in page["properties"]["Categories"]["multi_select"]
-                          ]
+                      # 获取页面完整内容并转换为 Markdown
+                      n2m = NotionToMarkdown(page_id=page_id, notion_client=notion)
+                      markdown = n2m.parse()
 
-                      # 处理正文内容（严格校验）
-                      content_blocks = page["properties"]["Content"]["rich_text"]
-                      if not content_blocks or len(content_blocks) == 0:
-                          logger.warning(f"文章 '{title}' 内容为空，已跳过")
-                          continue
-                      content = content_blocks[0]["plain_text"]
+                      # 替换图片链接为 GitHub 相对路径
+                      image_dir = "assets/images/notion"
+                      os.makedirs(image_dir, exist_ok=True)
+                      for block in n2m.blocks:
+                          if block.type == "image":
+                              image_url = block.image
+                              image_name = image_url.split("/")[-1].split("?")[0]
+                              local_path = f"{image_dir}/{image_name}"
+                              download_image(image_url, local_path)
+                              markdown = markdown.replace(image_url, f"/{local_path}")
 
-                      # 初始化Post对象（解决TypeError的核心修复）
-                      post = frontmatter.Post(content)
+                      # 构建 Front Matter
+                      post = frontmatter.Post(markdown)
                       post["layout"] = "post"
                       post["title"] = title
                       post["date"] = date_str
-                      post["categories"] = categories
-
-                      # 生成唯一文件名（避免覆盖现有文件）
-                      filename = f"_posts/{date_str}-notion-{slug}.md"
 
                       # 保存文件
+                      filename = f"_posts/{date_str}-{slug}.md"
                       with open(filename, "w", encoding="utf-8") as f:
                           f.write(frontmatter.dumps(post))
-                      logger.info(f"成功生成: {filename}")
+                      logger.info(f"生成文件: {filename}")
 
-                  except KeyError as e:
-                      logger.error(f"字段缺失: {str(e)} (Page ID: {page['id']})")
                   except Exception as e:
-                      logger.error(f"处理文章失败: {str(e)} (Page ID: {page['id']})")
+                      logger.error(f"处理页面失败: {str(e)} (Page ID: {page_id})")
 
           if __name__ == "__main__":
               main()
           EOF
 
-          # 执行脚本
           python notion_to_jekyll.py
 
-      # ----------- 步骤5：自动提交变更 -----------
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Auto-sync posts from Notion"
-          file_pattern: "_posts/*.md"
-          commit_user_name: "Notion Sync Bot"
-          commit_user_email: "actions@github.com"
+          commit_message: "Auto-sync Notion pages"
+          file_pattern: |
+            _posts/*
+            assets/images/notion/*
