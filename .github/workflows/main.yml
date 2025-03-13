@@ -1,83 +1,120 @@
 # .github/workflows/notion-sync.yml
-name: Sync Notion to Jekyll
+name: Notion to Jekyll Sync
 on:
   schedule:
-    - cron: "0 12 * * *"  # 每天UTC时间12点执行
+    - cron: "0 12 * * *"  # 每天UTC时间12点自动同步
   workflow_dispatch:       # 支持手动触发
 
 jobs:
-  sync:
+  sync-notion:
     runs-on: ubuntu-latest
     steps:
-      # 步骤1：拉取仓库代码
-      - name: Checkout Code
+      # ----------- 步骤1：拉取仓库代码 -----------
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 步骤2：设置Python环境
-      - name: Set up Python
+      # ----------- 步骤2：设置Python环境 -----------
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # 步骤3：安装依赖库
-      - name: Install Dependencies
+      # ----------- 步骤3：安装依赖库（固定版本避免兼容性问题） -----------
+      - name: Install dependencies
         run: |
-          pip install notion-client python-frontmatter pyyaml
+          pip install \
+            notion-client==2.2.0 \
+            python-frontmatter==1.0.0 \
+            PyYAML==6.0.1
 
-      # 步骤4：运行转换脚本（从Notion拉取数据并生成Markdown）
-      - name: Run Notion to Jekyll Script
+      # ----------- 步骤4：执行同步脚本（核心逻辑） -----------
+      - name: Run Notion to Jekyll converter
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         run: |
-          # 创建Python脚本并执行
-          cat << EOF > notion_to_jekyll.py
+          # 创建Python脚本文件
+          cat << 'EOF' > notion_to_jekyll.py
           import os
+          import logging
           from notion_client import Client
           import frontmatter
           from datetime import datetime
 
-          # 初始化Notion客户端
-          notion = Client(auth=os.environ["NOTION_TOKEN"])
-          database_id = os.environ["NOTION_DATABASE_ID"]
+          # 配置日志
+          logging.basicConfig(level=logging.INFO)
+          logger = logging.getLogger(__name__)
 
-          # 查询已发布的文章
-          results = notion.databases.query(
-              database_id,
-              filter={"property": "Status", "select": {"equals": "Published"}}
-          )
+          def main():
+              # 初始化Notion客户端
+              notion = Client(auth=os.environ["NOTION_TOKEN"])
+              database_id = os.environ["NOTION_DATABASE_ID"]
 
-          # 生成Markdown文件
-          for page in results["results"]:
-              # 提取Front Matter字段
-              title = page["properties"]["Title"]["title"][0]["plain_text"]
-              slug = page["properties"]["Slug"]["rich_text"][0]["plain_text"]
-              date = page["properties"]["Date"]["date"]["start"]
-              categories = [tag["name"] for tag in page["properties"]["Categories"]["multi_select"]]
-              content = page["properties"]["Content"]["rich_text"][0]["plain_text"]
+              # 查询已发布文章
+              try:
+                  results = notion.databases.query(
+                      database_id,
+                      filter={"property": "Status", "select": {"equals": "Published"}}
+                  )
+              except Exception as e:
+                  logger.error(f"Notion API查询失败: {str(e)}")
+                  raise
 
-              # 生成文件名（格式：YYYY-MM-DD-slug.md）
-              filename = f"_posts/{date}-{slug}.md"
+              # 处理每篇文章
+              for page in results.get("results", []):
+                  try:
+                      # 提取基础字段
+                      title = page["properties"]["Title"]["title"][0]["plain_text"].strip()
+                      slug = page["properties"]["Slug"]["rich_text"][0]["plain_text"].strip()
+                      date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
 
-              # 构建Front Matter
-              post = frontmatter.Post()
-              post["layout"] = "post"
-              post["title"] = title
-              post["date"] = date
-              post["categories"] = categories
-              post.content = content
+                      # 处理分类（兼容字段不存在的情况）
+                      categories = []
+                      if "Categories" in page["properties"]:
+                          categories = [
+                              tag["name"] 
+                              for tag in page["properties"]["Categories"]["multi_select"]
+                          ]
 
-              # 保存文件
-              with open(filename, "w") as f:
-                  f.write(frontmatter.dumps(post))
+                      # 处理正文内容（严格校验）
+                      content_blocks = page["properties"]["Content"]["rich_text"]
+                      if not content_blocks or len(content_blocks) == 0:
+                          logger.warning(f"文章 '{title}' 内容为空，已跳过")
+                          continue
+                      content = content_blocks[0]["plain_text"]
+
+                      # 初始化Post对象（解决TypeError的核心修复）
+                      post = frontmatter.Post(content)
+                      post["layout"] = "post"
+                      post["title"] = title
+                      post["date"] = date_str
+                      post["categories"] = categories
+
+                      # 生成唯一文件名（避免覆盖现有文件）
+                      filename = f"_posts/{date_str}-notion-{slug}.md"
+
+                      # 保存文件
+                      with open(filename, "w", encoding="utf-8") as f:
+                          f.write(frontmatter.dumps(post))
+                      logger.info(f"成功生成: {filename}")
+
+                  except KeyError as e:
+                      logger.error(f"字段缺失: {str(e)} (Page ID: {page['id']})")
+                  except Exception as e:
+                      logger.error(f"处理文章失败: {str(e)} (Page ID: {page['id']})")
+
+          if __name__ == "__main__":
+              main()
           EOF
 
           # 执行脚本
           python notion_to_jekyll.py
 
-      # 步骤5：自动提交更改
-      - name: Commit Changes
+      # ----------- 步骤5：自动提交变更 -----------
+      - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Auto-sync posts from Notion"
-          file_pattern: "_posts/*.md"  # 仅追踪Markdown文件变动
+          file_pattern: "_posts/*.md"
+          commit_user_name: "Notion Sync Bot"
+          commit_user_email: "actions@github.com"
