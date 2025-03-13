@@ -13,26 +13,71 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 步骤2：使用现成 Action 转换 Notion 到 Markdown
-      - name: Sync Notion to Markdown
-        uses: cocomine/notion-sync-action@v1
+      # 步骤2：设置Python环境
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          database_id: ${{ secrets.NOTION_DATABASE_ID }}
-          notion_token: ${{ secrets.NOTION_TOKEN }}
-          output_dir: "_posts"  # 关键！指定输出目录为 Jekyll 的 _posts
-          filename: "{Date}-{Slug}.md"  # 按 Jekyll 格式命名文件
-          frontmatter: |
-            layout: post
-            title: "{Title}"
-            date: "{Date}"
-            categories: [{Categories}]
-            tags: [{Tags}]
-          filter: |
-            Status == "Published"  # 仅同步已发布文章
+          python-version: "3.10"
 
-      # 步骤3：自动提交更改
+      # 步骤3：安装依赖库
+      - name: Install Dependencies
+        run: |
+          pip install notion-client python-frontmatter pyyaml
+
+      # 步骤4：运行转换脚本（从Notion拉取数据并生成Markdown）
+      - name: Run Notion to Jekyll Script
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: |
+          # 创建Python脚本并执行
+          cat << EOF > notion_to_jekyll.py
+          import os
+          from notion_client import Client
+          import frontmatter
+          from datetime import datetime
+
+          # 初始化Notion客户端
+          notion = Client(auth=os.environ["NOTION_TOKEN"])
+          database_id = os.environ["NOTION_DATABASE_ID"]
+
+          # 查询已发布的文章
+          results = notion.databases.query(
+              database_id,
+              filter={"property": "Status", "select": {"equals": "Published"}}
+          )
+
+          # 生成Markdown文件
+          for page in results["results"]:
+              # 提取Front Matter字段
+              title = page["properties"]["Title"]["title"][0]["plain_text"]
+              slug = page["properties"]["Slug"]["rich_text"][0]["plain_text"]
+              date = page["properties"]["Date"]["date"]["start"]
+              categories = [tag["name"] for tag in page["properties"]["Categories"]["multi_select"]]
+              content = page["properties"]["Content"]["rich_text"][0]["plain_text"]
+
+              # 生成文件名（格式：YYYY-MM-DD-slug.md）
+              filename = f"_posts/{date}-{slug}.md"
+
+              # 构建Front Matter
+              post = frontmatter.Post()
+              post["layout"] = "post"
+              post["title"] = title
+              post["date"] = date
+              post["categories"] = categories
+              post.content = content
+
+              # 保存文件
+              with open(filename, "w") as f:
+                  f.write(frontmatter.dumps(post))
+          EOF
+
+          # 执行脚本
+          python notion_to_jekyll.py
+
+      # 步骤5：自动提交更改
       - name: Commit Changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Auto-sync posts from Notion"
-          file_pattern: "_posts/*"  # 仅追踪 _posts 目录的变动
+          file_pattern: "_posts/*.md"  # 仅追踪Markdown文件变动
