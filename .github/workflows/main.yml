@@ -19,14 +19,14 @@ jobs:
         with:
           python-version: "3.10"
 
-      # ----------- 步骤3：安装依赖（使用正确包名和版本） -----------
+      # ----------- 步骤3：安装依赖（修复多行语法） -----------
       - name: Install dependencies
         run: |
           pip install \
             notion-client==2.2.0 \
             python-frontmatter==1.0.0 \
             requests==2.31.0 \
-            mdutils==1.5.0 \  # 替代方案：标准Markdown处理库
+            mdutils==1.5.0 \
             --index-url https://pypi.tuna.tsinghua.edu.cn/simple \
             --trusted-host pypi.tuna.tsinghua.edu.cn \
             --no-cache-dir
@@ -36,26 +36,35 @@ jobs:
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cat << 'EOF' > notion_to_jekyll.py
           import os
           import logging
           from notion_client import Client
           import frontmatter
-          from mdutils import MdUtils  # 改用标准Markdown库
+          from mdutils import MdUtils
           import requests
 
-          # 配置日志
           logging.basicConfig(level=logging.INFO)
           logger = logging.getLogger(__name__)
 
           def get_page_content(page_id):
-              """直接通过Notion API获取页面内容"""
+              """通过Notion API获取页面内容"""
               try:
-                  blocks = notion.blocks.children.list(block_id=page_id)["results"]
+                  blocks = []
+                  result = Client(auth=os.environ["NOTION_TOKEN"]).blocks.children.list(block_id=page_id)
+                  while True:
+                      blocks.extend(result.get("results", []))
+                      if not result.get("has_more"):
+                          break
+                      result = Client(auth=os.environ["NOTION_TOKEN"]).blocks.children.list(
+                          block_id=page_id,
+                          start_cursor=result.get("next_cursor")
+                      )
                   return "\n".join([_parse_block(b) for b in blocks])
               except Exception as e:
-                  logger.error(f"获取页面内容失败: {str(e)}")
+                  logger.error(f"获取内容失败: {str(e)}")
                   return ""
 
           def _parse_block(block):
@@ -63,13 +72,22 @@ jobs:
               type_ = block["type"]
               content = block[type_]
               
-              # 基础文本处理
-              if type_ == "paragraph":
-                  return "".join([t["plain_text"] for t in content["rich_text"]])
-              elif type_ == "heading_1":
-                  return f"# {content['rich_text'][0]['plain_text']}"
+              # 文本类型处理
+              if "rich_text" in content and content["rich_text"]:
+                  text = "".join([t["plain_text"] for t in content["rich_text"]])
+                  if type_ == "paragraph":
+                      return text
+                  elif type_ == "heading_1":
+                      return f"# {text}"
+                  elif type_ == "heading_2":
+                      return f"## {text}"
+                  elif type_ == "bulleted_list_item":
+                      return f"- {text}"
+                  elif type_ == "numbered_list_item":
+                      return f"1. {text}"
+              # 图片处理
               elif type_ == "image":
-                  return f"![]({content['external']['url']})"  # 简单处理外部图片
+                  return f"![]({content['external']['url']})"
               return ""
 
           def main():
@@ -94,16 +112,9 @@ jobs:
                       date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
                       page_id = page["id"]
 
-                      # 获取页面内容
+                      # 获取并处理内容
                       content = get_page_content(page_id)
-
-                      # 构建Markdown
-                      md = MdUtils(file_name="temp")
-                      md.new_header(level=1, title=title)
-                      md.new_paragraph(content)
-                      
-                      # 生成Front Matter
-                      post = frontmatter.Post(md.file_data)
+                      post = frontmatter.Post(content)
                       post["title"] = title
                       post["date"] = date_str
                       post["layout"] = "post"
@@ -121,7 +132,6 @@ jobs:
               main()
           EOF
 
-          # 执行脚本
           python notion_to_jekyll.py
 
       # ----------- 步骤5：提交变更 -----------
@@ -130,5 +140,3 @@ jobs:
         with:
           commit_message: "Auto-sync from Notion"
           file_pattern: "_posts/*"
-          commit_user_name: "Notion Sync Bot"
-          commit_user_email: "actions@github.com"
