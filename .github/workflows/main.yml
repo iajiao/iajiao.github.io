@@ -143,7 +143,7 @@ jobs:
             # ----------- 步骤5：修复权限（关键新增步骤） -----------
       - name: Fix Gemfile permissions
         run: |
-          sudo chmod -R a+w /github/workspace
+          sudo chmod -R a+w "$GITHUB_WORKSPACE"
           ls -al Gemfile.lock  # 验证权限
       
       # ----------- 步骤6：构建Jekyll站点 -----------
