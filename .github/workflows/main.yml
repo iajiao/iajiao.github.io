@@ -89,7 +89,7 @@ jobs:
                           ]
                       }
                   }
-                  return self.notion.databases.query(database_id, ​**query).get("results", [])  # 添加database_id作为第一个参数
+                  return self.notion.databases.query(database_id, ​**query).get("results", [])
 
               def parse_content(self, page_id):
                   blocks = []
