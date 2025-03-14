@@ -141,10 +141,35 @@ jobs:
           python notion_to_jekyll.py
 
       # ----------- 步骤5：构建Jekyll站点 -----------
-      - name: Build Jekyll Site
-        uses: docker://jekyll/jekyll
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          args: jekyll build -d ./_site
+          persist-credentials: false
+
+      - name: Fix permissions
+        run: |
+          sudo chown -R $(id -u):$(id -g) .
+          sudo find . -type d -exec chmod 755 {} \;
+          sudo find . -type f -exec chmod 644 {} \;
+          [ -f Gemfile.lock ] && sudo chmod 666 Gemfile.lock
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+          bundler-cache: true
+
+      - name: Jekyll build
+        uses: docker://jekyll/jekyll
+        env:
+          JEKYLL_UID: 1000
+          JEKYLL_GID: 1000
+        with:
+          args: |
+            jekyll build -d ./_site
+            --trace
+            --strict_front_matter
+            --safe      
 
       # ----------- 步骤6：部署到Cloudflare Pages -----------
       - name: Deploy to Cloudflare
