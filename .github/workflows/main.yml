@@ -89,7 +89,7 @@ jobs:
                           ]
                       }
                   }
-                  return self.notion.databases.query(database_id, ​**query).get("results", [])
+                  return self.notion.databases.query(database_id,**query).get("results", [])
 
               def parse_content(self, page_id):
                   blocks = []
