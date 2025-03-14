@@ -113,7 +113,7 @@ jobs:
 
                       # 新增字段处理
                       subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip()
-                      header_img = page["properties"].get("Header Image", {}).get("rich_text", [{}])[0].get("plain_text", "").strip()
+                      header_img = props["Header-img"]["rich_text"][0]["plain_text"].strip() 
                       catalog = page["properties"].get("Catalog", {}).get("checkbox", False)
                       tags = [tag["name"] for tag in page["properties"].get("Tags", {}).get("multi_select", [])]
 
