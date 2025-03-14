@@ -220,14 +220,14 @@ jobs:
       - name: 闪电构建
         uses: docker://jekyll/builder
         env:
-        JEKYLL_ENV: production
-        RUBY_GC_HEAP_INIT_SLOTS: 1000000
+              JEKYLL_ENV: production
+              RUBY_GC_HEAP_INIT_SLOTS: 1000000
         with:
         args: |
-         jekyll build -d ./_site \
-         --limit_posts 100 \
-         --trace \
-         --profile
+             jekyll build -d ./_site \
+             --limit_posts 100 \
+             --trace \
+            --profile
    
       - name: 部署到Cloudflare
         uses: cloudflare/pages-action@1
