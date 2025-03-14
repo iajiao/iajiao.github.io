@@ -80,20 +80,16 @@ jobs:
               def __init__(self, notion_client):
                   self.notion = notion_client
 
-
-def get_updated_pages(self, database_id, last_sync):
-    query = {
-        "filter": {
-            "and": [
-                {"property": "Status", "select": {"equals": "Published"}},
-                {"timestamp": "last_edited_time", "last_edited_time": {"after": last_sync}}
-            ]
-        }
-    }
-    return self.notion.databases.query(database_id, **query).get("results", [])  # 添加database_id作为第一个参数
-
-
-
+              def get_updated_pages(self, database_id, last_sync):
+                  query = {
+                      "filter": {
+                          "and": [
+                              {"property": "Status", "select": {"equals": "Published"}},
+                              {"timestamp": "last_edited_time", "last_edited_time": {"after": last_sync}}
+                          ]
+                      }
+                  }
+                  return self.notion.databases.query(database_id, ​**query).get("results", [])  # 添加database_id作为第一个参数
 
               def parse_content(self, page_id):
                   blocks = []
