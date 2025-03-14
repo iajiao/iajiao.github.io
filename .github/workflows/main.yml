@@ -149,12 +149,9 @@ jobs:
           restore-keys: ${{ runner.os }}-gems-
 
       - name: Build Jekyll Site
-        uses: docker://jekyll/builder
-        env:
-          LANG: C.UTF-8
-          LC_ALL: C.UTF-8
+        uses: docker://jekyll/jekyll
         with:
-          args: /bin/bash -c "jekyll build -s /github/workspace -d /github/workspace/_site --trace"
+          args: jekyll build -d ./_site
 
 
       # ----------- 步骤6：部署到Cloudflare Pages -----------
