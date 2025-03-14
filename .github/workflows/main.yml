@@ -109,7 +109,6 @@ jobs:
                   try:
                       # 提取基础字段（带容错）
                       title = page["properties"]["Title"]["title"][0]["plain_text"].strip()
-                      slug = page["properties"]["Slug"]["rich_text"][0]["plain_text"].strip()
                       date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
 
                       # 新增字段处理
@@ -130,7 +129,7 @@ jobs:
                       post["tags"] = tags
 
                       # 保存文件
-                      filename = f"_posts/{date_str}-{slug}.md"
+                      filename = f"_posts/{date_str}-{title}.md"
                       with open(filename, "w", encoding="utf-8") as f:
                           f.write(frontmatter.dumps(post))
                       logger.info(f"成功生成: {filename}")
