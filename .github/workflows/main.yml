@@ -141,13 +141,6 @@ jobs:
           python notion_to_jekyll.py
 
       # ----------- 步骤5：构建Jekyll站点 -----------
-     - name: Cache Jekyll Gems
-        uses: actions/cache@v3
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
-
       - name: Build Jekyll Site
         uses: docker://jekyll/jekyll
         with:
