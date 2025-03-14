@@ -1,26 +1,38 @@
 # .github/workflows/notion-sync.yml
-name: Notion Sync & Deploy
+name: Notion超速同步
 on:
   schedule:
     - cron: "0 12 * * *"  # 每天UTC时间12点自动同步
   workflow_dispatch:       # 支持手动触发
 
 jobs:
-  sync-and-deploy:
+  hyper-sync:
     runs-on: ubuntu-latest
     steps:
-      # ----------- 步骤1：拉取仓库代码 -----------
-      - name: Checkout repository
+      # ========== 初始化 ==========
+      - name: 检出代码
         uses: actions/checkout@v4
 
-      # ----------- 步骤2：设置Python环境 -----------
-      - name: Set up Python
+      - name: 获取上次同步时间
+        id: get-time
+        run: |
+          echo "time=$(date -u -d '1 hour ago' +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+
+      # ========== 依赖管理 ==========
+      - name: 缓存加速
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            vendor/bundle
+          key: ${{ runner.os }}-${{ hashFiles('**/Gemfile.lock') }}-${{ hashFiles('requirements.txt') }}
+
+      - name: 安装Python环境
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # ----------- 步骤3：安装依赖 -----------
-      - name: Install dependencies
+      - name: 安装依赖
         run: |
           pip install \
             notion-client==2.2.0 \
@@ -28,136 +40,186 @@ jobs:
             requests==2.31.0 \
             --index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-      # ----------- 步骤4：执行同步脚本 -----------
-      - name: Sync Notion to Jekyll
+      # ========== 核心同步逻辑 ==========
+      - name: 执行智能同步
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          LAST_SYNC_TIME: ${{ steps.get-time.outputs.time }}
         run: |
-          cat << 'EOF' > notion_to_jekyll.py
+          cat << 'EOF' > notion_hyper_sync.py
           import os
           import logging
+          import requests
+          from datetime import datetime
           from notion_client import Client
           import frontmatter
-          import requests
+          from concurrent.futures import ThreadPoolExecutor
 
+          # 配置日志
           logging.basicConfig(level=logging.INFO)
           logger = logging.getLogger(__name__)
 
-          def get_page_content(notion, page_id):
-              """获取Notion页面内容"""
-              try:
+          # ====== 并行下载器 ======
+          class FastDownloader:
+              def __init__(self, max_workers=5):
+                  self.executor = ThreadPoolExecutor(max_workers=max_workers)
+
+              def download(self, url, path):
+                  try:
+                      response = requests.get(url, timeout=10)
+                      with open(path, 'wb') as f:
+                          f.write(response.content)
+                      return True
+                  except Exception as e:
+                      logger.error(f"下载失败 {url}: {str(e)}")
+                      return False
+
+          # ====== Notion解析引擎 ======
+          class NotionParser:
+              def __init__(self, notion_client):
+                  self.notion = notion_client
+
+              def get_updated_pages(self, database_id, last_sync):
+                  query = {
+                      "filter": {
+                          "and": [
+                              {"property": "Status", "select": {"equals": "Published"}},
+                              {"timestamp": "last_edited_time", "last_edited_time": {"after": last_sync}}
+                          ]
+                      }
+                  }
+                  return self.notion.databases.query(**query).get("results", [])
+
+              def parse_content(self, page_id):
                   blocks = []
-                  result = notion.blocks.children.list(block_id=page_id)
+                  result = self.notion.blocks.children.list(block_id=page_id)
                   while True:
                       blocks.extend(result.get("results", []))
                       if not result.get("has_more"):
                           break
-                      result = notion.blocks.children.list(
+                      result = self.notion.blocks.children.list(
                           block_id=page_id,
                           start_cursor=result.get("next_cursor")
                       )
-                  return "\n".join([parse_block(b) for b in blocks])
-              except Exception as e:
-                  logger.error(f"内容获取失败: {str(e)}")
+                  return "\n".join([self._parse_block(b) for b in blocks])
+
+              def _parse_block(self, block):
+                  type_ = block["type"]
+                  content = block.get(type_, {})
+                  
+                  # 文本处理
+                  if "rich_text" in content and content["rich_text"]:
+                      text = "".join([t["plain_text"] for t in content["rich_text"]])
+                      return {
+                          "heading_1": f"# {text}",
+                          "heading_2": f"## {text}",
+                          "paragraph": text,
+                          "bulleted_list_item": f"- {text}",
+                          "numbered_list_item": f"1. {text}"
+                      }.get(type_, "")
+                  
+                  # 图片处理
+                  elif type_ == "image":
+                      return f"![]({content.get('external', {}).get('url', '')})"
+                  
                   return ""
 
-          def parse_block(block):
-              """解析Notion块为Markdown"""
-              type_ = block["type"]
-              content = block.get(type_, {})
-              
-              # 文本处理
-              if "rich_text" in content and content["rich_text"]:
-                  text = "".join([t["plain_text"] for t in content["rich_text"]])
-                  if type_ == "heading_1":
-                      return f"# {text}"
-                  elif type_ == "heading_2":
-                      return f"## {text}"
-                  elif type_ == "paragraph":
-                      return text
-                  elif type_ == "bulleted_list_item":
-                      return f"- {text}"
-                  elif type_ == "numbered_list_item":
-                      return f"1. {text}"
+          # ====== 文件管理系统 ======
+          class FileManager:
+              @staticmethod
+              def cleanup_orphans(current_ids):
+                  deleted = 0
+                  for filename in os.listdir("_posts"):
+                      if not filename.endswith(".md"):
+                          continue
+                      with open(f"_posts/{filename}", "r", encoding="utf-8") as f:
+                          post = frontmatter.load(f)
+                          if (page_id := post.get("notion_id")) and page_id not in current_ids:
+                              os.remove(f"_posts/{filename}")
+                              deleted += 1
+                  logger.info(f"清理完成: 删除 {deleted} 篇旧文章")
 
-              # 图片处理
-              elif type_ == "image":
-                  url = content.get("external", {}).get("url", "")
-                  return f"![]({url})"
+              @staticmethod
+              def save_post(post_data, content):
+                  post = frontmatter.Post(content)
+                  post.metadata.update({
+                      "layout": "post",
+                      "notion_id": post_data["id"],
+                      "title": post_data["title"],
+                      "subtitle": post_data.get("subtitle", ""),
+                      "date": post_data["date"],
+                      "author": post_data["author"],
+                      "header-img": post_data["header_img"],
+                      "catalog": "true",
+                      "tags": post_data["tags"]
+                  })
+                  filename = f"_posts/{post_data['date']}-{post_data['slug']}.md"
+                  with open(filename, "w", encoding="utf-8", errors="replace") as f:
+                      f.write(frontmatter.dumps(post))
+                  return filename
 
-              return ""
-
+          # ====== 主控制器 ======
           def main():
               notion = Client(auth=os.environ["NOTION_TOKEN"])
-              database_id = os.environ["NOTION_DATABASE_ID"]
+              parser = NotionParser(notion)
+              downloader = FastDownloader()
+              fm = FileManager()
 
-              # 查询已发布文章
-              pages = notion.databases.query(
-                  database_id,
-                  filter={"property": "Status", "select": {"equals": "Published"}}
-              ).get("results", [])
+              # 获取增量更新
+              pages = parser.get_updated_pages(
+                  os.environ["NOTION_DATABASE_ID"],
+                  os.environ["LAST_SYNC_TIME"]
+              )
+              current_ids = [p["id"] for p in pages]
 
+              # 清理旧数据
+              fm.cleanup_orphans(current_ids)
+
+              # 处理新内容
               for page in pages:
                   try:
                       props = page["properties"]
-
-                      # 提取字段
-                      title = props["Title"]["title"][0]["plain_text"].strip()
-                      slug = props["Slug"]["rich_text"][0]["plain_text"].strip()
-                      date = props["Date"]["date"]["start"].split("T")[0]
-                      author = props["Author"]["rich_text"][0]["plain_text"].strip()
-                      header_img = props["Header-img"]["rich_text"][0]["plain_text"].strip()
-                      tags = [tag["name"] for tag in props["Tags"]["multi_select"]]
-
-                      # 获取页面内容
-                      page_id = page["id"]
-                      content = get_page_content(notion, page_id)
-
-                      # 构建Front Matter
-                      post = frontmatter.Post(content)
-                      post["layout"] = "post"
-                      post["title"] = title
-                      post["subtitle"] = props.get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "")
-                      post["date"] = date
-                      post["author"] = author
-                      post["header-img"] = header_img
-                      post["catalog"] = "true"
-                      post["tags"] = tags
-
-                      # 生成文件
-                      filename = f"_posts/{date}-{slug}.md"
-                      with open(filename, "w", encoding="utf-8") as f:
-                          f.write(frontmatter.dumps(post))
-                      logger.info(f"生成成功: {filename}")
+                      post_data = {
+                          "id": page["id"],
+                          "title": props["Title"]["title"][0]["plain_text"].strip(),
+                          "slug": props["Slug"]["rich_text"][0]["plain_text"].strip(),
+                          "date": props["Date"]["date"]["start"].split("T")[0],
+                          "author": props["Author"]["rich_text"][0]["plain_text"].strip(),
+                          "header_img": props["Header-img"]["rich_text"][0]["plain_text"].strip(),
+                          "tags": [tag["name"] for tag in props["Tags"]["multi_select"]],
+                          "subtitle": props.get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "")
+                      }
+                      
+                      # 生成内容
+                      content = parser.parse_content(page["id"])
+                      filename = fm.save_post(post_data, content)
+                      logger.info(f"🔥 已同步: {filename}")
 
                   except Exception as e:
-                      logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
+                      logger.error(f"❌ 处理失败: {str(e)}")
 
           if __name__ == "__main__":
               main()
           EOF
 
-          python notion_to_jekyll.py
+          # 执行超速同步
+          python notion_hyper_sync.py
 
-        # ----------- 步骤5：修复权限（关键新增步骤） -----------
-      - name: Fix Gemfile permissions
-        run: |
-          sudo chmod -R a+w /github/workspace
-          ls -al Gemfile.lock  # 验证权限
-
-      # ----------- 步骤6：构建Jekyll站点 -----------
-      - name: Build Jekyll Site
+      # ========== 极速构建部署 ==========
+      - name: 闪电构建
         uses: docker://jekyll/jekyll
+        env:
+          LANG: C.UTF-8
+          JEKYLL_ENV: production
         with:
-          args: jekyll build -d ./_site
+          args: jekyll build -d ./_site --limit_posts 10 --incremental
 
-      # ----------- 步骤7：部署到Cloudflare Pages -----------
-      - name: Deploy to Cloudflare
+      - name: 部署到Cloudflare
         uses: cloudflare/pages-action@1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: "YOUR_PROJECT_NAME"  # 替换为你的项目名
+          projectName: "YOUR_PROJECT"
           directory: "./_site"
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          commitMessage: "🚀 自动同步: ${{ github.run_id }}"
