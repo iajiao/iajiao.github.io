@@ -29,7 +29,7 @@ jobs:
             --index-url https://pypi.tuna.tsinghua.edu.cn/simple \
             --trusted-host pypi.tuna.tsinghua.edu.cn
 
-      # ----------- 步骤4：执行转换脚本 -----------
+      # ----------- 步骤4：执行转换脚本（核心修复） -----------
       - name: Convert Notion pages to Jekyll posts
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
@@ -45,27 +45,49 @@ jobs:
           logging.basicConfig(level=logging.INFO)
           logger = logging.getLogger(__name__)
 
-          REQUIRED_FIELDS = ["Title", "Slug", "Date", "Status", "Author", "Tags"]
-
-          def validate_fields(properties):
-              """校验必需字段存在"""
-              missing = [field for field in REQUIRED_FIELDS if field not in properties]
-              if missing:
-                  raise ValueError(f"缺失必需字段: {missing}")
-
-          def get_field_value(prop, field_type="rich_text"):
-              """安全获取字段值"""
+          def get_page_content(notion, page_id):
+              """获取 Notion 页面正文内容并转换为 Markdown"""
               try:
-                  if field_type == "rich_text":
-                      return prop[field_type][0]["plain_text"].strip()
-                  elif field_type == "date":
-                      return prop[field_type]["start"].split("T")[0]
-                  elif field_type == "multi_select":
-                      return [tag["name"] for tag in prop[field_type]]
-                  elif field_type == "select":
-                      return prop[field_type]["name"]
-              except (KeyError, IndexError, TypeError):
+                  blocks = []
+                  result = notion.blocks.children.list(block_id=page_id)
+                  while True:
+                      blocks.extend(result.get("results", []))
+                      if not result.get("has_more"):
+                          break
+                      result = notion.blocks.children.list(
+                          block_id=page_id,
+                          start_cursor=result.get("next_cursor")
+                      )
+                  return "\n".join([parse_block(b) for b in blocks])
+              except Exception as e:
+                  logger.error(f"获取内容失败: {str(e)}")
                   return ""
+
+          def parse_block(block):
+              """解析 Notion 块为 Markdown"""
+              type_ = block["type"]
+              content = block.get(type_, {})
+
+              # 文本类型处理
+              if "rich_text" in content and content["rich_text"]:
+                  text = "".join([t["plain_text"] for t in content["rich_text"]])
+                  if type_ == "heading_1":
+                      return f"# {text}"
+                  elif type_ == "heading_2":
+                      return f"## {text}"
+                  elif type_ == "paragraph":
+                      return text
+                  elif type_ == "bulleted_list_item":
+                      return f"- {text}"
+                  elif type_ == "numbered_list_item":
+                      return f"1. {text}"
+
+              # 图片处理
+              elif type_ == "image":
+                  url = content.get("external", {}).get("url", "")
+                  return f"![]({url})"
+
+              return ""
 
           def main():
               notion = Client(auth=os.environ["NOTION_TOKEN"])
@@ -80,36 +102,38 @@ jobs:
               for page in pages:
                   try:
                       props = page["properties"]
-                      validate_fields(props)
 
-                      # 提取字段（带默认值）
-                      title = get_field_value(props["Title"], "title") or "Untitled"
-                      slug = get_field_value(props["Slug"]) or "untitled"
-                      date = get_field_value(props["Date"], "date") or datetime.now().strftime("%Y-%m-%d")
-                      author = get_field_value(props["Author"]) or "Anonymous"
-                      header_img = get_field_value(props["HeaderImg"])  # 可选字段
-                      subtitle = get_field_value(props["Subtitle"])     # 可选字段
-                      tags = get_field_value(props["Tags"], "multi_select")
-                      catalog = "true" if get_field_value(props["Catalog"], "checkbox") else "false"
+                      # 提取 Front Matter 字段（修复字段名匹配问题）
+                      title = props["Title"]["title"][0]["plain_text"].strip()
+                      slug = props["Slug"]["rich_text"][0]["plain_text"].strip()
+                      date = props["Date"]["date"]["start"].split("T")[0]
+                      author = props["Author"]["rich_text"][0]["plain_text"].strip()
+                      header_img = props["Header-img"]["rich_text"][0]["plain_text"].strip()  # 字段名需完全匹配
+                      tags = [tag["name"] for tag in props["Tags"]["multi_select"]]
 
-                      # 构建Front Matter
-                      post = frontmatter.Post("")
+                      # 获取页面正文内容
+                      page_id = page["id"]
+                      content = get_page_content(notion, page_id)
+
+                      # 构建 Front Matter
+                      post = frontmatter.Post(content)
                       post["layout"] = "post"
                       post["title"] = title
-                      post["subtitle"] = subtitle
+                      post["subtitle"] = props.get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "")
                       post["date"] = date
                       post["author"] = author
                       post["header-img"] = header_img
-                      post["catalog"] = catalog
+                      post["catalog"] = "true"  # 根据需求可改为从数据库读取
                       post["tags"] = tags
 
-                      # 生成符合Jekyll规范的文件名
+                      # 生成文件名（修复名称格式）
                       filename = f"_posts/{date}-{slug}.md"
                       with open(filename, "w", encoding="utf-8") as f:
-                          f.write(frontmatter.dumps(post) + "\n\n" + "{{ page.content }}")
+                          f.write(frontmatter.dumps(post))
+                      logger.info(f"成功生成: {filename}")
 
                   except Exception as e:
-                      logger.error(f"处理失败: {str(e)} (Page ID: {page['id']}")
+                      logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
 
           if __name__ == "__main__":
               main()
