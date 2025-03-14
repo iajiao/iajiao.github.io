@@ -207,6 +207,8 @@ jobs:
           python notion_hyper_sync.py
 
       # ========== 极速构建部署 ==========
+      - name: 修复文件权限
+        run: sudo chmod -R a+w .
       - name: 闪电构建
         uses: docker://jekyll/jekyll
         env:
