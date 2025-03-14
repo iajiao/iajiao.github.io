@@ -210,7 +210,7 @@ jobs:
       - name: 修复文件权限
         run: sudo chmod -R a+w .
       - name: 闪电构建
-        uses: docker://jekyll/jekyll
+        uses: docker://jekyll/builder
         env:
           LANG: C.UTF-8
           JEKYLL_ENV: production
