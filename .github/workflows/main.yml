@@ -6,7 +6,7 @@ on:
   workflow_dispatch:       # 支持手动触发
 
 jobs:
-  sync-and-build:
+  sync-and-deploy:
     runs-on: ubuntu-latest
     steps:
       # ----------- 步骤1：拉取仓库代码 -----------
@@ -25,15 +25,16 @@ jobs:
           pip install \
             notion-client==2.2.0 \
             python-frontmatter==1.0.0 \
+            requests==2.31.0 \
             --index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-      # ----------- 步骤4：同步Notion内容 -----------
+      # ----------- 步骤4：执行同步脚本 -----------
       - name: Sync Notion to Jekyll
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         run: |
- cat << 'EOF' > notion_to_jekyll.py
+          cat << 'EOF' > notion_to_jekyll.py
           import os
           import logging
           from notion_client import Client
@@ -136,7 +137,7 @@ jobs:
           if __name__ == "__main__":
               main()
           EOF
-		  
+
           python notion_to_jekyll.py
 
       # ----------- 步骤5：构建Jekyll站点 -----------
@@ -146,11 +147,11 @@ jobs:
           args: jekyll build -d ./_site
 
       # ----------- 步骤6：部署到Cloudflare Pages -----------
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare
         uses: cloudflare/pages-action@1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: "iajiao"
+          projectName: "YOUR_PROJECT_NAME"  # 替换为你的项目名
           directory: "./_site"
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
