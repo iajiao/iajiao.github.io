@@ -141,10 +141,27 @@ jobs:
           python notion_to_jekyll.py
 
       # ----------- 步骤5：构建Jekyll站点 -----------
-      - name: Build Jekyll Site
-        uses: docker://jekyll/jekyll
+     - name: Cache Jekyll Gems
+        uses: actions/cache@v3
         with:
-          args: jekyll build -d ./_site
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-
+
+      - name: Install Jekyll Dependencies
+        run: |
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install
+
+      - name: Build Jekyll Site
+        uses: docker://jekyll/builder
+        env:
+          LANG: C.UTF-8
+          LC_ALL: C.UTF-8
+        with:
+          args: /bin/bash -c "jekyll build -s /github/workspace -d /github/workspace/_site --trace"
+
 
       # ----------- 步骤6：部署到Cloudflare Pages -----------
       - name: Deploy to Cloudflare
