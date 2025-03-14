@@ -116,7 +116,7 @@ jobs:
                       date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
 
                       # 修改点：Header Image 字段处理
-                      header_img = page["properties"].get("Header Image", {}).get("url", "").strip()
+                      header_img = page["properties"].get("Header-img", {}).get("url", "").strip()
                       
                       subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip()
                       catalog = page["properties"].get("Catalog", {}).get("checkbox", False)
@@ -128,7 +128,7 @@ jobs:
                       post["subtitle"] = subtitle
                       post["date"] = date_str
                       post["layout"] = "post"
-                      post["header-img"] = header_img  # 确保这里字段名与配置一致
+                      post["header-img"] = header-img  # 确保这里字段名与配置一致
                       post["catalog"] = catalog
                       post["tags"] = tags
 
