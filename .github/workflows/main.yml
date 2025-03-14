@@ -140,13 +140,19 @@ jobs:
 
           python notion_to_jekyll.py
 
-      # ----------- 步骤5：构建Jekyll站点 -----------
+            # ----------- 步骤5：修复权限（关键新增步骤） -----------
+      - name: Fix Gemfile permissions
+        run: |
+          sudo chmod -R a+w /github/workspace
+          ls -al Gemfile.lock  # 验证权限
+      
+      # ----------- 步骤6：构建Jekyll站点 -----------
       - name: Build Jekyll Site
         uses: docker://jekyll/jekyll
         with:
           args: jekyll build -d ./_site
 
-      # ----------- 步骤6：部署到Cloudflare Pages -----------
+      # ----------- 步骤7：部署到Cloudflare Pages -----------
       - name: Deploy to Cloudflare
         uses: cloudflare/pages-action@1
         with:
