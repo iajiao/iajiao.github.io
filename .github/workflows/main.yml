@@ -209,14 +209,26 @@ jobs:
       # ========== 极速构建部署 ==========
       - name: 修复文件权限
         run: sudo chmod -R a+w .
+      - name: 创建交换空间
+        run: |
+             sudo dd if=/dev/zero of=/swapfile bs=1G count=2
+             sudo chmod 600 /swapfile
+             sudo mkswap /swapfile
+             sudo swapon /swapfile
+             swapon --show
+
       - name: 闪电构建
         uses: docker://jekyll/builder
         env:
-          LANG: C.UTF-8
-          JEKYLL_ENV: production
+        JEKYLL_ENV: production
+        RUBY_GC_HEAP_INIT_SLOTS: 1000000
         with:
-          args: jekyll build -d ./_site --limit_posts 10 --profile --trace --disable-disk-cache
-
+        args: |
+         jekyll build -d ./_site \
+         --limit_posts 100 \
+         --trace \
+         --profile
+   
       - name: 部署到Cloudflare
         uses: cloudflare/pages-action@1
         with:
