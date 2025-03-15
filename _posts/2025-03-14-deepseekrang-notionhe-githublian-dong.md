@@ -2,7 +2,6 @@
 catalog: true
 date: '2025-03-14'
 header-img: img/post-bg-4.jpg
-layout: post
 notion_id: 1b67d276-8542-802f-8185-cf8ed45aa470
 subtitle: 用Notion作为Github后台
 tags:

@@ -2,7 +2,6 @@
 catalog: true
 date: '2025-03-14'
 header-img: img/post-bg-4.jpg
-layout: post
 notion_id: 1b67d276-8542-80b7-8d3c-d8b9457a622d
 subtitle: DNS加速网络
 tags:
