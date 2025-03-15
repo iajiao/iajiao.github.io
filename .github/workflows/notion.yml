@@ -115,7 +115,7 @@ jobs:
                   url = content.get("external", {}).get("url") or content.get("file", {}).get("url")
                   return f"![]({url})\n"
               elif type_ == "code":
-                  code = "\n".join([t["plain_text"] for t in content["rich_text"])
+                  code = "\n".join([t["plain_text"] for t in content["rich_text"]])
                   return f"```{content['language']}\n{code}\n```\n"
               elif type_ == "quote":
                   return f"> {text}\n"
