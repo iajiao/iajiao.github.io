@@ -1,4 +1,4 @@
-name: v2
+name: Notion to Jekyll Sync
 on:
   schedule:
     - cron: "0 12 * * *"  # 每天 UTC 时间 12 点自动同步
@@ -119,22 +119,9 @@ jobs:
 
               try:
                   # 查询所有已发布文章
-                  filter_condition = {
-                      "property": "Status",
-                      "select": {"equals": "Published"}
-                  }
-                  if last_sync:
-                      # 如果是增量同步，添加最后编辑时间过滤
-                      filter_condition = {
-                          "and": [
-                              {"property": "Status", "select": {"equals": "Published"}},
-                              {"property": "Last Edited", "date": {"on_or_after": last_sync.isoformat()}}
-                          ]
-                      }
-
                   pages = notion.databases.query(
                       database_id,
-                      filter=filter_condition
+                      filter={"property": "Status", "select": {"equals": "Published"}}
                   ).get("results", [])
               except Exception as e:
                   logger.error(f"数据库查询失败: {str(e)}")
