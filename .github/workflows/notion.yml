@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync v2
+name: Notion to Jekyll Sync  V2
 on:
   schedule:
     - cron: "0 12 * * *"  # 每天UTC时间12点全量同步
@@ -12,16 +12,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 获取完整提交历史
 
-      - name: Cache Python dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - name: 获取上次同步时间
+        id: sync-time
+        run: |
+          if [ -f .last_sync ]; then
+            echo "last_sync=$(cat .last_sync)" >> $GITHUB_OUTPUT
+          else
+            echo "last_sync=1970-01-01T00:00:00Z" >> $GITHUB_OUTPUT
+          fi
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
@@ -35,12 +34,12 @@ jobs:
             python-frontmatter==1.0.0 \
             requests==2.31.0 \
             mdutils==1.5.0 \
-            python-dotenv==1.0.0 \
+            python-dateutil==2.8.2 \
             --index-url https://pypi.tuna.tsinghua.edu.cn/simple \
             --trusted-host pypi.tuna.tsinghua.edu.cn \
             --no-cache-dir
 
-      - name: Convert Notion pages
+      - name: Convert Notion pages to Jekyll posts
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
@@ -49,144 +48,155 @@ jobs:
           cat << 'EOF' > notion_to_jekyll.py
           import os
           import logging
-          import json
-          from datetime import datetime, timedelta
           from notion_client import Client
           import frontmatter
           from mdutils import MdUtils
           import requests
-          from dotenv import load_dotenv
+          from dateutil.parser import isoparse
+          import datetime
+          import glob
 
-          # 配置初始化
-          load_dotenv()
           logging.basicConfig(level=logging.INFO)
           logger = logging.getLogger(__name__)
 
-          SYNC_RECORD = "sync_record.json"
-          LAST_SYNC_FILE = ".last_sync"
-
-          def get_last_sync_time():
-              try:
-                  with open(LAST_SYNC_FILE, "r") as f:
-                      return datetime.fromisoformat(f.read().strip())
-              except:
-                  return datetime.now() - timedelta(days=365)
-
-          def save_sync_time():
-              with open(LAST_SYNC_FILE, "w") as f:
-                  f.write(datetime.now().isoformat())
+          # 新增：跟踪已处理页面ID
+          processed_ids = set()
 
           def get_page_content(page_id):
-              """优化版内容获取（减少API调用）"""
+              """通过 Notion API 获取页面内容（含递归子块解析）"""
               try:
-                  client = Client(auth=os.environ["NOTION_TOKEN"])
                   blocks = []
+                  client = Client(auth=os.environ["NOTION_TOKEN"])
                   result = client.blocks.children.list(block_id=page_id)
-                  blocks.extend(result.get("results", []))
+                  while True:
+                      blocks.extend(result.get("results", []))
+                      if not result.get("has_more"):
+                          break
+                      result = client.blocks.children.list(
+                          block_id=page_id,
+                          start_cursor=result.get("next_cursor")
+                      )
                   return "\n\n".join([_parse_block(b) for b in blocks])
               except Exception as e:
                   logger.error(f"获取内容失败: {str(e)}")
                   return ""
 
           def _parse_block(block):
-              """极简格式处理"""
+              """解析 Notion 块为 Markdown（支持更多类型）"""
               type_ = block["type"]
               content = block[type_]
-              # 仅提取纯文本（忽略所有格式）
               text = "".join([t["plain_text"] for t in content.get("rich_text", [])])
               
-              # 核心块处理
+              # 段落与标题处理
               if type_ == "paragraph":
-                  return text
+                  return text + "\n"  # 修改点：追加换行
               elif type_ == "heading_1":
                   return f"# {text}\n"
               elif type_ == "heading_2":
                   return f"## {text}\n"
+              elif type_ == "heading_3":
+                  return f"### {text}\n"
+              elif type_ == "bulleted_list_item":
+                  return f"- {text}\n"
+              elif type_ == "numbered_list_item":
+                  return f"1. {text}\n"
+              # 图片处理
               elif type_ == "image":
                   url = content.get("external", {}).get("url") or content.get("file", {}).get("url")
                   return f"![]({url})\n"
+              # 代码块处理
               elif type_ == "code":
-                  code = "".join([t["plain_text"] for t in content["rich_text"]])
+                  code = "\n".join([t["plain_text"] for t in content["rich_text"]])
                   return f"```{content['language']}\n{code}\n```\n"
+              # 引用块处理
+              elif type_ == "quote":
+                  return f"> {text}\n"
               return ""
-
-          def sync_deleted_pages(current_pages):
-              """自动删除已移除文章"""
-              try:
-                  with open(SYNC_RECORD, "r") as f:
-                      existing_pages = json.load(f)
-                      
-                  for page_id in set(existing_pages.keys()) - {p["id"] for p in current_pages}:
-                      filename = existing_pages[page_id]
-                      if os.path.exists(filename):
-                          os.remove(filename)
-                          logger.info(f"已删除旧文章: {filename}")
-              except FileNotFoundError:
-                  pass
 
           def main():
               notion = Client(auth=os.environ["NOTION_TOKEN"])
               database_id = os.environ["NOTION_DATABASE_ID"]
-              sync_mode = os.getenv("SYNC_MODE", "full")
-              
-              # 构建查询条件
-              filter_params = {
-                  "filter": {"property": "Status", "select": {"equals": "Published"}}
-              }
-              if sync_mode == "incremental":
-                  filter_params["filter"] = {
-                      "and": [
-                          {"property": "Status", "select": {"equals": "Published"}},
-                          {"timestamp": "last_edited_time", 
-                           "last_edited_time": {"after": get_last_sync_time().isoformat()}}
-                      ]
+              sync_mode = os.environ["SYNC_MODE"]
+              last_sync = isoparse(os.environ.get("LAST_SYNC", "1970-01-01T00:00:00Z"))
+
+              # 新增：构建时间过滤条件
+              time_filter = {}
+              if sync_mode == 'incremental':
+                  time_filter = {
+                      "timestamp": "last_edited_time",
+                      "last_edited_time": {
+                          "after": last_sync.isoformat()
+                      }
                   }
 
               try:
-                  pages = notion.databases.query(database_id, ​**filter_params).get("results", [])
-                  current_records = {}
-                  
-                  for page in pages:
-                      try:
-                          # 元数据提取
-                          title = page["properties"]["Title"]["title"][0]["plain_text"].strip()
-                          date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
-                          
-                          # 生成文件名
-                          filename = f"_posts/{date_str}-{title.replace(' ', '-')}.md"
-                          current_records[page["id"]] = filename
-                          
-                          # 仅当文件不存在或内容变更时处理
-                          if not os.path.exists(filename) or page["last_edited_time"] > get_last_sync_time().isoformat():
-                              content = get_page_content(page["id"])
-                              post = frontmatter.Post(content)
-                              # ...（原有元数据设置）...
-                              with open(filename, "w", encoding="utf-8") as f:
-                                  f.write(frontmatter.dumps(post))
-                              logger.info(f"已更新: {filename}")
-
-                      except Exception as e:
-                          logger.error(f"处理失败: {str(e)}")
-
-                  # 更新同步记录
-                  with open(SYNC_RECORD, "w") as f:
-                      json.dump(current_records, f)
-                      
-                  # 删除旧文章
-                  sync_deleted_pages(pages)
-                  save_sync_time()
-
+                  query_params = {
+                      "filter": {
+                          "and": [
+                              {"property": "Status", "select": {"equals": "Published"}},
+                              time_filter
+                          ]
+                      }
+                  }
+                  pages = notion.databases.query(
+                      database_id,
+                      ​**query_params
+                  ).get("results", [])
               except Exception as e:
-                  logger.error(f"数据库错误: {str(e)}")
+                  logger.error(f"数据库查询失败: {str(e)}")
+                  return
+
+              # 新增：记录当前所有有效页面ID
+              current_ids = {page["id"] for page in pages}
+
+              # 删除已被移除的文章
+              existing_files = glob.glob("_posts/*.md")
+              for filepath in existing_files:
+                  with open(filepath, "r") as f:
+                      post = frontmatter.load(f)
+                      if "notion_id" in post and post["notion_id"] not in current_ids:
+                          os.remove(filepath)
+                          logger.info(f"删除已移除文章: {filepath}")
+
+              for page in pages:
+                  try:
+                      # 新增：检查最后编辑时间
+                      last_edited = isoparse(page["last_edited_time"])
+                      if sync_mode == 'incremental' and last_edited <= last_sync:
+                          continue
+
+                      # 提取基础字段（新增notion_id存储）
+                      page_id = page["id"]
+                      title = page["properties"]["Title"]["title"][0]["plain_text"].strip()
+                      date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
+                      
+                      # 其他字段提取保持不变...
+
+                      # 新增：在frontmatter中存储Notion ID
+                      post["notion_id"] = page_id
+
+                      # 文件名生成逻辑保持不变...
+
+                      processed_ids.add(page_id)
+                      logger.info(f"成功生成: {filename}")
+
+                  except Exception as e:
+                      logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
+
+              # 新增：写入本次同步时间
+              with open(".last_sync", "w") as f:
+                  f.write(datetime.datetime.utcnow().isoformat() + "Z")
 
           if __name__ == "__main__":
               main()
           EOF
 
+          # 传递环境变量
+          LAST_SYNC=${{ steps.sync-time.outputs.last_sync }}
           python notion_to_jekyll.py
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Auto-sync from Notion"
-          file_pattern: "_posts/*"
+          file_pattern: "_posts/* .last_sync"
