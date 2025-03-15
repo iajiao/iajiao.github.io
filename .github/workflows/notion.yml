@@ -2,7 +2,7 @@ name: Notion to Jekyll Sync
 on:
   schedule:
     - cron: "0 12 * * *"  # 每日UTC时间12点全量同步
-  workflow_dispatch:       # 手动触发增量同步
+  workflow_dispatch:       # 手动触发同步（立即清理）
 
 jobs:
   sync-notion-pages:
@@ -44,7 +44,6 @@ jobs:
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-          FULL_SYNC: ${{ github.event_name == 'schedule' }}
         run: |
           cat << 'EOF' > notion_to_jekyll.py
           import os
@@ -97,7 +96,6 @@ jobs:
               rich_text = content.get("rich_text", [])
               text = "".join([t["plain_text"] for t in rich_text])
               
-              # 块类型解析
               if type_ == "paragraph":
                   return text + "\n"
               elif type_ == "heading_1":
@@ -117,7 +115,7 @@ jobs:
                   url = content.get("external", {}).get("url") or content.get("file", {}).get("url")
                   return f"![]({url})\n"
               elif type_ == "code":
-                  code = "\n".join([t["plain_text"] for t in content["rich_text"]])
+                  code = "\n".join([t["plain_text"] for t in content["rich_text"])
                   return f"```{content['language']}\n{code}\n```\n"
               elif type_ == "quote":
                   return f"> {text}\n"
@@ -150,6 +148,8 @@ jobs:
               cache = json.load(open(".notion_cache"))
               keep_ids = set(current_ids + cache["all_ids"])
               
+              # 强制清理模式：删除所有未关联的文件
+              deleted_files = []
               for filename in os.listdir("_posts"):
                   if not filename.endswith(".md"):
                       continue
@@ -159,12 +159,16 @@ jobs:
                           pid = post.get("notion_id")
                           if pid and pid not in keep_ids:
                               os.remove(f"_posts/{filename}")
-                              logger.info(f"删除无效文章: {filename}")
+                              deleted_files.append(filename)
+                              logger.info(f"删除文章: {filename}")
                   except Exception as e:
                       logger.error(f"处理文件失败 {filename}: {str(e)}")
-
-              new_cache = {"all_ids": list(set(current_ids + cache["all_ids"]))[:1000]}
+              
+              # 更新缓存（保留最近200条记录）
+              new_cache = {"all_ids": list(set(current_ids + cache["all_ids"]))[:200]}
               json.dump(new_cache, open(".notion_cache", "w"))
+              
+              return deleted_files
 
           def main():
               pages = get_all_pages(os.environ["NOTION_DATABASE_ID"])
@@ -190,21 +194,18 @@ jobs:
                       if "Tags" in props and props["Tags"]["multi_select"]:
                           tags = [tag["name"] for tag in props["Tags"]["multi_select"]]
                       
-                      catalog = False
-                      if "Catalog" in props and props["Catalog"]["checkbox"] is not None:
-                          catalog = props["Catalog"]["checkbox"]
-                      
                       content = get_page_content(page["id"])
                       post = frontmatter.loads(content)
                       
-                      # 完整Frontmatter字段
+                      # 添加layout字段
                       post.metadata.update({
+                          "layout": "post",
                           "title": title,
                           "date": date_str,
                           "subtitle": subtitle,
                           "header-img": header_img,
                           "tags": tags,
-                          "catalog": catalog,
+                          "catalog": "true",
                           "notion_id": page["id"]
                       })
                       
@@ -226,7 +227,9 @@ jobs:
                   except Exception as e:
                       logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
               
-              sync_cleanup(current_ids)
+              # 每次同步都执行清理
+              deleted = sync_cleanup(current_ids)
+              logger.info(f"本次删除 {len(deleted)} 篇无效文章")
 
           if __name__ == "__main__":
               main()
