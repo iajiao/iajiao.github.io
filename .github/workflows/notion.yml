@@ -1,8 +1,8 @@
-name: Notion to Jekyll Sync v2
+name: Notion to Jekyll Sync
 on:
   schedule:
     - cron: "0 12 * * *"  # 每日UTC时间12点全量同步
-  workflow_dispatch:       # 手动触发同步（立即清理）
+  workflow_dispatch:       # 手动触发同步
 
 jobs:
   sync-notion-pages:
@@ -13,17 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Initialize cache
+      - name: Initialize environment
         run: |
           if [ ! -f .notion_cache ]; then
-            echo '{"all_ids":[]}' > .notion_cache
+            echo '{"valid_ids":[]}' > .notion_cache
           fi
-
-      - name: Cache Notion data
-        uses: actions/cache@v3
-        with:
-          path: .notion_cache
-          key: ${{ runner.os }}-notion-${{ hashFiles('.last_sync') }}
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
@@ -40,7 +34,7 @@ jobs:
             --trusted-host pypi.tuna.tsinghua.edu.cn \
             --no-cache-dir
 
-      - name: Run enhanced sync
+      - name: Run strict sync
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
@@ -56,9 +50,10 @@ jobs:
           logging.basicConfig(level=logging.INFO)
           logger = logging.getLogger(__name__)
 
-          def get_all_pages(database_id):
+          def get_all_valid_ids(database_id):
+              """获取数据库当前所有有效ID"""
               notion = Client(auth=os.environ["NOTION_TOKEN"])
-              all_pages = []
+              valid_ids = []
               query = {}
               while True:
                   res = notion.databases.query(
@@ -66,13 +61,14 @@ jobs:
                       **query,
                       filter={"property": "Status", "select": {"equals": "Published"}}
                   )
-                  all_pages += res.get("results", [])
+                  valid_ids += [p["id"] for p in res.get("results", [])]
                   if not res.get("has_more"):
                       break
                   query["start_cursor"] = res["next_cursor"]
-              return all_pages
+              return valid_ids
 
           def get_page_content(page_id):
+              """获取页面内容"""
               try:
                   blocks = []
                   client = Client(auth=os.environ["NOTION_TOKEN"])
@@ -91,6 +87,7 @@ jobs:
                   return ""
 
           def _parse_block(block):
+              """解析Notion块为Markdown"""
               type_ = block["type"]
               content = block[type_]
               rich_text = content.get("rich_text", [])
@@ -127,6 +124,7 @@ jobs:
               return ""
 
           def _parse_table(content):
+              """解析表格为Markdown"""
               table_width = content["table_width"]
               rows = []
               for row in content["children"]:
@@ -140,17 +138,12 @@ jobs:
                   rows.insert(1, sep)
               return "\n".join(rows) + "\n\n"
 
-          def sync_cleanup(current_ids):
-              if not os.path.exists(".notion_cache"):
-                  with open(".notion_cache", "w") as f:
-                      json.dump({"all_ids": []}, f)
+          def enforce_consistency(valid_ids):
+              """强制保持本地与Notion一致性"""
+              cache = json.load(open(".notion_cache")) if os.path.exists(".notion_cache") else {"valid_ids": []}
               
-              cache = json.load(open(".notion_cache"))
-              
-              # 关键修复：仅保留当前有效ID
-              keep_ids = set(current_ids)
-              
-              deleted_files = []
+              # 清理无效文件
+              deleted = []
               for filename in os.listdir("_posts"):
                   if not filename.endswith(".md"):
                       continue
@@ -158,27 +151,39 @@ jobs:
                       with open(f"_posts/{filename}", "r", encoding="utf-8") as f:
                           post = frontmatter.load(f)
                           pid = post.get("notion_id")
-                          if pid and pid not in keep_ids:
+                          
+                          # 严格删除条件
+                          if pid and pid not in valid_ids:
                               os.remove(f"_posts/{filename}")
-                              deleted_files.append(filename)
-                              logger.info(f"删除文章: {filename}")
+                              deleted.append(filename)
+                              logger.info(f"硬删除文章: {filename}")
                   except Exception as e:
-                      logger.error(f"处理文件失败 {filename}: {str(e)}")
+                      logger.error(f"文件处理错误 {filename}: {str(e)}")
               
-              # 更新缓存（保留最近200条记录）
-              new_cache = {"all_ids": list(set(current_ids + cache["all_ids"]))[:200]}
-              json.dump(new_cache, open(".notion_cache", "w"))
-              
-              return deleted_files
+              # 更新缓存（仅保留有效ID）
+              json.dump({"valid_ids": valid_ids}, open(".notion_cache", "w"))
+              return deleted
 
           def main():
-              pages = get_all_pages(os.environ["NOTION_DATABASE_ID"])
-              current_ids = [p["id"] for p in pages]
+              # 获取当前所有有效ID
+              valid_ids = get_all_valid_ids(os.environ["NOTION_DATABASE_ID"])
               
+              # 执行强制清理
+              deleted = enforce_consistency(valid_ids)
+              logger.info(f"已清理 {len(deleted)} 篇无效文章")
+
+              # 处理文章更新
+              notion = Client(auth=os.environ["NOTION_TOKEN"])
+              pages = notion.databases.query(
+                  os.environ["NOTION_DATABASE_ID"],
+                  filter={"property": "Status", "select": {"equals": "Published"}}
+              ).get("results", [])
+
               for page in pages:
                   try:
                       props = page["properties"]
                       
+                      # 提取所有字段
                       title = props["Title"]["title"][0]["plain_text"].strip()
                       date_str = props["Date"]["date"]["start"].split("T")[0]
                       
@@ -197,6 +202,7 @@ jobs:
                       content = get_page_content(page["id"])
                       post = frontmatter.loads(content)
                       
+                      # 完整Frontmatter字段
                       post.metadata.update({
                           "layout": "post",
                           "title": title,
@@ -211,6 +217,7 @@ jobs:
                       title_slug = slugify(title)
                       filename = f"_posts/{date_str}-{title_slug}.md"
                       
+                      # 对比内容差异
                       existing_content = ""
                       if os.path.exists(filename):
                           with open(filename, "r", encoding="utf-8") as f:
@@ -224,9 +231,6 @@ jobs:
                               
                   except Exception as e:
                       logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
-              
-              deleted = sync_cleanup(current_ids)
-              logger.info(f"本次删除 {len(deleted)} 篇无效文章")
 
           if __name__ == "__main__":
               main()
@@ -237,7 +241,7 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Auto-sync: ${{ github.event_name }}"
+          commit_message: "Sync: ${{ github.event_name }}"
           file_pattern: |
             _posts/*
             .notion_cache
