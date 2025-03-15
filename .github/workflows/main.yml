@@ -35,7 +35,6 @@ jobs:
             notion-client==2.2.0 \
             python-frontmatter==1.0.0 \
             requests==2.31.0 \
-            mdutils==1.5.0 \
             --index-url https://pypi.tuna.tsinghua.edu.cn/simple \
             --trusted-host pypi.tuna.tsinghua.edu.cn \
             --no-cache-dir
@@ -58,24 +57,38 @@ jobs:
           logging.basicConfig(level=logging.INFO)
           logger = logging.getLogger(__name__)
 
+          def safe_get(obj, keys, default=None):
+              """安全获取嵌套字典值"""
+              for key in keys:
+                  if isinstance(obj, dict):
+                      obj = obj.get(key, default)
+                  else:
+                      return default
+              return obj
+
           def get_page_content(page_id):
               blocks = []
               client = Client(auth=os.environ["NOTION_TOKEN"])
-              result = client.blocks.children.list(block_id=page_id)
-              while True:
-                  blocks.extend(result.get("results", []))
-                  if not result.get("has_more"):
-                      break
-                  result = client.blocks.children.list(
-                      block_id=page_id,
-                      start_cursor=result.get("next_cursor")
-                  )
-              return "\n\n".join([_parse_block(b) for b in blocks])
+              try:
+                  result = client.blocks.children.list(block_id=page_id)
+                  while True:
+                      blocks.extend(result.get("results", []))
+                      if not result.get("has_more"):
+                          break
+                      result = client.blocks.children.list(
+                          block_id=page_id,
+                          start_cursor=result.get("next_cursor")
+                      )
+                  return "\n\n".join([_parse_block(b) for b in blocks])
+              except Exception as e:
+                  logger.error(f"获取内容失败: {str(e)}")
+                  return ""
 
           def _parse_block(block):
               type_ = block["type"]
-              content = block[type_]
-              text = "".join([t["plain_text"] for t in content.get("rich_text", [])])
+              content = block.get(type_, {})
+              rich_text = content.get("rich_text", [])
+              text = "".join([t.get("plain_text", "") for t in rich_text])
 
               handlers = {
                   "paragraph": lambda: f"{text}\n",
@@ -86,12 +99,11 @@ jobs:
                   "numbered_list_item": lambda: f"1. {text}\n",
                   "image": lambda: f"![]({content.get('external', {}).get('url') or content.get('file', {}).get('url')})\n",
                   "code": lambda: (
-                      f"```{content['language']}\n"
-                      + "\n".join([t["plain_text"] for t in content["rich_text"]])
+                      f"```{content.get('language', '')}\n"
+                      + "\n".join([t.get("plain_text", "") for t in content.get("rich_text", [])])
                       + "\n```\n"
                   ),
                   "quote": lambda: f"> {text}\n",
-                  "callout": lambda: f"**{text}**\n",
                   "divider": lambda: "---\n"
               }
               return handlers.get(type_, lambda: "")()
@@ -101,82 +113,104 @@ jobs:
               database_id = os.environ["NOTION_DATABASE_ID"]
               SYNC_MODE = os.getenv("SYNC_MODE", "full")
 
+              # 强制初始化时间戳文件
+              if not os.path.exists(".last_sync_time"):
+                  with open(".last_sync_time", "w") as f:
+                      f.write("1970-01-01T00:00:00+00:00")
+
+              # 获取所有有效页面
               all_pages = []
               query_params = {
                   "database_id": database_id,
                   "filter": {"property": "Status", "select": {"equals": "Published"}}
               }
-              while True:
-                  response = notion.databases.query(**query_params)
-                  all_pages.extend(response.get("results", []))
-                  if not response.get("has_more"):
-                      break
-                  query_params["start_cursor"] = response.get("next_cursor")
+              try:
+                  while True:
+                      response = notion.databases.query(**query_params)
+                      all_pages.extend(response.get("results", []))
+                      if not response.get("has_more"):
+                          break
+                      query_params["start_cursor"] = response.get("next_cursor")
+              except Exception as e:
+                  logger.error(f"数据库查询失败: {str(e)}")
+                  return
 
-              current_ids = {page["id"]: page for page in all_pages}
+              current_ids = {p["id"]: p for p in all_pages}
 
-              if SYNC_MODE == "incremental":
-                  try:
-                      with open(".last_sync_time", "r") as f:
-                          last_sync = datetime.fromisoformat(f.read().strip())
-                  except FileNotFoundError:
-                      last_sync = datetime(1970, 1, 1, tzinfo=timezone.utc)
-                  
-                  pages_to_process = [
-                      p for p in all_pages
-                      if datetime.fromisoformat(p["last_edited_time"].rstrip("Z")) > last_sync
-                  ]
-              else:
-                  pages_to_process = all_pages
+              # 处理同步模式
+              try:
+                  with open(".last_sync_time", "r") as f:
+                      last_sync_str = f.read().strip()
+                      last_sync = datetime.fromisoformat(last_sync_str) if last_sync_str else datetime.min.replace(tzinfo=timezone.utc)
+              except Exception as e:
+                  logger.warning(f"读取时间戳失败: {str(e)}, 使用默认时间")
+                  last_sync = datetime.min.replace(tzinfo=timezone.utc)
 
+              pages_to_process = all_pages if SYNC_MODE == "full" else [
+                  p for p in all_pages
+                  if datetime.fromisoformat(p.get("last_edited_time", "1970-01-01T00:00:00Z")[:-1]).replace(tzinfo=timezone.utc) > last_sync
+              ]
+
+              # 处理文章更新
               for page in pages_to_process:
                   try:
-                      props = page["properties"]
-                      title = props["Title"]["title"][0]["plain_text"].strip()
-                      date_str = props["Date"]["date"]["start"].split("T")[0]
+                      props = page.get("properties", {})
+                      title = safe_get(props, ["Title", "title", 0, "plain_text"], "").strip()
+                      date_str = safe_get(props, ["Date", "date", "start"], "").split("T")[0]
 
+                      if not title or not date_str:
+                          logger.warning(f"跳过无效页面: {page['id']}")
+                          continue
+
+                      # 构建元数据
                       post = frontmatter.Post("")
                       post["title"] = title
                       post["date"] = date_str
                       post["layout"] = "post"
                       post["notion_id"] = page["id"]
 
-                      optional_fields = {
-                          "Subtitle": ("rich_text", ""),
-                          "Header-img": ("rich_text", ""),
-                          "Catalog": ("checkbox", False),
-                          "Tags": ("multi_select", [])
+                      # 处理可选字段
+                      field_mapping = {
+                          "Subtitle": ("rich_text", 0, "plain_text"),
+                          "Header-img": ("rich_text", 0, "plain_text"),
+                          "Catalog": ("checkbox",),
+                          "Tags": ("multi_select",)
                       }
-                      for field, (type_, default) in optional_fields.items():
-                          value = props.get(field, {}).get(type_, default)
-                          if type_ == "rich_text" and value:
-                              value = value[0]["plain_text"]
-                          post[field.lower()] = value
+                      for field, path in field_mapping.items():
+                          try:
+                              value = props.get(field, {})
+                              for key in path:
+                                  value = value[key] if isinstance(value, dict) else value
+                              post[field.lower()] = value
+                          except:
+                              post[field.lower()] = None
 
+                      # 获取内容
                       content = get_page_content(page["id"])
                       post.content = content
-                      filename = f"_posts/{date_str}-{title.replace(' ', '-')}.md"
+
+                      # 生成文件名
+                      filename = f"_posts/{date_str}-{title.replace(' ', '-')[:50]}.md"
                       with open(filename, "w", encoding="utf-8") as f:
                           f.write(frontmatter.dumps(post))
-                      logger.info(f"Processed: {filename}")
+                      logger.info(f"成功生成: {filename}")
 
                   except Exception as e:
-                      logger.error(f"Error processing {page['id']}: {str(e)}")
+                      logger.error(f"处理页面失败 {page['id']}: {str(e)}")
 
+              # 清理已删除文章
               existing_files = glob.glob("_posts/*.md")
               for file_path in existing_files:
                   try:
                       with open(file_path, "r", encoding="utf-8") as f:
                           post = frontmatter.load(f)
-                          if "notion_id" not in post.metadata:
-                              continue
-                          
-                          if post["notion_id"] not in current_ids:
+                          if post.get("notion_id") and post["notion_id"] not in current_ids:
                               os.remove(file_path)
-                              logger.info(f"Removed deleted post: {file_path}")
+                              logger.info(f"已删除文章: {os.path.basename(file_path)}")
                   except Exception as e:
-                      logger.error(f"Error checking {file_path}: {str(e)}")
+                      logger.error(f"处理文件失败 {file_path}: {str(e)}")
 
+              # 更新同步时间
               with open(".last_sync_time", "w") as f:
                   f.write(datetime.now(timezone.utc).isoformat())
 
@@ -186,11 +220,11 @@ jobs:
 
           python notion_to_jekyll.py
 
-      - name: Create backup (Full sync only)
+      - name: Create backup
         if: env.SYNC_MODE == 'full'
         run: |
           mkdir -p _posts_backup
-          cp -r _posts _posts_backup/$(date +%Y%m%d)
+          cp -r _posts _posts_backup/$(date +%Y%m%d%H%M%S)
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
