@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync
+name: Notion to Jekyll Sync v2
 on:
   schedule:
     - cron: "0 12 * * *"  # 每日UTC时间12点全量同步
@@ -146,9 +146,10 @@ jobs:
                       json.dump({"all_ids": []}, f)
               
               cache = json.load(open(".notion_cache"))
-              keep_ids = set(current_ids + cache["all_ids"])
               
-              # 强制清理模式：删除所有未关联的文件
+              # 关键修复：仅保留当前有效ID
+              keep_ids = set(current_ids)
+              
               deleted_files = []
               for filename in os.listdir("_posts"):
                   if not filename.endswith(".md"):
@@ -178,7 +179,6 @@ jobs:
                   try:
                       props = page["properties"]
                       
-                      # 提取所有字段
                       title = props["Title"]["title"][0]["plain_text"].strip()
                       date_str = props["Date"]["date"]["start"].split("T")[0]
                       
@@ -197,7 +197,6 @@ jobs:
                       content = get_page_content(page["id"])
                       post = frontmatter.loads(content)
                       
-                      # 添加layout字段
                       post.metadata.update({
                           "layout": "post",
                           "title": title,
@@ -212,7 +211,6 @@ jobs:
                       title_slug = slugify(title)
                       filename = f"_posts/{date_str}-{title_slug}.md"
                       
-                      # 对比内容差异
                       existing_content = ""
                       if os.path.exists(filename):
                           with open(filename, "r", encoding="utf-8") as f:
@@ -227,7 +225,6 @@ jobs:
                   except Exception as e:
                       logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
               
-              # 每次同步都执行清理
               deleted = sync_cleanup(current_ids)
               logger.info(f"本次删除 {len(deleted)} 篇无效文章")
 
