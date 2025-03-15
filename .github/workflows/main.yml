@@ -8,7 +8,7 @@ jobs:
   sync-notion-pages:
     runs-on: ubuntu-latest
     permissions:
-      contents: write      # 授予写入仓库权限
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,8 +31,8 @@ jobs:
 
       - name: Convert Notion pages to Jekyll posts
         env:
-          NOTION_TOKEN: $
-          NOTION_DATABASE_ID: $
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         run: |
           cat << 'EOF' > notion_to_jekyll.py
           import os
@@ -59,7 +59,7 @@ jobs:
                           block_id=page_id,
                           start_cursor=result.get("next_cursor")
                       )
-                  return "\n".join([_parse_block(b) for b in blocks])
+                  return "\n\n".join([_parse_block(b) for b in blocks])  # 修改点：双换行拼接
               except Exception as e:
                   logger.error(f"获取内容失败: {str(e)}")
                   return ""
@@ -72,30 +72,34 @@ jobs:
               
               # 段落与标题处理
               if type_ == "paragraph":
-                  return text
+                  return text + "\n"  # 修改点：追加换行
               elif type_ == "heading_1":
-                  return f"# {text}"
+                  return f"# {text}\n"
               elif type_ == "heading_2":
-                  return f"## {text}"
+                  return f"## {text}\n"
+              elif type_ == "heading_3":
+                  return f"### {text}\n"
               elif type_ == "bulleted_list_item":
-                  return f"- {text}"
+                  return f"- {text}\n"
               elif type_ == "numbered_list_item":
-                  return f"1. {text}"
-              # 图片处理（兼容外部 URL 和本地路径）
+                  return f"1. {text}\n"
+              # 图片处理
               elif type_ == "image":
                   url = content.get("external", {}).get("url") or content.get("file", {}).get("url")
-                  return f"![]({url})"
+                  return f"![]({url})\n"
               # 代码块处理
               elif type_ == "code":
                   code = "\n".join([t["plain_text"] for t in content["rich_text"]])
-                  return f"```{content['language']}\n{code}\n```"
+                  return f"```{content['language']}\n{code}\n```\n"
+              # 引用块处理
+              elif type_ == "quote":
+                  return f"> {text}\n"
               return ""
 
           def main():
               notion = Client(auth=os.environ["NOTION_TOKEN"])
               database_id = os.environ["NOTION_DATABASE_ID"]
 
-              # 查询已发布的文章
               try:
                   pages = notion.databases.query(
                       database_id,
@@ -107,29 +111,28 @@ jobs:
 
               for page in pages:
                   try:
-                      # 提取基础字段（带容错）
+                      # 提取基础字段
                       title = page["properties"]["Title"]["title"][0]["plain_text"].strip()
                       date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
 
-                      # 新增字段处理
+                      # 修改点：Header Image 字段处理
+                      header_img = page["properties"].get("Header-img", {}).get("rich_text", [{}])[0].get("plain_text", "").strip()
+                      
                       subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip()
-                      header_img = page["properties"].get("Header Image", {}).get("select", [])
                       catalog = page["properties"].get("Catalog", {}).get("checkbox", False)
                       tags = [tag["name"] for tag in page["properties"].get("Tags", {}).get("multi_select", [])]
 
-                      # 生成 Markdown 内容
                       content = get_page_content(page["id"])
                       post = frontmatter.Post(content)
                       post["title"] = title
                       post["subtitle"] = subtitle
                       post["date"] = date_str
                       post["layout"] = "post"
-                      post["header-img"] = header_img
+                      post["header-img"] = header_img  # 确保这里字段名与配置一致
                       post["catalog"] = catalog
                       post["tags"] = tags
 
-                      # 保存文件
-                      filename = f"_posts/{date_str}-{title}.md"
+                      filename = f"_posts/{date_str}-{title.replace(' ', '-')}.md"
                       with open(filename, "w", encoding="utf-8") as f:
                           f.write(frontmatter.dumps(post))
                       logger.info(f"成功生成: {filename}")
