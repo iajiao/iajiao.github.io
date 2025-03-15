@@ -1,7 +1,8 @@
 ---
-catalog: true
+catalog: 'true'
 date: '2025-03-15'
 header-img: img/post-bg-4.jpg
+layout: post
 notion_id: 1b77d276-8542-805a-a562-d197c4ee0ddf
 subtitle: wion
 tags:
