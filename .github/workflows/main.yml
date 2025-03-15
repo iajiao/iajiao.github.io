@@ -1,28 +1,17 @@
 name: Notion to Jekyll Sync
 on:
   schedule:
-    - cron: "0 12 * * *"
-  workflow_dispatch:
+    - cron: "0 12 * * *"  # 每天 UTC 时间 12 点自动同步
+  workflow_dispatch:       # 支持手动触发
 
 jobs:
   sync-notion-pages:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write      # 授予写入仓库权限
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set sync mode
-        id: set-mode
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "SYNC_MODE=incremental" >> $GITHUB_ENV
-          else
-            echo "SYNC_MODE=full" >> $GITHUB_ENV
-          fi
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
@@ -35,134 +24,118 @@ jobs:
             notion-client==2.2.0 \
             python-frontmatter==1.0.0 \
             requests==2.31.0 \
-            python-slugify==8.0.1 \
+            mdutils==1.5.0 \
             --index-url https://pypi.tuna.tsinghua.edu.cn/simple \
-            --trusted-host pypi.tuna.tsinghua.edu.cn
+            --trusted-host pypi.tuna.tsinghua.edu.cn \
+            --no-cache-dir
 
       - name: Convert Notion pages to Jekyll posts
         env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-          SYNC_MODE: ${{ env.SYNC_MODE }}
+          NOTION_TOKEN: $
+          NOTION_DATABASE_ID: $
         run: |
           cat << 'EOF' > notion_to_jekyll.py
           import os
-          import glob
           import logging
-          from datetime import datetime, timezone
           from notion_client import Client
           import frontmatter
-          from slugify import slugify
+          from mdutils import MdUtils
+          import requests
 
-          logging.basicConfig(
-              level=logging.INFO,
-              format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-          )
+          logging.basicConfig(level=logging.INFO)
           logger = logging.getLogger(__name__)
 
-          def get_nested_value(data, keys, default=None):
-              """通用嵌套数据获取方法"""
-              for key in keys:
-                  if isinstance(data, dict):
-                      data = data.get(key, default)
-                  elif isinstance(data, list) and isinstance(key, int) and len(data) > key:
-                      data = data[key]
-                  else:
-                      return default
-              return data if data is not None else default
+          def get_page_content(page_id):
+              """通过 Notion API 获取页面内容（含递归子块解析）"""
+              try:
+                  blocks = []
+                  client = Client(auth=os.environ["NOTION_TOKEN"])
+                  result = client.blocks.children.list(block_id=page_id)
+                  while True:
+                      blocks.extend(result.get("results", []))
+                      if not result.get("has_more"):
+                          break
+                      result = client.blocks.children.list(
+                          block_id=page_id,
+                          start_cursor=result.get("next_cursor")
+                      )
+                  return "\n".join([_parse_block(b) for b in blocks])
+              except Exception as e:
+                  logger.error(f"获取内容失败: {str(e)}")
+                  return ""
 
-          def process_custom_properties(page_properties):
-              """处理自定义字段（保持你的现有结构）"""
-              properties = {}
+          def _parse_block(block):
+              """解析 Notion 块为 Markdown（支持更多类型）"""
+              type_ = block["type"]
+              content = block[type_]
+              text = "".join([t["plain_text"] for t in content.get("rich_text", [])])
               
-              # 必填字段
-              properties["title"] = get_nested_value(page_properties, ["Title", "title", 0, "plain_text"], "").strip()
-              properties["date"] = get_nested_value(page_properties, ["Date", "date", "start"], "").split("T")[0]
-              
-              # 可选字段（按你的实际字段名修改）
-              custom_fields = {
-                  "Subtitle": ["rich_text", 0, "plain_text"],
-                  "Header-img": ["rich_text", 0, "plain_text"],
-                  "Catalog": ["checkbox"],
-                  "Tags": ["multi_select"],
-                  "Author": ["select", "name"],  # 示例自定义字段
-                  "ReadTime": ["number"]
-              }
-              
-              for field, path in custom_fields.items():
-                  properties[field.lower()] = get_nested_value(page_properties, [field] + path)
-              
-              return properties
+              # 段落与标题处理
+              if type_ == "paragraph":
+                  return text
+              elif type_ == "heading_1":
+                  return f"# {text}"
+              elif type_ == "heading_2":
+                  return f"## {text}"
+              elif type_ == "bulleted_list_item":
+                  return f"- {text}"
+              elif type_ == "numbered_list_item":
+                  return f"1. {text}"
+              # 图片处理（兼容外部 URL 和本地路径）
+              elif type_ == "image":
+                  url = content.get("external", {}).get("url") or content.get("file", {}).get("url")
+                  return f"![]({url})"
+              # 代码块处理
+              elif type_ == "code":
+                  code = "\n".join([t["plain_text"] for t in content["rich_text"]])
+                  return f"```{content['language']}\n{code}\n```"
+              return ""
 
           def main():
-              # 初始化客户端
               notion = Client(auth=os.environ["NOTION_TOKEN"])
               database_id = os.environ["NOTION_DATABASE_ID"]
-              
-              # 获取所有有效页面（保持你的筛选条件）
-              all_pages = []
-              query = {
-                  "database_id": database_id,
-                  "filter": {
-                      "and": [
-                          {"property": "Status", "select": {"equals": "Published"}},
-                          {"property": "Date", "date": {"is_not_empty": True}}
-                      ]
-                  }
-              }
-              
-              while True:
-                  response = notion.databases.query(**query)
-                  all_pages.extend(response.get("results", []))
-                  if not response.get("has_more"):
-                      break
-                  query["start_cursor"] = response["next_cursor"]
-              
-              logger.info(f"Found {len(all_pages)} published pages")
 
-              # 处理增量同步
-              if os.getenv("SYNC_MODE") == "incremental":
-                  try:
-                      with open(".last_sync_time", "r") as f:
-                          last_sync = datetime.fromisoformat(f.read().strip())
-                  except:
-                      last_sync = datetime(1970, 1, 1, tzinfo=timezone.utc)
-                  
-                  pages_to_process = [
-                      p for p in all_pages
-                      if datetime.fromisoformat(p["last_edited_time"].rstrip("Z")) > last_sync
-                  ]
-                  logger.info(f"Processing {len(pages_to_process)} updated pages")
-              else:
-                  pages_to_process = all_pages
+              # 查询已发布的文章
+              try:
+                  pages = notion.databases.query(
+                      database_id,
+                      filter={"property": "Status", "select": {"equals": "Published"}}
+                  ).get("results", [])
+              except Exception as e:
+                  logger.error(f"数据库查询失败: {str(e)}")
+                  return
 
-              # 处理页面生成
-              for page in pages_to_process:
+              for page in pages:
                   try:
-                      props = process_custom_properties(page["properties"])
-                      
-                      # 生成文件名
-                      title_slug = slugify(props["title"], max_length=50)
-                      filename = f"_posts/{props['date']}-{title_slug}.md"
-                      
-                      # 创建文章内容
-                      post = frontmatter.Post("")
-                      post.metadata.update(props)
-                      post.metadata["layout"] = "post"
-                      post.metadata["notion_id"] = page["id"]
-                      
+                      # 提取基础字段（带容错）
+                      title = page["properties"]["Title"]["title"][0]["plain_text"].strip()
+                      date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
+
+                      # 新增字段处理
+                      subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip()
+                      header_img = page["properties"].get("Header Image", {}).get("select", [])
+                      catalog = page["properties"].get("Catalog", {}).get("checkbox", False)
+                      tags = [tag["name"] for tag in page["properties"].get("Tags", {}).get("multi_select", [])]
+
+                      # 生成 Markdown 内容
+                      content = get_page_content(page["id"])
+                      post = frontmatter.Post(content)
+                      post["title"] = title
+                      post["subtitle"] = subtitle
+                      post["date"] = date_str
+                      post["layout"] = "post"
+                      post["header-img"] = header_img
+                      post["catalog"] = catalog
+                      post["tags"] = tags
+
                       # 保存文件
+                      filename = f"_posts/{date_str}-{title}.md"
                       with open(filename, "w", encoding="utf-8") as f:
                           f.write(frontmatter.dumps(post))
-                      
-                      logger.info(f"Generated: {filename}")
-                      
-                  except Exception as e:
-                      logger.error(f"Failed to process {page['id']}: {str(e)}")
+                      logger.info(f"成功生成: {filename}")
 
-              # 更新同步时间
-              with open(".last_sync_time", "w") as f:
-                  f.write(datetime.now(timezone.utc).isoformat())
+                  except Exception as e:
+                      logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
 
           if __name__ == "__main__":
               main()
@@ -173,5 +146,5 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Auto-sync from Notion (${{ env.SYNC_MODE }})"
-          file_pattern: "_posts/* .last_sync_time"
+          commit_message: "Auto-sync from Notion"
+          file_pattern: "_posts/*"
