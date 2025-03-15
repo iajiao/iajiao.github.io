@@ -1,8 +1,8 @@
-name: Notion to Jekyll Sync  V2
+name: Notion to Jekyll Sync
 on:
   schedule:
-    - cron: "0 12 * * *"  # 每天UTC时间12点全量同步
-  workflow_dispatch:       # 手动触发时增量同步
+    - cron: "0 12 * * *"  # 每日UTC时间12点全量同步
+  workflow_dispatch:       # 手动触发增量同步
 
 jobs:
   sync-notion-pages:
@@ -13,14 +13,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 获取上次同步时间
-        id: sync-time
+      - name: Initialize cache
         run: |
-          if [ -f .last_sync ]; then
-            echo "last_sync=$(cat .last_sync)" >> $GITHUB_OUTPUT
-          else
-            echo "last_sync=1970-01-01T00:00:00Z" >> $GITHUB_OUTPUT
+          if [ ! -f .notion_cache ]; then
+            echo '{"all_ids":[]}' > .notion_cache
           fi
+
+      - name: Cache Notion data
+        uses: actions/cache@v3
+        with:
+          path: .notion_cache
+          key: ${{ runner.os }}-notion-${{ hashFiles('.last_sync') }}
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
@@ -32,38 +35,45 @@ jobs:
           pip install \
             notion-client==2.2.0 \
             python-frontmatter==1.0.0 \
-            requests==2.31.0 \
-            mdutils==1.5.0 \
-            python-dateutil==2.8.2 \
+            python-slugify==8.0.1 \
             --index-url https://pypi.tuna.tsinghua.edu.cn/simple \
             --trusted-host pypi.tuna.tsinghua.edu.cn \
             --no-cache-dir
 
-      - name: Convert Notion pages to Jekyll posts
+      - name: Run enhanced sync
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-          SYNC_MODE: ${{ github.event_name == 'workflow_dispatch' && 'incremental' || 'full' }}
+          FULL_SYNC: ${{ github.event_name == 'schedule' }}
         run: |
           cat << 'EOF' > notion_to_jekyll.py
           import os
+          import json
           import logging
           from notion_client import Client
           import frontmatter
-          from mdutils import MdUtils
-          import requests
-          from dateutil.parser import isoparse
-          import datetime
-          import glob
+          from slugify import slugify
 
           logging.basicConfig(level=logging.INFO)
           logger = logging.getLogger(__name__)
 
-          # 新增：跟踪已处理页面ID
-          processed_ids = set()
+          def get_all_pages(database_id):
+              notion = Client(auth=os.environ["NOTION_TOKEN"])
+              all_pages = []
+              query = {}
+              while True:
+                  res = notion.databases.query(
+                      database_id,
+                      **query,
+                      filter={"property": "Status", "select": {"equals": "Published"}}
+                  )
+                  all_pages += res.get("results", [])
+                  if not res.get("has_more"):
+                      break
+                  query["start_cursor"] = res["next_cursor"]
+              return all_pages
 
           def get_page_content(page_id):
-              """通过 Notion API 获取页面内容（含递归子块解析）"""
               try:
                   blocks = []
                   client = Client(auth=os.environ["NOTION_TOKEN"])
@@ -82,14 +92,14 @@ jobs:
                   return ""
 
           def _parse_block(block):
-              """解析 Notion 块为 Markdown（支持更多类型）"""
               type_ = block["type"]
               content = block[type_]
-              text = "".join([t["plain_text"] for t in content.get("rich_text", [])])
+              rich_text = content.get("rich_text", [])
+              text = "".join([t["plain_text"] for t in rich_text])
               
-              # 段落与标题处理
+              # 块类型解析
               if type_ == "paragraph":
-                  return text + "\n"  # 修改点：追加换行
+                  return text + "\n"
               elif type_ == "heading_1":
                   return f"# {text}\n"
               elif type_ == "heading_2":
@@ -100,103 +110,134 @@ jobs:
                   return f"- {text}\n"
               elif type_ == "numbered_list_item":
                   return f"1. {text}\n"
-              # 图片处理
+              elif type_ == "to_do":
+                  checked = "x" if content["checked"] else " "
+                  return f"- [{checked}] {text}\n"
               elif type_ == "image":
                   url = content.get("external", {}).get("url") or content.get("file", {}).get("url")
                   return f"![]({url})\n"
-              # 代码块处理
               elif type_ == "code":
                   code = "\n".join([t["plain_text"] for t in content["rich_text"]])
                   return f"```{content['language']}\n{code}\n```\n"
-              # 引用块处理
               elif type_ == "quote":
                   return f"> {text}\n"
+              elif type_ == "callout":
+                  icon = content["icon"]["emoji"] if content.get("icon") else ""
+                  return f"{icon} **{text}**\n\n"
+              elif type_ == "table":
+                  return _parse_table(content)
               return ""
 
+          def _parse_table(content):
+              table_width = content["table_width"]
+              rows = []
+              for row in content["children"]:
+                  cells = []
+                  for cell in row["cells"]:
+                      cell_text = " ".join([t["plain_text"] for t in cell])
+                      cells.append(cell_text)
+                  rows.append("| " + " | ".join(cells) + " |")
+              if rows:
+                  sep = "|" + "|".join(["---"] * table_width) + "|"
+                  rows.insert(1, sep)
+              return "\n".join(rows) + "\n\n"
+
+          def sync_cleanup(current_ids):
+              if not os.path.exists(".notion_cache"):
+                  with open(".notion_cache", "w") as f:
+                      json.dump({"all_ids": []}, f)
+              
+              cache = json.load(open(".notion_cache"))
+              keep_ids = set(current_ids + cache["all_ids"])
+              
+              for filename in os.listdir("_posts"):
+                  if not filename.endswith(".md"):
+                      continue
+                  try:
+                      with open(f"_posts/{filename}", "r", encoding="utf-8") as f:
+                          post = frontmatter.load(f)
+                          pid = post.get("notion_id")
+                          if pid and pid not in keep_ids:
+                              os.remove(f"_posts/{filename}")
+                              logger.info(f"删除无效文章: {filename}")
+                  except Exception as e:
+                      logger.error(f"处理文件失败 {filename}: {str(e)}")
+
+              new_cache = {"all_ids": list(set(current_ids + cache["all_ids"]))[:1000]}
+              json.dump(new_cache, open(".notion_cache", "w"))
+
           def main():
-              notion = Client(auth=os.environ["NOTION_TOKEN"])
-              database_id = os.environ["NOTION_DATABASE_ID"]
-              sync_mode = os.environ["SYNC_MODE"]
-              last_sync = isoparse(os.environ.get("LAST_SYNC", "1970-01-01T00:00:00Z"))
-
-              # 新增：构建时间过滤条件
-              time_filter = {}
-              if sync_mode == 'incremental':
-                  time_filter = {
-                      "timestamp": "last_edited_time",
-                      "last_edited_time": {
-                          "after": last_sync.isoformat()
-                      }
-                  }
-
-              try:
-                  query_params = {
-                      "filter": {
-                          "and": [
-                              {"property": "Status", "select": {"equals": "Published"}},
-                              time_filter
-                          ]
-                      }
-                  }
-                  pages = notion.databases.query(
-                      database_id,
-                      ​**query_params
-                  ).get("results", [])
-              except Exception as e:
-                  logger.error(f"数据库查询失败: {str(e)}")
-                  return
-
-              # 新增：记录当前所有有效页面ID
-              current_ids = {page["id"] for page in pages}
-
-              # 删除已被移除的文章
-              existing_files = glob.glob("_posts/*.md")
-              for filepath in existing_files:
-                  with open(filepath, "r") as f:
-                      post = frontmatter.load(f)
-                      if "notion_id" in post and post["notion_id"] not in current_ids:
-                          os.remove(filepath)
-                          logger.info(f"删除已移除文章: {filepath}")
-
+              pages = get_all_pages(os.environ["NOTION_DATABASE_ID"])
+              current_ids = [p["id"] for p in pages]
+              
               for page in pages:
                   try:
-                      # 新增：检查最后编辑时间
-                      last_edited = isoparse(page["last_edited_time"])
-                      if sync_mode == 'incremental' and last_edited <= last_sync:
-                          continue
-
-                      # 提取基础字段（新增notion_id存储）
-                      page_id = page["id"]
-                      title = page["properties"]["Title"]["title"][0]["plain_text"].strip()
-                      date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
+                      props = page["properties"]
                       
-                      # 其他字段提取保持不变...
-
-                      # 新增：在frontmatter中存储Notion ID
-                      post["notion_id"] = page_id
-
-                      # 文件名生成逻辑保持不变...
-
-                      processed_ids.add(page_id)
-                      logger.info(f"成功生成: {filename}")
-
+                      # 提取所有字段
+                      title = props["Title"]["title"][0]["plain_text"].strip()
+                      date_str = props["Date"]["date"]["start"].split("T")[0]
+                      
+                      subtitle = ""
+                      if "Subtitle" in props and props["Subtitle"]["rich_text"]:
+                          subtitle = props["Subtitle"]["rich_text"][0]["plain_text"].strip()
+                      
+                      header_img = ""
+                      if "Header-img" in props and props["Header-img"]["rich_text"]:
+                          header_img = props["Header-img"]["rich_text"][0]["plain_text"].strip()
+                      
+                      tags = []
+                      if "Tags" in props and props["Tags"]["multi_select"]:
+                          tags = [tag["name"] for tag in props["Tags"]["multi_select"]]
+                      
+                      catalog = False
+                      if "Catalog" in props and props["Catalog"]["checkbox"] is not None:
+                          catalog = props["Catalog"]["checkbox"]
+                      
+                      content = get_page_content(page["id"])
+                      post = frontmatter.loads(content)
+                      
+                      # 完整Frontmatter字段
+                      post.metadata.update({
+                          "title": title,
+                          "date": date_str,
+                          "subtitle": subtitle,
+                          "header-img": header_img,
+                          "tags": tags,
+                          "catalog": catalog,
+                          "notion_id": page["id"]
+                      })
+                      
+                      title_slug = slugify(title)
+                      filename = f"_posts/{date_str}-{title_slug}.md"
+                      
+                      # 对比内容差异
+                      existing_content = ""
+                      if os.path.exists(filename):
+                          with open(filename, "r", encoding="utf-8") as f:
+                              existing_content = f.read()
+                      
+                      new_content = frontmatter.dumps(post)
+                      if new_content != existing_content:
+                          with open(filename, "w", encoding="utf-8") as f:
+                              f.write(new_content)
+                          logger.info(f"更新文章: {filename}")
+                              
                   except Exception as e:
                       logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
-
-              # 新增：写入本次同步时间
-              with open(".last_sync", "w") as f:
-                  f.write(datetime.datetime.utcnow().isoformat() + "Z")
+              
+              sync_cleanup(current_ids)
 
           if __name__ == "__main__":
               main()
           EOF
 
-          # 传递环境变量
-          LAST_SYNC=${{ steps.sync-time.outputs.last_sync }}
           python notion_to_jekyll.py
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Auto-sync from Notion"
-          file_pattern: "_posts/* .last_sync"
+          commit_message: "Auto-sync: ${{ github.event_name }}"
+          file_pattern: |
+            _posts/*
+            .notion_cache
