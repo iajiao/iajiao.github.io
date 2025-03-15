@@ -1,0 +1,200 @@
+name: Notion to Jekyll Sync
+on:
+  schedule:
+    - cron: "0 12 * * *"  # 每天 UTC 时间 12 点自动同步
+  workflow_dispatch:       # 支持手动触发
+
+jobs:
+  sync-notion-pages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install \
+            notion-client==2.2.0 \
+            python-frontmatter==1.0.0 \
+            requests==2.31.0 \
+            mdutils==1.5.0 \
+            python-slugify==8.0.1 \
+            --index-url https://pypi.tuna.tsinghua.edu.cn/simple \
+            --trusted-host pypi.tuna.tsinghua.edu.cn \
+            --no-cache-dir
+
+      - name: Convert Notion pages to Jekyll posts
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          INCREMENTAL_SYNC: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          cat << 'EOF' > notion_to_jekyll.py
+          import os
+          import logging
+          import datetime
+          from notion_client import Client
+          import frontmatter
+          from mdutils import MdUtils
+          import requests
+          from slugify import slugify
+
+          logging.basicConfig(level=logging.INFO)
+          logger = logging.getLogger(__name__)
+
+          def read_last_sync_time():
+              try:
+                  with open(".last_sync", "r") as f:
+                      return f.read().strip()
+              except FileNotFoundError:
+                  return None
+
+          def get_page_content(page_id):
+              try:
+                  blocks = []
+                  client = Client(auth=os.environ["NOTION_TOKEN"])
+                  result = client.blocks.children.list(block_id=page_id)
+                  while True:
+                      blocks.extend(result.get("results", []))
+                      if not result.get("has_more"):
+                          break
+                      result = client.blocks.children.list(
+                          block_id=page_id,
+                          start_cursor=result.get("next_cursor")
+                      )
+                  return "\n\n".join([_parse_block(b) for b in blocks])
+              except Exception as e:
+                  logger.error(f"获取内容失败: {str(e)}")
+                  return ""
+
+          def _parse_block(block):
+              type_ = block["type"]
+              content = block[type_]
+              text = "".join([t["plain_text"] for t in content.get("rich_text", [])])
+              
+              if type_ == "paragraph":
+                  return text + "\n"
+              elif type_ == "heading_1":
+                  return f"# {text}\n"
+              elif type_ == "heading_2":
+                  return f"## {text}\n"
+              elif type_ == "heading_3":
+                  return f"### {text}\n"
+              elif type_ == "bulleted_list_item":
+                  return f"- {text}\n"
+              elif type_ == "numbered_list_item":
+                  return f"1. {text}\n"
+              elif type_ == "image":
+                  url = content.get("external", {}).get("url") or content.get("file", {}).get("url")
+                  return f"![]({url})\n"
+              elif type_ == "code":
+                  code = "\n".join([t["plain_text"] for t in content["rich_text"]])
+                  return f"```{content['language']}\n{code}\n```\n"
+              elif type_ == "quote":
+                  return f"> {text}\n"
+              return ""
+
+          def main():
+              incremental_sync = os.environ.get("INCREMENTAL_SYNC", "false").lower() == "true"
+              processed_ids = set()
+              notion = Client(auth=os.environ["NOTION_TOKEN"])
+              database_id = os.environ["NOTION_DATABASE_ID"]
+
+              # 构建查询条件
+              filter_condition = {"property": "Status", "select": {"equals": "Published"}}
+              if incremental_sync:
+                  last_sync_time = read_last_sync_time()
+                  if last_sync_time:
+                      filter_condition = {
+                          "and": [
+                              {"property": "Status", "select": {"equals": "Published"}},
+                              {"timestamp": "last_edited_time", "last_edited_time": {"after": last_sync_time}}
+                          ]
+                      }
+
+              try:
+                  pages = notion.databases.query(database_id, filter=filter_condition).get("results", [])
+              except Exception as e:
+                  logger.error(f"数据库查询失败: {str(e)}")
+                  return
+
+              for page in pages:
+                  try:
+                      title = page["properties"]["Title"]["title"][0]["plain_text"].strip()
+                      date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
+                      header_img = page["properties"].get("Header-img", {}).get("rich_text", [{}])[0].get("plain_text", "").strip()
+                      subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip()
+                      catalog = page["properties"].get("Catalog", {}).get("checkbox", False)
+                      tags = [tag["name"] for tag in page["properties"].get("Tags", {}).get("multi_select", [])]
+
+                      content = get_page_content(page["id"])
+                      post = frontmatter.Post(content)
+                      post["title"] = title
+                      post["subtitle"] = subtitle
+                      post["date"] = date_str
+                      post["layout"] = "post"
+                      post["header-img"] = header_img
+                      post["catalog"] = catalog
+                      post["tags"] = tags
+                      post["notion_id"] = page["id"]  # 添加唯一标识
+
+                      title_slug = slugify(title)
+                      filename = f"_posts/{date_str}-{title_slug}.md"
+                      new_content = frontmatter.dumps(post)
+
+                      # 增量更新检查
+                      write_file = True
+                      if os.path.exists(filename):
+                          with open(filename, "r", encoding="utf-8") as f:
+                              existing_post = frontmatter.load(f)
+                              if existing_post.get("notion_id") == page["id"] and frontmatter.dumps(existing_post) == new_content:
+                                  write_file = False
+
+                      if write_file:
+                          with open(filename, "w", encoding="utf-8") as f:
+                              f.write(new_content)
+                          logger.info(f"文件已更新: {filename}")
+
+                      processed_ids.add(page["id"])
+                  except Exception as e:
+                      logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
+
+              # 全量同步时清理已删除文章
+              if not incremental_sync:
+                  for filename in os.listdir("_posts"):
+                      if filename.endswith(".md"):
+                          filepath = os.path.join("_posts", filename)
+                          try:
+                              with open(filepath, "r", encoding="utf-8") as f:
+                                  post = frontmatter.load(f)
+                                  if post.get("notion_id") not in processed_ids:
+                                      os.remove(filepath)
+                                      logger.info(f"删除文章: {filename}")
+                          except Exception as e:
+                              logger.error(f"处理文件失败 {filename}: {str(e)}")
+
+              # 更新同步时间戳
+              current_time = datetime.datetime.utcnow().isoformat()
+              with open(".last_sync", "w") as f:
+                  f.write(current_time)
+
+          if __name__ == "__main__":
+              main()
+          EOF
+
+          python notion_to_jekyll.py
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Auto-sync from Notion"
+          file_pattern: |
+            _posts/*
+            .last_sync
