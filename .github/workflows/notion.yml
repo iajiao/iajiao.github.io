@@ -155,13 +155,13 @@ jobs:
                       notion_ids_in_notion.add(page_id)
 
                       # 提取基础字段
-                      title = page["properties"]["Title"]["title"][0]["plain_text"].strip()
-                      date_str = page["properties"]["Date"]["date"]["start"].split("T")[0]
+                      title = page["properties"]["Title"]["title"][0]["plain_text"].strip() if page["properties"]["Title"]["title"] else ""
+                      date_str = page["properties"]["Date"]["date"]["start"].split("T")[0] if page["properties"]["Date"]["date"] else ""
 
                       # 修改点：Header Image 字段处理
-                      header_img = page["properties"].get("Header-img", {}).get("rich_text", [{}])[0].get("plain_text", "").strip()
+                      header_img = page["properties"].get("Header-img", {}).get("rich_text", [{}])[0].get("plain_text", "").strip() if page["properties"].get("Header-img", {}).get("rich_text") else ""
                       
-                      subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip()
+                      subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip() if page["properties"].get("Subtitle", {}).get("rich_text") else ""
                       tags = [tag["name"] for tag in page["properties"].get("Tags", {}).get("multi_select", [])]
 
                       content = get_page_content(page["id"])
