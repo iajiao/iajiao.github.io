@@ -1,7 +1,7 @@
 ---
 catalog: true
 date: '2025-03-16'
-header-img: img/post-bg-2.jpg
+header-img: img/post-bg-3.jpg
 layout: post
 notion_id: 1b87d276-8542-8017-a8c5-cb3dbfa9be6d
 subtitle: 让 notion 作为 jekyll 后台
@@ -19,7 +19,7 @@ title: Notion to Github 工作流代码开发
 # v1 版本出炉
 
 
-在Deepseek的帮助下，经过大约10个小时的努力，或者说是开发吧！准确得说是：罗马输球后睡不着的大半个晚上，以及小半个白天，终于通过编写 Github Action代码，实现了Notion与Github的互动，简称 V1 版本，主要实现了博客内容从 Notion 到 Github 的同步。具体代码如下：
+在Deepseek的帮助下，经过大约10个小时的努力，或者说是开发吧！准确得说是：罗马输球后睡不着的大半个晚上，以及小半个白天，终于通过编写 Github Action代码，实现了Notion与Github的互动，简称 V1 版本，主要实现了博客内容从 Notion 到 Github 的同步。
 
 
 ```yaml
