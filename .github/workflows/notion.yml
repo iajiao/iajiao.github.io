@@ -145,8 +145,8 @@ jobs:
                       title = page["properties"]["Title"]["title"][0]["plain_text"].strip() if page["properties"]["Title"]["title"] else ""
                       date_str = page["properties"]["Date"]["date"]["start"].split("T")[0] if page["properties"]["Date"]["date"] else ""
 
-                      # 修改点：Header Image 字段处理
-                      header_img = page["properties"].get("Header-img", {}).get("rich_text", [{}])[0].get("plain_text", "").strip() if page["properties"].get("Header-img", {}).get("rich_text") else ""
+                      # 修改点：Header Image 字段处理，改为单选字段
+                      header_img = page["properties"].get("Header-img", {}).get("select", {}).get("name", "") if page["properties"].get("Header-img", {}).get("select") else ""
                       
                       subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip() if page["properties"].get("Subtitle", {}).get("rich_text") else ""
                       tags = [tag["name"] for tag in page["properties"].get("Tags", {}).get("multi_select", [])]
