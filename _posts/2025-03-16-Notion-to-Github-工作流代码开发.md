@@ -10,7 +10,7 @@ tags:
 title: Notion to Github 工作流代码开发
 ---
 
-我的博客使用Jekyll 技术，建立在Github Pages上。GitHub非常稳定，但没有后台，更新起来非常麻烦。之前我曾使用Obsidian 作为 Github 后台。虽然Obsidian堪称神器，但仅限于电脑端。在安卓手机上，不仅难以操作，而且启动速度很慢。
+本站通过Jekyll 技术搭建在Github上。GitHub非常稳定，但没有后台，更新起来非常麻烦。之前我曾使用Obsidian 作为 Github 后台。虽然Obsidian堪称神器，但仅限于电脑端。在安卓手机上，不仅难以操作，而且启动速度很慢。
 
 
 最近，我发现Notion 在安卓端用起来特别顺手，主要是不用配置同步，而且移动端 App 尚可。 突发奇想：能否用Notion作为博客后台，实现与Github的互动呢？答案是肯定的！
