@@ -1,8 +1,9 @@
 ---
-catalog: false
+catalog: true
 date: '2025-03-16'
-header-img: ''
+header-img: img/post-bg-3.jpg
 layout: post
+notion_id: 1b87d276-8542-8017-a8c5-cb3dbfa9be6d
 subtitle: 让 notion 作为 jekyll 后台
 tags:
 - 网络
