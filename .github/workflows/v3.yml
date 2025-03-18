@@ -138,8 +138,12 @@ jobs:
                   image_data = f.read()
               # 准备请求数据
               files = {'file': (image_path, image_data)}
+              # 设置请求头，避免 403 错误
+              headers = {
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+              }
               # 发送 POST 请求
-              response = requests.post(ipfs_api_url, files=files)
+              response = requests.post(ipfs_api_url, files=files, headers=headers)
               response.raise_for_status()
               # 获取返回的图片哈希
               hash_value = response.json().get('Hash', '')
