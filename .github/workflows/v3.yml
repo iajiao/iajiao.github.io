@@ -147,7 +147,7 @@ jobs:
                       return f"![]({original_url})\n"
                   
                   # 使用 Cloudflare 加速后的链接
-                  cdn_url = f"https://img.ajiao.eu.org/img/in-post/{file_name}"
+                  cdn_url = f"https://ajiao.eu.org/img/in-post/{file_name}"
                   return f"![]({cdn_url})\n"
               # 代码块处理
               elif type_ == "code":
