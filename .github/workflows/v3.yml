@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync v3
+name: Notion to Jekyll Sync v2
 on:
   schedule:
     - cron: "0 12 * * *"  # 每天 UTC 时间 12 点自动同步
@@ -33,7 +33,6 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
           PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-          IMAGE_REPO: ${{ secrets.IMAGE_REPO }}
         run: |
           cat << 'EOF' > notion_to_jekyll.py
           import os
@@ -120,11 +119,11 @@ jobs:
                   # 生成唯一的文件名
                   file_name = hashlib.md5(original_url.encode()).hexdigest() + ".png"
                   
-                  # 上传图片到 GitHub 仓库
+                  # 上传图片到当前仓库的 img/in-post 目录
                   try:
                       # 使用 GitHub API 上传文件
                       github_token = os.environ["PERSONAL_TOKEN"]
-                      repo = os.environ["IMAGE_REPO"]
+                      repo = os.environ["GITHUB_REPOSITORY"]  # 当前仓库
                       branch = "master"  # 设置为 master 分支
                       
                       # 读取文件内容
@@ -135,7 +134,7 @@ jobs:
                           "Authorization": f"token {github_token}",
                           "Accept": "application/vnd.github.v3+json"
                       }
-                      url = f"https://api.github.com/repos/{repo}/contents/HiAjiao/{file_name}"
+                      url = f"https://api.github.com/repos/{repo}/contents/img/in-post/{file_name}"
                       data = {
                           "message": f"Add image {file_name}",
                           "content": base64.b64encode(image_content).decode(),
@@ -147,8 +146,8 @@ jobs:
                       logger.error(f"上传图片到 GitHub 失败: {str(e)}")
                       return f"![]({original_url})\n"
                   
-                  # 使用 jsDelivr CDN 加速
-                  cdn_url = f"https://cdn.jsdelivr.net/gh/{repo}@{branch}/HiAjiao/{file_name}"
+                  # 使用 Cloudflare 加速后的链接
+                  cdn_url = f"https://img.ajiao.eu.org/img/in-post/{file_name}"
                   return f"![]({cdn_url})\n"
               # 代码块处理
               elif type_ == "code":
