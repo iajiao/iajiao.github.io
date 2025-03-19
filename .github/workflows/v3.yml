@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync v3
+name: Notion to Jekyll Sync v2
 on:
   schedule:
     - cron: "0 12 * * *"  # 每天 UTC 时间 12 点自动同步
@@ -122,7 +122,6 @@ jobs:
                   
                   # 上传图片到 GitHub 仓库
                   try:
-                      # 使用 GitHub API 上传文件
                       github_token = os.environ["PERSONAL_TOKEN"]
                       repo = os.environ["IMAGE_REPO"]
                       branch = "master"  # 设置为 master 分支
@@ -148,7 +147,7 @@ jobs:
                       return f"![]({original_url})\n"
                   
                   # 使用 jsDelivr CDN 加速
-                  cdn_url = f"https://cdn.jsdelivr.net/gh/{repo}@{branch}/img/in-post/{file_name}"
+                  cdn_url = f"https://cdn.jsdelivr.net/gh/{repo}/img/in-post/{file_name}"
                   return f"![]({cdn_url})\n"
               # 代码块处理
               elif type_ == "code":
