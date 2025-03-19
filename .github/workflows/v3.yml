@@ -12,8 +12,8 @@ jobs:
     env:
       NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
       NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-      # GITHUB_REPO: ${{ secrets.GITHUB_REPO }}  # GitHub 图床仓库名
-      # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub 个人访问令牌
+      GITHUB_REPO: ${{ secrets.IMAGE_REPO }}  # GitHub 图床仓库名
+      GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}  # GitHub 个人访问令牌
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -107,14 +107,14 @@ jobs:
               # 图片处理
               elif type_ == "image":
                   url = content.get("external", {}).get("url") or content.get("file", {}).get("url")
-                  # 下载图片并上传到 IPFS 图床
+                  # 下载图片并上传到 GitHub 图床
                   try:
                       response = requests.get(url)
                       response.raise_for_status()
                       file_name = url.split('/')[-1][:100]  # 限制文件名长度
                       with open(file_name, 'wb') as f:
                           f.write(response.content)
-                      new_url = upload_to_ipfs(file_name)
+                      new_url = upload_to_github(file_name)
                       os.remove(file_name)
                       return f"![]({new_url})\n"
                   except Exception as e:
@@ -129,26 +129,33 @@ jobs:
                   return f"> {text}\n"
               return ""
 
-          def upload_to_ipfs(image_path):
-              """上传图片到 IPFS 图床"""
-              # IPFS 图床 API 地址
-              ipfs_api_url = "https://api.img2ipfs.org/api/v0/add?pin=false"
-              # 读取图片文件
-              with open(image_path, 'rb') as f:
-                  image_data = f.read()
-              # 准备请求数据
-              files = {'file': (image_path, image_data)}
-              # 设置请求头，避免 403 错误
+          def upload_to_github(image_path):
+              """上传图片到 GitHub 图床"""
+              github_api_url = f"https://api.github.com/repos/{os.getenv('GITHUB_REPO')}/contents/"
               headers = {
-                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+                  "Authorization": f"token {os.getenv('GITHUB_TOKEN')}",
+                  "Accept": "application/vnd.github.v3+json"
+              }
+              with open(image_path, 'rb') as f:
+                  content = f.read()
+              # 生成唯一的文件名
+              unique_filename = f"images/{datetime.now().strftime('%Y%m%d%H%M%S')}_{image_path}"
+              # 编码图片内容为 base64
+              import base64
+              encoded_content = base64.b64encode(content).decode('utf-8')
+              # 准备请求数据
+              data = {
+                  "message": f"Add image {unique_filename}",
+                  "content": encoded_content
               }
               # 发送 POST 请求
-              response = requests.post(ipfs_api_url, files=files, headers=headers)
+              response = requests.put(github_api_url + unique_filename, headers=headers, json=data)
               response.raise_for_status()
-              # 获取返回的图片哈希
-              hash_value = response.json().get('Hash', '')
-              # 构造图片链接
-              return f"https://ipfs.io/ipfs/{hash_value}"
+              # 使用 Cloudflare 加速域名替换 GitHub 的 raw 文件 URL
+              cloudflare_domain = os.getenv('CLOUDFLARE_DOMAIN')
+              github_raw_url = f"https://raw.githubusercontent.com/{os.getenv('GITHUB_REPO')}/main/{unique_filename}"
+              cloudflare_url = github_raw_url.replace("raw.githubusercontent.com", cloudflare_domain)
+              return cloudflare_url
 
           def main():
               notion = Client(auth=os.environ["NOTION_TOKEN"])
