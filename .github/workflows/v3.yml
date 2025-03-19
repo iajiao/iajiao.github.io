@@ -242,6 +242,12 @@ jobs:
 
           python notion_to_jekyll.py
 
+      - name: Pull remote changes
+        run: |
+          git config --global user.email "your-email@example.com"
+          git config --global user.name "Your Name"
+          git pull origin master
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
