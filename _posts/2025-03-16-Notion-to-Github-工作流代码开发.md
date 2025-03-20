@@ -19,7 +19,10 @@ title: Notion to Github 工作流代码开发
 # v1 版本出炉
 
 
-在Deepseek的帮助下，经过大约10个小时的努力，或者说是开发吧！准确得说是：罗马输球后睡不着的大半个晚上，以及小半个白天，终于通过编写 Github Action代码，实现了Notion与Github的互动，简称 V1 版本，主要实现了博客内容从 Notion 到 Github 的同步。
+在Deepseek的帮助下，经过大约10个小时的开发！准确得说，是在罗马输球后大半夜睡不着的几个小时里，以及次日小半个白天，终于通过编写 Github Action代码，实现了Notion与Github的互动，简称 V1 版本。
+
+
+这个版本主要实现了Notion数据库内容从 Notion 到 Github 的同步，相当于给Github搭建的jekyll网站构建了一个高水平的后台文章管理系统。
 
 
 ```yaml
@@ -403,7 +406,10 @@ jobs:
 # V3版本
 
 
-这几天突然发现图片访问链接会变化，而且速度很不稳定。这个版本，主要就是解决了Notion图片访问速度的问题，现在采用了cloudflare进行CDN加速，快了很多。在这里，同样要鸣谢Kimi。
+这几天，突然发现图片的访问链接会变化，而且速度很不稳定，不断的在amazon和github之间切换，时好时坏，非常影响访问速度，如何解决？
+
+
+这个版本，主要就是解决了Notion图片访问速度的问题，现在采用了cloudflare进行CDN加速，快了很多。在这里，同样要鸣谢Kimi。
 
 
 ```yaml
