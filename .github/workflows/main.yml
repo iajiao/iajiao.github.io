@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync v5
+name: Notion to Jekyll Sync v1
 
 on:
   schedule:
@@ -61,7 +61,8 @@ jobs:
           def get_last_sync_time():
               try:
                   with open('.last_sync.txt', 'r') as f:
-                      return datetime.fromisoformat(f.read().strip())
+                      # 假设本地时间戳是UTC时间
+                      return datetime.fromisoformat(f.read().strip()).replace(tzinfo=None)
               except:
                   return None
 
@@ -206,8 +207,8 @@ jobs:
 
                       # 获取notion页面的最后修改时间
                       last_edited_time_str = page["last_edited_time"]
-                      # 使用 dateutil 解析时间
-                      last_edited_time = parser.isoparse(last_edited_time_str)
+                      # 使用 dateutil 解析时间，并移除时区信息
+                      last_edited_time = parser.isoparse(last_edited_time_str).replace(tzinfo=None)
                       
                       # 如果上次同步时间为空，或者notion页面的最后修改时间晚于上次同步时间，则需要更新
                       if last_sync is None or last_edited_time > last_sync:
