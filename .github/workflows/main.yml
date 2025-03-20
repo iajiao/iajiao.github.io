@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync v2
+name: Notion to Jekyll Sync v3 with Image Compression
 on:
   schedule:
     - cron: "0 12 * * *"  # 每天 UTC 时间 12 点自动同步
@@ -267,6 +267,8 @@ jobs:
         run: |
           git config --global user.email "your-email@example.com"
           git config --global user.name "Your Name"
+          git add .last_sync.txt
+          git commit -m "Update last sync time"
           git pull origin master
 
       - name: Commit changes
