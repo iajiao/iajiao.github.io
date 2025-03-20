@@ -263,12 +263,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install ImgBot
-        run: |
-          gem install imgbot
-
       - name: Run ImgBot to compress images
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         run: |
-          imgbot -d img/in-post/
+          # 这里不需要安装 ImgBot，因为它是 GitHub 应用
+          # 只需要确保 ImgBot 应用已安装到您的仓库
+          # ImgBot 会自动检测并压缩图片
+          echo "ImgBot will automatically compress images in the repository"
