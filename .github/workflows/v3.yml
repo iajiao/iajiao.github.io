@@ -259,6 +259,7 @@ jobs:
     needs: sync-notion-pages
     permissions:
       contents: write
+      issues: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -272,4 +273,4 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }}/issues \
-            -d '{"title":"Compress Images","body":"Please compress images in the img/in-post directory"}'
+            -d '{"title":"Compress Images","body":"@ImgBot compress images in img/in-post/"}'
