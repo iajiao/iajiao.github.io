@@ -188,7 +188,7 @@ jobs:
                       notion_ids_in_notion.add(page_id)
 
                       # 提取基础字段
-                      title = page["properties"]["Title"]["title"][0]["plain_text"].strip() if page["properties"]["Title"]["title"] else ""
+                      title = page["properties"]["Name"]["title"][0]["plain_text"].strip() if page["properties"]["Name"]["title"] else ""
                       date_str = page["properties"]["Date"]["date"]["start"].split("T")[0] if page["properties"]["Date"]["date"] else ""
 
                       # 修改点：Header Image 字段处理，改为单选字段
