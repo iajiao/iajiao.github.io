@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync v3
+name: Notion to Jekyll Sync v3 with ImgBot Compression
 on:
   schedule:
     - cron: "0 12 * * *"  # 每天 UTC 时间 12 点自动同步
@@ -253,3 +253,22 @@ jobs:
         with:
           commit_message: "Auto-sync from Notion"
           file_pattern: "_posts/* .last_sync.txt"
+
+  compress-images:
+    runs-on: ubuntu-latest
+    needs: sync-notion-pages
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install ImgBot
+        run: |
+          gem install imgbot
+
+      - name: Run ImgBot to compress images
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+        run: |
+          imgbot -d img/in-post/
