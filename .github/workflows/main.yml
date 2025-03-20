@@ -27,6 +27,7 @@ jobs:
             requests==2.31.0 \
             mdutils==1.5.0 \
             Pillow==9.3.0 \
+            python-dateutil==2.8.2 \
             --index-url https://pypi.tuna.tsinghua.edu.cn/simple \
             --trusted-host pypi.tuna.tsinghua.edu.cn
 
@@ -41,6 +42,7 @@ jobs:
           import logging
           import json
           from datetime import datetime
+          from dateutil import parser  # 用于解析 Notion 的时间格式
           from notion_client import Client
           import frontmatter
           from mdutils import MdUtils
@@ -203,7 +205,9 @@ jobs:
                       notion_ids_in_notion.add(page_id)
 
                       # 获取notion页面的最后修改时间
-                      last_edited_time = datetime.fromisoformat(page["last_edited_time"])
+                      last_edited_time_str = page["last_edited_time"]
+                      # 使用 dateutil 解析时间
+                      last_edited_time = parser.isoparse(last_edited_time_str)
                       
                       # 如果上次同步时间为空，或者notion页面的最后修改时间晚于上次同步时间，则需要更新
                       if last_sync is None or last_edited_time > last_sync:
