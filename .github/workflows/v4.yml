@@ -1,0 +1,9 @@
+filter_condition = {
+    "and": [
+        {"property": "Status", "select": {"equals": "Published"}},
+        {"or": [
+            {"property": "Last Edited Time", "date": {"on_or_after": last_sync.isoformat()}},
+            {"property": "Created Time", "date": {"on_or_after": last_sync.isoformat()}}
+        ]}
+    ]
+} if last_sync else {"property": "Status", "select": {"equals": "Published"}}
