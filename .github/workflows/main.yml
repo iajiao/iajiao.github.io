@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync v3 with Image Compression
+name: v5
 on:
   schedule:
     - cron: "0 12 * * *"  # 每天 UTC 时间 12 点自动同步
