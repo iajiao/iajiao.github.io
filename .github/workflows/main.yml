@@ -1,4 +1,5 @@
-name: Notion to Jekyll Sync v3 with Image Compression
+name: Notion to Jekyll Sync v5
+
 on:
   schedule:
     - cron: "0 12 * * *"  # 每天 UTC 时间 12 点自动同步
@@ -119,12 +120,15 @@ jobs:
                       logger.error(f"下载图片失败: {str(e)}")
                       return f"![]({original_url})\n"
                   
-                  # 将图片转换为 JPG 格式
+                  # 将图片转换为 JPG 格式并压缩
                   try:
                       image = Image.open(BytesIO(response.content))
                       image = image.convert("RGB")  # 确保是 RGB 模式
+                      
+                      # 压缩图片
+                      image.thumbnail((1920, 1080))  # 调整大小以压缩
                       image_bytes = BytesIO()
-                      image.save(image_bytes, format="JPEG")
+                      image.save(image_bytes, format="JPEG", quality=85)
                       image_content = image_bytes.getvalue()
                   except Exception as e:
                       logger.error(f"图片格式转换失败: {str(e)}")
@@ -198,47 +202,48 @@ jobs:
                       page_id = page["id"]
                       notion_ids_in_notion.add(page_id)
 
-                      # 提取基础字段
-                      title = page["properties"]["Name"]["title"][0]["plain_text"].strip() if page["properties"]["Name"]["title"] else ""
-                      date_str = page["properties"]["Date"]["date"]["start"].split("T")[0] if page["properties"]["Date"]["date"] else ""
-
-                      # 修改点：Header Image 字段处理，改为单选字段
-                      header_img = page["properties"].get("Header-img", {}).get("select", {}).get("name", "") if page["properties"].get("Header-img", {}).get("select") else ""
+                      # 获取notion页面的最后修改时间
+                      last_edited_time = datetime.fromisoformat(page["last_edited_time"])
                       
-                      subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip() if page["properties"].get("Subtitle", {}).get("rich_text") else ""
-                      tags = [tag["name"] for tag in page["properties"].get("Tags", {}).get("multi_select", [])]
+                      # 如果上次同步时间为空，或者notion页面的最后修改时间晚于上次同步时间，则需要更新
+                      if last_sync is None or last_edited_time > last_sync:
+                          # 提取基础字段
+                          title = page["properties"]["Name"]["title"][0]["plain_text"].strip() if page["properties"]["Name"]["title"] else ""
+                          date_str = page["properties"]["Date"]["date"]["start"].split("T")[0] if page["properties"]["Date"]["date"] else ""
+                          header_img = page["properties"].get("Header-img", {}).get("select", {}).get("name", "") if page["properties"].get("Header-img", {}).get("select") else ""
+                          subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip() if page["properties"].get("Subtitle", {}).get("rich_text") else ""
+                          tags = [tag["name"] for tag in page["properties"].get("Tags", {}).get("multi_select", [])]
 
-                      content = get_page_content(page["id"])
-                      post = frontmatter.Post(content)
-                      post["title"] = title
-                      post["subtitle"] = subtitle
-                      post["date"] = date_str
-                      post["layout"] = "post"
-                      post["header-img"] = header_img  # 确保这里字段名与配置一致
-                      post["catalog"] = True  # 手动设置 catalog 为 true
-                      post["tags"] = tags
-                      post["notion_id"] = page_id  # 添加 Notion ID 字段
+                          content = get_page_content(page["id"])
+                          post = frontmatter.Post(content)
+                          post["title"] = title
+                          post["subtitle"] = subtitle
+                          post["date"] = date_str
+                          post["layout"] = "post"
+                          post["header-img"] = header_img
+                          post["catalog"] = True
+                          post["tags"] = tags
+                          post["notion_id"] = page_id
 
-                      # 根据 Notion ID 检查是否已经存在对应的本地文件
-                      if page_id in local_posts:
-                          # 如果存在，更新现有文件
-                          filename = local_posts[page_id]
-                          with open(filename, "w", encoding="utf-8") as f:
-                              f.write(frontmatter.dumps(post))
-                          logger.info(f"更新文章: {filename}")
+                          # 根据 Notion ID 检查是否已经存在对应的本地文件
+                          if page_id in local_posts:
+                              filename = local_posts[page_id]
+                              with open(filename, "w", encoding="utf-8") as f:
+                                  f.write(frontmatter.dumps(post))
+                              logger.info(f"更新文章: {filename}")
+                          else:
+                              filename = f"_posts/{date_str}-{title.replace(' ', '-')}.md"
+                              with open(filename, "w", encoding="utf-8") as f:
+                                  f.write(frontmatter.dumps(post))
+                              logger.info(f"创建新文章: {filename}")
                       else:
-                          # 如果不存在，创建新文件
-                          filename = f"_posts/{date_str}-{title.replace(' ', '-')}.md"
-                          with open(filename, "w", encoding="utf-8") as f:
-                              f.write(frontmatter.dumps(post))
-                          logger.info(f"创建新文章: {filename}")
-
+                          logger.info(f"文章未修改，跳过更新: {page_id}")
                   except Exception as e:
                       logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
 
               # 删除本地未被处理的文章（即Notion中已删除的文章）
               for notion_id, post_file in local_posts.items():
-                  if notion_id not in notion_ids_in_notion:
+                  if notion_id not in [page["id"] for page in pages]:
                       try:
                           os.remove(post_file)
                           logger.info(f"删除本地文章: {post_file}")
