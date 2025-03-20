@@ -1,4 +1,4 @@
-name: v5
+name: Notion to Jekyll Sync v3 with Image Compression
 on:
   schedule:
     - cron: "0 12 * * *"  # 每天 UTC 时间 12 点自动同步
@@ -175,20 +175,10 @@ jobs:
               last_sync = get_last_sync_time()
 
               try:
-                  # 查询自上次同步以来新增或修改的文章
-                  filter_condition = {
-                      "and": [
-                          {"property": "Status", "select": {"equals": "Published"}},
-                          {"or": [
-                              {"property": "Last Edited Time", "date": {"on_or_after": last_sync.isoformat()}},
-                              {"property": "Created Time", "date": {"on_or_after": last_sync.isoformat()}}
-                          ]}
-                      ]
-                  } if last_sync else {"property": "Status", "select": {"equals": "Published"}}
-
+                  # 查询所有已发布文章
                   pages = notion.databases.query(
                       database_id,
-                      filter=filter_condition
+                      filter={"property": "Status", "select": {"equals": "Published"}}
                   ).get("results", [])
               except Exception as e:
                   logger.error(f"数据库查询失败: {str(e)}")
@@ -263,16 +253,10 @@ jobs:
 
           python notion_to_jekyll.py
 
-      - name: Configure Git
+      - name: Pull remote changes
         run: |
           git config --global user.email "your-email@example.com"
           git config --global user.name "Your Name"
-          git config pull.rebase true
-
-      - name: Pull remote changes
-        run: |
-          git add .last_sync.txt
-          git commit -m "Update last sync time"
           git pull origin master
 
       - name: Commit changes
