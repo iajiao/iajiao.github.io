@@ -254,6 +254,37 @@ jobs:
                           # 根据 Notion ID 检查是否已经存在对应的本地文件
                           if page_id in local_posts:
                               filename = local_posts[page_id]
+                              # 读取旧的文章，获取旧的图片哈希值
+                              with open(filename, 'r', encoding='utf-8') as f:
+                                  old_post = frontmatter.load(f)
+                                  old_image_hashes = old_post.get("image_hashes", [])
+                              # 删除旧的但不在新的文章中的图片
+                              for old_image_hash in old_image_hashes:
+                                  if old_image_hash not in image_hashes:
+                                      image_path = f"img/in-post/{old_image_hash}"
+                                      if os.path.exists(image_path):
+                                          os.remove(image_path)
+                                          logger.info(f"删除旧图片: {image_path}")
+                                          # 同步删除 GitHub 仓库中的图片
+                                          try:
+                                              github_token = os.environ["PERSONAL_TOKEN"]
+                                              repo = os.environ["GITHUB_REPOSITORY"]
+                                              branch = "master"
+                                              headers = {
+                                                  "Authorization": f"token {github_token}",
+                                                  "Accept": "application/vnd.github.v3+json"
+                                              }
+                                              url = f"https://api.github.com/repos/{repo}/contents/img/in-post/{old_image_hash}"
+                                              data = {
+                                                  "message": f"Remove image {old_image_hash}",
+                                                  "sha": get_file_sha(old_image_hash),
+                                                  "branch": branch
+                                              }
+                                              response = requests.delete(url, headers=headers, json=data)
+                                              response.raise_for_status()
+                                          except Exception as e:
+                                              logger.error(f"删除旧图片失败: {str(e)} (Image: {old_image_hash})")
+                              # 更新文章
                               with open(filename, "w", encoding="utf-8") as f:
                                   f.write(frontmatter.dumps(post))
                               logger.info(f"更新文章: {filename}")
