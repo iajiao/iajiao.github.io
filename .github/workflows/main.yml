@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync v1
+name: Notion to Jekyll Sync v3 with Image Compression
 
 on:
   schedule:
@@ -167,4 +167,207 @@ jobs:
                       response = requests.put(url, headers=headers, json=data)
                       response.raise_for_status()
                   except Exception as e:
-                      logger.error(f"上传图片到 ‌‍
+                      logger.error(f"上传图片到 GitHub 失败: {str(e)}")
+                      return f"![]({original_url})\n"
+                  
+                  # 使用 Cloudflare 加速后的链接
+                  cdn_url = f"https://ajiao.eu.org/img/in-post/{file_name}"
+                  return f"![]({cdn_url})\n"
+              # 代码块处理
+              elif type_ == "code":
+                  code = "\n".join([t["plain_text"] for t in content["rich_text"]])
+                  return f"```{content['language']}\n{code}\n```\n"
+              # 引用块处理
+              elif type_ == "quote":
+                  return f"> {text}\n"
+              return ""
+
+          def main():
+              notion = Client(auth=os.environ["NOTION_TOKEN"])
+              database_id = os.environ["NOTION_DATABASE_ID"]
+              last_sync = get_last_sync_time()
+
+              try:
+                  # 查询所有已发布文章
+                  pages = notion.databases.query(
+                      database_id,
+                      filter={"property": "Status", "select": {"equals": "Published"}}
+                  ).get("results", [])
+              except Exception as e:
+                  logger.error(f"数据库查询失败: {str(e)}")
+                  return
+
+              local_posts = {}
+              notion_ids_in_notion = set()
+              # 读取本地_posts目录中的所有文章
+              for post_file in glob.glob("_posts/*.md"):
+                  with open(post_file, 'r', encoding='utf-8') as f:
+                      post = frontmatter.load(f)
+                      if "notion_id" in post:
+                          local_posts[post["notion_id"]] = post_file
+
+              # 用于记录所有被引用的图片
+              used_images = set()
+
+              for page in pages:
+                  try:
+                      page_id = page["id"]
+                      notion_ids_in_notion.add(page_id)
+
+                      # 获取notion页面的最后修改时间
+                      last_edited_time_str = page["last_edited_time"]
+                      # 使用 dateutil 解析时间，并移除时区信息
+                      last_edited_time = parser.isoparse(last_edited_time_str).replace(tzinfo=None)
+                      
+                      # 如果上次同步时间为空，或者notion页面的最后修改时间晚于上次同步时间，则需要更新
+                      if last_sync is None or last_edited_time > last_sync:
+                          # 提取基础字段
+                          title = page["properties"]["Name"]["title"][0]["plain_text"].strip() if page["properties"]["Name"]["title"] else ""
+                          date_str = page["properties"]["Date"]["date"]["start"].split("T")[0] if page["properties"]["Date"]["date"] else ""
+                          header_img = page["properties"].get("Header-img", {}).get("select", {}).get("name", "") if page["properties"].get("Header-img", {}).get("select") else ""
+                          subtitle = page["properties"].get("Subtitle", {}).get("rich_text", [{}])[0].get("plain_text", "").strip() if page["properties"].get("Subtitle", {}).get("rich_text") else ""
+                          tags = [tag["name"] for tag in page["properties"].get("Tags", {}).get("multi_select", [])]
+
+                          content = get_page_content(page["id"])
+                          post = frontmatter.Post(content)
+                          post["title"] = title
+                          post["subtitle"] = subtitle
+                          post["date"] = date_str
+                          post["layout"] = "post"
+                          post["header-img"] = header_img
+                          post["catalog"] = True
+                          post["tags"] = tags
+                          post["notion_id"] = page_id
+
+                          # 提取文章中使用的图片哈希值
+                          image_hashes = []
+                          for block in content.split('\n'):
+                              if '![](' in block:
+                                  url = block.split('![](')[1].split(')')[0]
+                                  if url.startswith('https://ajiao.eu.org/img/in-post/'):
+                                      image_hash = url.split('/')[-1]
+                                      image_hashes.append(image_hash)
+                                      used_images.add(image_hash)
+
+                          post["image_hashes"] = image_hashes  # 记录文章使用的图片哈希值
+
+                          # 根据 Notion ID 检查是否已经存在对应的本地文件
+                          if page_id in local_posts:
+                              filename = local_posts[page_id]
+                              with open(filename, "w", encoding="utf-8") as f:
+                                  f.write(frontmatter.dumps(post))
+                              logger.info(f"更新文章: {filename}")
+                          else:
+                              filename = f"_posts/{date_str}-{title.replace(' ', '-')}.md"
+                              with open(filename, "w", encoding="utf-8") as f:
+                                  f.write(frontmatter.dumps(post))
+                              logger.info(f"创建新文章: {filename}")
+                      else:
+                          logger.info(f"文章未修改，跳过更新: {page_id}")
+                  except Exception as e:
+                      logger.error(f"处理失败: {str(e)} (Page ID: {page['id']})")
+
+              # 删除本地未被处理的文章（即Notion中已删除的文章）
+              for notion_id, post_file in local_posts.items():
+                  if notion_id not in [page["id"] for page in pages]:
+                      try:
+                          # 读取文章的 Front Matter，获取图片哈希值并删除对应的图片
+                          with open(post_file, 'r', encoding='utf-8') as f:
+                              post = frontmatter.load(f)
+                              image_hashes = post.get("image_hashes", [])
+                              for image_hash in image_hashes:
+                                  image_path = f"img/in-post/{image_hash}"
+                                  if os.path.exists(image_path):
+                                      os.remove(image_path)
+                                      logger.info(f"删除图片: {image_path}")
+                                      # 同步删除 GitHub 仓库中的图片
+                                      try:
+                                          github_token = os.environ["PERSONAL_TOKEN"]
+                                          repo = os.environ["GITHUB_REPOSITORY"]
+                                          branch = "master"
+                                          headers = {
+                                              "Authorization": f"token {github_token}",
+                                              "Accept": "application/vnd.github.v3+json"
+                                          }
+                                          url = f"https://api.github.com/repos/{repo}/contents/img/in-post/{image_hash}"
+                                          data = {
+                                              "message": f"Remove image {image_hash}",
+                                              "sha": get_file_sha(image_hash),
+                                              "branch": branch
+                                          }
+                                          response = requests.delete(url, headers=headers, json=data)
+                                          response.raise_for_status()
+                                      except Exception as e:
+                                          logger.error(f"删除图片失败: {str(e)} (Image: {image_hash})")
+
+                          os.remove(post_file)
+                          logger.info(f"删除本地文章: {post_file}")
+                      except Exception as e:
+                          logger.error(f"删除文章失败: {str(e)} (File: {post_file})")
+
+              # 清理未被引用的图片
+              for image_file in glob.glob("img/in-post/*.jpg"):
+                  image_hash = image_file.split('/')[-1]
+                  if image_hash not in used_images:
+                      try:
+                          os.remove(image_file)
+                          logger.info(f"清理未被引用的图片: {image_file}")
+                          # 同步删除 GitHub 仓库中的图片
+                          try:
+                              github_token = os.environ["PERSONAL_TOKEN"]
+                              repo = os.environ["GITHUB_REPOSITORY"]
+                              branch = "master"
+                              headers = {
+                                  "Authorization": f"token {github_token}",
+                                  "Accept": "application/vnd.github.v3+json"
+                              }
+                              url = f"https://api.github.com/repos/{repo}/contents/img/in-post/{image_hash}"
+                              data = {
+                                  "message": f"Remove unused image {image_hash}",
+                                  "sha": get_file_sha(image_hash),
+                                  "branch": branch
+                              }
+                              response = requests.delete(url, headers=headers, json=data)
+                              response.raise_for_status()
+                          except Exception as e:
+                              logger.error(f"删除未被引用的图片失败: {str(e)} (Image: {image_hash})")
+                      except Exception as e:
+                          logger.error(f"清理图片失败: {str(e)} (Image: {image_file})")
+
+              save_last_sync_time()
+
+          def get_file_sha(file_name):
+              """获取文件的 SHA 值"""
+              try:
+                  github_token = os.environ["PERSONAL_TOKEN"]
+                  repo = os.environ["GITHUB_REPOSITORY"]
+                  branch = "master"
+                  headers = {
+                      "Authorization": f"token {github_token}",
+                      "Accept": "application/vnd.github.v3+json"
+                  }
+                  url = f"https://api.github.com/repos/{repo}/contents/img/in-post/{file_name}"
+                  response = requests.get(url, headers=headers)
+                  response.raise_for_status()
+                  return response.json().get("sha")
+              except Exception as e:
+                  logger.error(f"获取文件 SHA 值失败: {str(e)}")
+                  return None
+
+          if __name__ == "__main__":
+              main()
+          EOF
+
+          python notion_to_jekyll.py
+
+      - name: Pull remote changes
+        run: |
+          git config --global user.email "your-email@example.com"
+          git config --global user.name "Your Name"
+          git pull origin master
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Auto-sync from Notion"
+          file_pattern: "_posts/* .last_sync.txt img/in-post/*"
