@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync v3
+name: Notion to Jekyll Sync v2
 
 on:
   schedule:
