@@ -1,4 +1,4 @@
-name: Notion to Jekyll Sync v3 with Image Compression
+name: Notion to Jekyll Sync v1
 
 on:
   schedule:
