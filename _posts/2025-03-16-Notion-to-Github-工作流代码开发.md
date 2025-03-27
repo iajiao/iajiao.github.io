@@ -8,13 +8,10 @@ notion_id: 1b87d276-8542-8017-a8c5-cb3dbfa9be6d
 subtitle: 让 notion 作为 jekyll 后台
 tags:
 - 网络
-title: Notion to Github 工作流代码开发
+title: Notion to Github 工作流代码
 ---
 
-本站通过Jekyll 技术搭建在Github。GitHub非常稳定，但没后台管理，更新起来非常麻烦。之前我曾使用Obsidian 作为 Github 后台。虽然Obsidian堪称神器，但仅限于电脑端。在安卓手机上，不仅难以操作，而且启动速度很慢。
-
-
-最近，我发现Notion 在安卓端用起来特别顺手，同步不用操心，而且移动端 App 尚可。 突发奇想：能否用Notion作后台，实现与Github的互动呢？答案是肯定的！
+本站通过Jekyll 技术搭建在Github。GitHub非常稳定，但没后台管理，更新起来非常麻烦。之前我曾使用Obsidian 作为 Github 后台。虽然Obsidian堪称神器，但仅限于电脑端。在安卓手机上，不仅难以操作，而且启动速度很慢。最近，我发现Notion 在安卓端用起来特别顺手，同步不用操心，而且移动端 App 尚可。 突发奇想：能否用Notion作后台，实现与Github的互动呢？答案是肯定的！
 
 
 # 更新日志
