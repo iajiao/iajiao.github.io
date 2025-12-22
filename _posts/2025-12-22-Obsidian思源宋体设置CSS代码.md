@@ -4,11 +4,11 @@ date: '2025-12-22'
 header-img: img/post-bg-4.jpg
 image_hashes: []
 layout: post
-notion_id: 2d17d276-8542-8169-94de-c483c4787909
-subtitle: Obsidian拥抱思源宋体
+notion_id: 2d17d276-8542-8175-9450-cdf0db388b99
+subtitle: 大爱思源宋体
 tags:
 - 网络
-title: Obsidian字体页宽CSS代码
+title: Obsidian思源宋体设置CSS代码
 ---
 
 思源宋体是我近两年比较钟爱的字体，个人网站和Obsidian都是思源宋体。
@@ -23,10 +23,15 @@ title: Obsidian字体页宽CSS代码
 ## 一、Obsidian PC版使用思源宋体CSS代码
 
 
-> 
+@import url('https://www.unpkg.com/font-online/fonts/SourceHanSans/SourceHanSans-Normal.otf');
+
+
+.cm-sizer{ /* Screen version / font-family:'Georgia', 'Source Han Serif SC','Noto Serif SC', serif; font-style:Normal; font-size:21px; line-height:35px; font-weight:200; letter-spacing: -1px; / 设置字母间距为2像素 */ }
 
 
 ## 二、Obsidian PC版设置页面宽度CSS代码
 
 
->
+body {
+--file-line-width: 660px;
+}
