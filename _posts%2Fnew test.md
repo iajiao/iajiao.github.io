@@ -1,4 +1,6 @@
 ---
 share: "true"
 ---
-换了一台电脑测试。
+new test。
+
+This is the third computer I've replaced, and without exception, all of them have had this problem.
