@@ -1,7 +1,9 @@
-Hey, I'm Ajiao, a science and technology worker, a football enthusiast, and a young man who doesn't move at an angle.
+Hey, I’m Ajiao!
 
-My life footprints are all over Shaanxi, Xinjiang, Qingdao, Chengdu, Lanzhou, Shanghai, Suzhou, Hangzhou and Hefei. In some places, I stayed for four or five years because of studying or working; In some places, for work or play, the stay time can only be counted in days.
+A veteran lover of football, a dabbler in history, and a man of tech—by trade, at least. I used to wear many hats; now, I’m just trying to keep this one on.
 
-I like history and have read a lot of articles and books about the Three Kingdoms, the Northern and Southern Dynasties, the history of the Ming Dynasty, and the history of Japan's Warring States period. I like football, I used to be a fanatical fan of Shaanxi National Strength, and I am still a fan of Serie A Rome. Love life and love all good things.
+I was born in the southern folds of the Qinling Mountains, in a land so blessed it’s said to nurture genius—the hills and rivers of Shangluo. I spent four transformative years wandering under the skies of northern Xinjiang, at the foot of the Tianshan range.
 
-Here, I would like to share my work, life and study, as well as the bits and pieces that are worth cherishing.
+For a time, I made a living with a football at my feet and a pen in my hand. Six years, more or less, writing for platforms like NetEase, Tencent, LeSports, and Baike. But the digital tides shift fast, and so do fortunes. In 2014, I washed up in Weinan, ready to turn the page and start something new.
+
+Truth be told, I’ve always had a taste for the finer things: a cozy study, good company, great food, fast cars—anything that makes life a little more beautiful. This space? It’s where I’ll be sharing bits of that life—work, play, learning, and the small moments in between.
