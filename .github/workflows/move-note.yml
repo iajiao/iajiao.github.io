@@ -1,0 +1,40 @@
+name: Move Notes to _posts
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - '**/*.md'
+
+jobs:
+  organize-notes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Move markdown files to _posts
+        run: |
+          mkdir -p _posts
+          find . -maxdepth 2 -type f -name "*.md" \
+            ! -path "./_posts/*" \
+            ! -path "./.git/*" \
+            ! -path "./.github/*" \
+            -exec mv {} ./_posts/ \;
+
+      - name: Clean up empty directories
+        run: |
+          find . -type d -empty -delete 2>/dev/null || true
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: move notes to _posts"
+          git push
