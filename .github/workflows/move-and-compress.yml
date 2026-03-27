@@ -86,10 +86,8 @@ jobs:
           cd _posts
           for file in *.md; do
             if [ -f "$file" ]; then
-              # 修复后的 sed 命令 - 处理 ![](filename.png) 格式
-              sed -i 's|!\[\([^]]*\)]([^)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\))|![\1](../img/in-post/\2)|g' "$file"
-              # 处理 ![](./filename.png) 格式
-              sed -i 's|!\[\([^]]*\)](\./[^)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\))|![\1](../img/in-post/\2)|g' "$file"
+              # 处理 Obsidian Wiki 链接格式：![[filename.jpg]] 或 ![[filename.jpg|别名]]
+              sed -i 's|!\[\[\([^]|]*\)\.\(png\|jpg\|jpeg\|gif\|svg\|webp\)[^]]*\]\]|![](../img/in-post/\1.\2)|g' "$file"
             fi
           done
           cd ..
