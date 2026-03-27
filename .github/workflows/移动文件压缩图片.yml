@@ -32,9 +32,9 @@ jobs:
             ! -path "./.github/*" \
             -exec mv {} ./_posts/ \;
 
-      - name: Move images to img/in-post (temporary location)
+      - name: Move images to temporary directory
         run: |
-          mkdir -p img/in-post
+          mkdir -p temp_images
           find . -maxdepth 2 -type f \( \
             -name "*.png" -o \
             -name "*.jpg" -o \
@@ -44,37 +44,38 @@ jobs:
             -name "*.webp" \) \
             ! -path "./_posts/*" \
             ! -path "./img/*" \
+            ! -path "./temp_images/*" \
             ! -path "./.git/*" \
             ! -path "./.github/*" \
             -exec mv {} ./temp_images/ \;
 
-      - name: Compress images with squoosh
-        uses: szenius/squoosh-action@v1
-        with:
-          # 输入目录（临时存放的图片）
-          inputDir: './temp_images'
-          # 输出目录（压缩后的图片）
-          outputDir: './img/in-post'
-          # 压缩配置
-          options: |
-            {
-              "jpg": {
-                "quality": 80
-              },
-              "jpeg": {
-                "quality": 80
-              },
-              "png": {
-                "quality": 80
-              },
-              "webp": {
-                "quality": 80
-              }
-            }
-      
-      - name: Clean up temporary directory
+      - name: Install ImageMagick
+        run: sudo apt-get update && sudo apt-get install -y imagemagick
+
+      - name: Compress images with ImageMagick
         run: |
-          rm -rf ./temp_images
+          mkdir -p img/in-post
+          for img in temp_images/*; do
+            if [ -f "$img" ]; then
+              filename=$(basename "$img")
+              # 根据扩展名选择压缩参数
+              case "$img" in
+                *.jpg|*.jpeg)
+                  convert "$img" -quality 80% "img/in-post/$filename"
+                  ;;
+                *.png)
+                  convert "$img" -quality 80% "img/in-post/$filename"
+                  ;;
+                *.webp)
+                  convert "$img" -quality 80% "img/in-post/$filename"
+                  ;;
+                *)
+                  mv "$img" "img/in-post/$filename"
+                  ;;
+              esac
+            fi
+          done
+          rm -rf temp_images
 
       - name: Clean up empty directories
         run: |
@@ -85,7 +86,106 @@ jobs:
           cd _posts
           for file in *.md; do
             if [ -f "$file" ]; then
-              # 替换图片链接为相对路径指向 img/in-post
+              sed -i 's|![](\([^/)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\)\)|![](../img/in-post/\1|g' "$file"
+              sed -i 's|![](\./\([^)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\)\)|![](../img/in-post/\1|g' "$file"
+            fi
+          done
+          cd ..
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: organize, compress and move notes & images"
+          git pushname: Move, Compress and Organize Notes and Images
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**/*.md'
+      - '**/*.png'
+      - '**/*.jpg'
+      - '**/*.jpeg'
+      - '**/*.gif'
+      - '**/*.svg'
+      - '**/*.webp'
+
+jobs:
+  organize-files:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Move markdown files to _posts
+        run: |
+          mkdir -p _posts
+          find . -maxdepth 2 -type f -name "*.md" \
+            ! -path "./_posts/*" \
+            ! -path "./.git/*" \
+            ! -path "./.github/*" \
+            -exec mv {} ./_posts/ \;
+
+      - name: Move images to temporary directory
+        run: |
+          mkdir -p temp_images
+          find . -maxdepth 2 -type f \( \
+            -name "*.png" -o \
+            -name "*.jpg" -o \
+            -name "*.jpeg" -o \
+            -name "*.gif" -o \
+            -name "*.svg" -o \
+            -name "*.webp" \) \
+            ! -path "./_posts/*" \
+            ! -path "./img/*" \
+            ! -path "./temp_images/*" \
+            ! -path "./.git/*" \
+            ! -path "./.github/*" \
+            -exec mv {} ./temp_images/ \;
+
+      - name: Install ImageMagick
+        run: sudo apt-get update && sudo apt-get install -y imagemagick
+
+      - name: Compress images with ImageMagick
+        run: |
+          mkdir -p img/in-post
+          for img in temp_images/*; do
+            if [ -f "$img" ]; then
+              filename=$(basename "$img")
+              # 根据扩展名选择压缩参数
+              case "$img" in
+                *.jpg|*.jpeg)
+                  convert "$img" -quality 80% "img/in-post/$filename"
+                  ;;
+                *.png)
+                  convert "$img" -quality 80% "img/in-post/$filename"
+                  ;;
+                *.webp)
+                  convert "$img" -quality 80% "img/in-post/$filename"
+                  ;;
+                *)
+                  mv "$img" "img/in-post/$filename"
+                  ;;
+              esac
+            fi
+          done
+          rm -rf temp_images
+
+      - name: Clean up empty directories
+        run: |
+          find . -type d -empty -delete 2>/dev/null || true
+
+      - name: Update image links in markdown files
+        run: |
+          cd _posts
+          for file in *.md; do
+            if [ -f "$file" ]; then
               sed -i 's|![](\([^/)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\)\)|![](../img/in-post/\1|g' "$file"
               sed -i 's|![](\./\([^)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\)\)|![](../img/in-post/\1|g' "$file"
             fi
