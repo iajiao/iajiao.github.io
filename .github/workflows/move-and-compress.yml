@@ -86,10 +86,11 @@ jobs:
           cd _posts
           for file in *.md; do
             if [ -f "$file" ]; then
-              # 处理 Obsidian Wiki 链接格式：![[filename.jpg]] 或 ![[filename.jpg|别名]]
+              # 处理 ![[filename.jpg]] 或 ![[filename.jpg|别名]] 格式
               sed -i 's|!\[\[\([^]|]*\)\.\(png\|jpg\|jpeg\|gif\|svg\|webp\)[^]]*\]\]|![](../img/in-post/\1.\2)|g' "$file"
-              # 处理 Markdown 格式：![](filename.jpg) 或 ![](./filename.jpg)
+              # 处理 ![alt](filename.jpg) 或 ![alt](./filename.jpg) 格式
               sed -i 's|!\[\([^]]*\)]([^)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\))|![\1](../img/in-post/\2)|g' "$file"
+              # 处理 ![alt](./(路径)/filename.jpg) 格式
               sed -i 's|!\[\([^]]*\)](\./[^)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\))|![\1](../img/in-post/\2)|g' "$file"
             fi
           done
