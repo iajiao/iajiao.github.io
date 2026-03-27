@@ -1,6 +1,7 @@
 name: Move, Compress and Organize Notes and Images
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -85,8 +86,10 @@ jobs:
           cd _posts
           for file in *.md; do
             if [ -f "$file" ]; then
-              sed -i 's|![](\([^/)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\)\)|![](../img/in-post/\1|g' "$file"
-              sed -i 's|![](\./\([^)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\)\)|![](../img/in-post/\1|g' "$file"
+              # 修复后的 sed 命令 - 处理 ![](filename.png) 格式
+              sed -i 's|!\[\([^]]*\)]([^)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\))|![\1](../img/in-post/\2)|g' "$file"
+              # 处理 ![](./filename.png) 格式
+              sed -i 's|!\[\([^]]*\)](\./[^)]*\.\(png\|jpg\|jpeg\|gif\|svg\|webp\))|![\1](../img/in-post/\2)|g' "$file"
             fi
           done
           cd ..
