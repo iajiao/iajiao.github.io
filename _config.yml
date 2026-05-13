@@ -93,3 +93,8 @@ friends:
   [
     { title: "Hux", href: "https://huangxuan.me/" },
   ]
+
+# Cloudflare R2 Gallery Settings
+r2_gallery:
+  public_url: "https://pub-b27c51480b7f4231b30d8e230e04c2ca.r2.dev"
+  prefix: ""
