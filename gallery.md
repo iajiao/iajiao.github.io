@@ -1,7 +1,7 @@
 ---
 layout: page
-title: "记录美好"
-description: "「Ajiao喜欢的，热爱的，欣赏的……」"
+title: "Pic"
+description: "「喜欢的，热爱的，欣赏的……」"
 permalink: /gallery/
 ---
 
