@@ -6,490 +6,71 @@ permalink: /gallery/
 ---
 
 ---
-layout: gallery
-title: 光影集
-permalink: /gallery/
+layout: default
 ---
 
-<style>
-  /* ========== 变量 ========== */
-  :root {
-    --primary: #007aff;
-    --primary-light: #e3f2fd;
-    --text-dark: #1a1a1a;
-    --text-light: #888;
-    --bg-light: #fafafa;
-    --border: #e5e5e5;
-  }
+<!-- Page Header -->
+{% include intro-header.html type='page' %}
 
-  /* ========== 右侧垂直时间轴（点击跳转版） ========== */
-  .timeline-sidebar {
-    position: fixed;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 200;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    border-radius: 32px;
-    padding: 12px 6px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    max-height: 70vh;
-    overflow-y: auto;
-    scrollbar-width: thin;
-  }
-
-  .timeline-sidebar::-webkit-scrollbar {
-    width: 3px;
-  }
-
-  .timeline-sidebar::-webkit-scrollbar-track {
-    background: #e5e5e5;
-    border-radius: 10px;
-  }
-
-  .timeline-sidebar::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 10px;
-  }
-
-  .timeline-sidebar-item {
-    width: 52px;
-    text-align: center;
-    padding: 8px 0;
-    font-size: 12px;
-    font-weight: 500;
-    color: #666;
-    cursor: pointer;
-    border-radius: 30px;
-    transition: all 0.2s ease;
-    font-family: monospace;
-  }
-
-  .timeline-sidebar-item:hover {
-    background: rgba(0,122,255,0.1);
-    color: var(--primary);
-    transform: scale(1.05);
-  }
-
-  .timeline-sidebar-item.active {
-    background: var(--primary);
-    color: white;
-    box-shadow: 0 2px 8px rgba(0,122,255,0.3);
-  }
-
-  /* 顶部特殊按钮 */
-  .timeline-sidebar-item.top {
-    background: #f0f0f0;
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 600;
-  }
-
-  .timeline-sidebar-item.top:hover {
-    background: var(--primary);
-    color: white;
-  }
-
-  /* ========== 主内容区域 ========== */
-  .gallery-main-content {
-    max-width: calc(100% - 90px);
-    padding-right: 20px;
-  }
-
-  /* ========== 年份分组 ========== */
-  .year-group {
-    scroll-margin-top: 80px;
-  }
-
-  .year-header {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin: 40px 0 20px 0;
-    padding-left: 8px;
-    border-left: 4px solid var(--primary);
-  }
-
-  .year-number {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text-dark);
-  }
-
-  .year-count {
-    font-size: 13px;
-    color: var(--text-light);
-  }
-
-  /* ========== 月份分组 ========== */
-  .month-group {
-    scroll-margin-top: 80px;
-    margin-bottom: 32px;
-  }
-
-  .month-header {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: 16px;
-    padding-left: 12px;
-  }
-
-  .month-name {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-  }
-
-  .month-count {
-    font-size: 12px;
-    color: var(--text-light);
-  }
-
-  /* ========== 瀑布流 ========== */
-  .waterfall {
-    column-count: 4;
-    column-gap: 16px;
-  }
-
-  .waterfall-item {
-    break-inside: avoid;
-    margin-bottom: 16px;
-    cursor: pointer;
-    border-radius: 14px;
-    overflow: hidden;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    transition: all 0.25s ease;
-  }
-
-  .waterfall-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  }
-
-  .waterfall-item img {
-    width: 100%;
-    display: block;
-  }
-
-  /* ========== Lightbox ========== */
-  .lightbox {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.92);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-  }
-  .lightbox.active { display: flex; }
-  .lightbox img {
-    max-width: 90%;
-    max-height: 90%;
-    border-radius: 12px;
-  }
-  .lightbox-close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    font-size: 44px;
-    color: white;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-
-  /* ========== 回到顶部按钮 ========== */
-  .scroll-top {
-    position: fixed;
-    bottom: 24px;
-    left: 24px;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.25s;
-    box-shadow: 0 2px 12px rgba(0,122,255,0.3);
-    z-index: 99;
-    font-size: 20px;
-  }
-  .scroll-top.show {
-    opacity: 1;
-    visibility: visible;
-  }
-  .scroll-top:hover {
-    transform: translateY(-2px);
-  }
-
-  /* ========== 空状态 ========== */
-  .empty-state {
-    text-align: center;
-    padding: 80px 20px;
-    color: var(--text-light);
-  }
-
-  /* ========== 响应式 ========== */
-  @media (max-width: 1200px) { .waterfall { column-count: 3; } }
-  @media (max-width: 768px) { 
-    .waterfall { column-count: 2; }
-    .timeline-sidebar { right: 6px; padding: 8px 4px; }
-    .timeline-sidebar-item { width: 40px; font-size: 10px; padding: 6px 0; }
-    .gallery-main-content { max-width: calc(100% - 60px); }
-    .year-number { font-size: 22px; }
-    .month-name { font-size: 16px; }
-  }
-  @media (max-width: 480px) { .waterfall { column-count: 1; } }
-</style>
-
-<!-- 右侧垂直时间轴 -->
-<div class="timeline-sidebar" id="timelineSidebar"></div>
-
-<!-- 主内容 -->
-<div class="gallery-main-content" id="galleryContainer"></div>
-
-<!-- Lightbox -->
-<div id="lightbox" class="lightbox" onclick="closeLightbox()">
-  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-  <img id="lightboxImg" src="" alt="">
+<!-- Main Content - 相册专用，全宽无侧边栏 -->
+<div class="container">
+  <div class="row">
+    <!-- 全宽内容区域，不留侧边栏空间 -->
+    <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 col-sm-12 col-xs-12
+      postlist-container">
+      {{ content }}
+    </div>
+  </div>
 </div>
 
-<!-- 回到顶部 -->
-<div class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</div>
+<!-- 覆盖样式：确保相册容器足够宽 -->
+<style>
+  /* 针对相册页面，进一步放宽宽度限制 */
+  .page-gallery .postlist-container {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+  }
+  
+  /* 如果瀑布流需要更多空间，调整容器宽度 */
+  @media (min-width: 1200px) {
+    .page-gallery .col-lg-10 {
+      width: 83.33333333%;
+    }
+  }
+  
+  @media (min-width: 1600px) {
+    .page-gallery .col-lg-10 {
+      width: 90%;
+    }
+    .page-gallery .postlist-container {
+      max-width: 1600px;
+    }
+  }
+</style>
 
 <script>
-  // ========== 数据注入（Jekyll 自动生成）==========
-  const galleryData = [
-    {% if site.data.gallery.size > 0 %}
-      {% for photo in site.data.gallery %}
-      {
-        title: "{{ photo.title | escape }}",
-        image: "{{ photo.image }}",
-        key: "{{ photo.key }}",
-        date: "{{ photo.date }}"
-      }{% unless forloop.last %},{% endunless %}
-      {% endfor %}
-    {% endif %}
-  ];
-
-  // ========== 工具函数 ==========
-  function formatDate(dateStr) {
-    if (!dateStr || dateStr === '') return null;
-    const parts = dateStr.split('-');
-    if (parts.length < 2) return null;
-    return { year: parts[0], month: parts[1], full: `${parts[0]}-${parts[1]}` };
-  }
-
-  function getMonthName(monthNum) {
-    const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-    return months[parseInt(monthNum) - 1];
-  }
-
-  // ========== 按年月分组 ==========
-  function groupPhotos() {
-    const groups = {};
-    const unknown = [];
-
-    galleryData.forEach(photo => {
-      const dateInfo = formatDate(photo.date);
-      if (!dateInfo) {
-        unknown.push(photo);
-        return;
-      }
-      const key = `${dateInfo.year}-${dateInfo.month}`;
-      if (!groups[key]) {
-        groups[key] = { year: dateInfo.year, month: dateInfo.month, photos: [] };
-      }
-      groups[key].photos.push(photo);
-    });
-
-    const sortedKeys = Object.keys(groups).sort((a, b) => b.localeCompare(a));
-    return { groups, sortedKeys, unknown };
-  }
-
-  // ========== 渲染右侧时间轴 ==========
-  let timelineItems = [];
-
-  function renderTimelineSidebar(sortedKeys, hasUnknown) {
-    const container = document.getElementById('timelineSidebar');
-    let html = '<div class="timeline-sidebar-item top" data-key="top">⬆️<br><span style="font-size:10px;">顶部</span></div>';
-    
-    timelineItems = [];
-    sortedKeys.forEach(key => {
-      const [year, month] = key.split('-');
-      const label = `${year}.${month}`;
-      html += `<div class="timeline-sidebar-item" data-key="${key}">${label}</div>`;
-      timelineItems.push(key);
-    });
-    
-    if (hasUnknown) {
-      html += `<div class="timeline-sidebar-item" data-key="unknown">📅<br><span style="font-size:10px;">其他</span></div>`;
-      timelineItems.push('unknown');
-    }
-    
-    container.innerHTML = html;
-    
-    // 绑定点击事件
-    document.querySelectorAll('.timeline-sidebar-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const key = item.dataset.key;
-        if (key === 'top') {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          scrollToGroup(key);
-        }
-      });
-    });
-  }
-
-  // 滚动到指定分组
-  function scrollToGroup(key) {
-    const element = document.getElementById(`group-${key}`);
-    if (element) {
-      const offset = 80;
-      const top = element.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
-  }
-
-  // 更新右侧高亮（基于滚动位置）
-  function updateHighlight() {
-    const groups = document.querySelectorAll('[id^="group-"]');
-    let currentKey = null;
-    
-    groups.forEach(group => {
-      const rect = group.getBoundingClientRect();
-      if (rect.top <= 150 && rect.bottom >= 100) {
-        currentKey = group.id.replace('group-', '');
-      }
-    });
-    
-    document.querySelectorAll('.timeline-sidebar-item').forEach(item => {
-      const key = item.dataset.key;
-      if (key === currentKey) {
-        item.classList.add('active');
-        item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      } else {
-        item.classList.remove('active');
-      }
-    });
-  }
-
-  // ========== 渲染相册内容 ==========
-  function renderGallery() {
-    const container = document.getElementById('galleryContainer');
-    
-    if (!galleryData.length) {
-      container.innerHTML = '<div class="empty-state">📷<p>暂无照片，请在 R2 上传图片后运行 Workflow</p></div>';
-      return;
-    }
-    
-    const { groups, sortedKeys, unknown } = groupPhotos();
-    
-    // 渲染右侧时间轴
-    renderTimelineSidebar(sortedKeys, unknown.length > 0);
-    
-    let html = '';
-    let currentYear = '';
-    
-    sortedKeys.forEach(key => {
-      const group = groups[key];
-      const { year, month, photos } = group;
-      const monthName = getMonthName(month);
-      const groupId = `group-${key}`;
-      
-      if (currentYear !== year) {
-        if (currentYear !== '') html += `</div>`;
-        html += `<div class="year-group" id="${groupId}">`;
-        html += `<div class="year-header"><span class="year-number">${year}</span><span class="year-count">${photos.length}张</span></div>`;
-        currentYear = year;
-      } else {
-        html += `<div class="year-group" id="${groupId}">`;
-        html += `<div class="year-header" style="margin-top: 0;"><span class="year-number" style="font-size: 20px; color: #666;">${year}</span><span class="year-count">${photos.length}张</span></div>`;
-      }
-      
-      html += `<div class="month-group"><div class="month-header"><span class="month-name">📅 ${monthName}</span><span class="month-count">${photos.length}张</span></div>`;
-      html += `<div class="waterfall">`;
-      
-      photos.forEach(photo => {
-        html += `
-          <div class="waterfall-item" onclick="openLightbox('${photo.image}')">
-            <img src="${photo.image}" alt="${photo.title}" loading="lazy">
-          </div>
-        `;
-      });
-      html += `</div></div>`;
-    });
-    
-    html += `</div>`;
-    
-    if (unknown.length > 0) {
-      html += `<div class="year-group" id="group-unknown"><div class="year-header"><span class="year-number">📅 其他日期</span><span class="year-count">${unknown.length}张</span></div>`;
-      html += `<div class="waterfall">`;
-      unknown.forEach(photo => {
-        html += `
-          <div class="waterfall-item" onclick="openLightbox('${photo.image}')">
-            <img src="${photo.image}" loading="lazy">
-          </div>
-        `;
-      });
-      html += `</div></div>`;
-    }
-    
-    container.innerHTML = html;
-  }
-
-  // ========== Lightbox ==========
-  function openLightbox(url) {
-    const lb = document.getElementById('lightbox');
-    const img = document.getElementById('lightboxImg');
-    img.src = url;
-    lb.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-  
-  function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('active');
-    document.body.style.overflow = '';
-  }
-  
-  // ========== 回到顶部 ==========
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  
-  // ========== 监听滚动 ==========
-  window.addEventListener('scroll', () => {
-    const scrollTop = document.getElementById('scrollTop');
-    if (window.scrollY > 300) {
-      scrollTop.classList.add('show');
-    } else {
-      scrollTop.classList.remove('show');
-    }
-    updateHighlight();
-  });
-  
-  // ESC 关闭 Lightbox
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeLightbox();
-  });
-  
-  // 页面加载
-  document.addEventListener('DOMContentLoaded', renderGallery);
+  // 给 body 添加标识类，方便样式定位
+  document.body.classList.add('page-gallery');
 </script>
+
+{% if site.page-mathjax %}
+<!-- MathJax 支持（如果不需要可以删除） -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true,
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+{% endif %}
