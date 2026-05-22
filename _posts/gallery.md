@@ -19,10 +19,6 @@ permalink: /gallery/
   width: 100%;
   border-radius: 8px;
   display: block;
-  transition: transform 0.2s;
-}
-.waterfall-item img:hover {
-  transform: scale(1.02);
 }
 .lightbox {
   display: none;
@@ -62,7 +58,7 @@ permalink: /gallery/
 }
 </style>
 
-<div class="waterfall" id="gallery">
+<div class="waterfall">
   {% if site.data.gallery.size > 0 %}
     {% for photo in site.data.gallery %}
     <div class="waterfall-item" onclick="openLightbox('{{ photo.image }}')">
