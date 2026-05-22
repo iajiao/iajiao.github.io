@@ -1,0 +1,10 @@
+# 手动创建的相册数据
+# 请替换下面的 URL 为你实际的图片地址
+
+- title: "测试图片1"
+  image: "https://img.ajiao.eu.org/Pic/1000g00825aasglsfc00g4a1btgvd7pu.jpg"
+  key: "Pic/你的图片1文件名.jpg"
+
+- title: "测试图片2"
+  image: "https://img.ajiao.eu.org/Pic/1000g00825aasglsfc00g4a1btgvd7pu.jpg"
+  key: "Pic/你的图片2文件名.jpg"
