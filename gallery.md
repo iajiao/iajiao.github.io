@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "Pic"
+title: "Pics"
 description: "「喜欢的，热爱的，欣赏的……」"
 permalink: /gallery/
 ---
