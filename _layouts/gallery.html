@@ -1,0 +1,69 @@
+---
+layout: default
+---
+
+<!-- Page Header -->
+{% include intro-header.html type='page' %}
+
+<!-- Main Content - 相册专用，全宽无侧边栏 -->
+<div class="container">
+  <div class="row">
+    <!-- 全宽内容区域，不留侧边栏空间 -->
+    <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 col-sm-12 col-xs-12
+      postlist-container">
+      {{ content }}
+    </div>
+  </div>
+</div>
+
+<!-- 覆盖样式：确保相册容器足够宽 -->
+<style>
+  /* 针对相册页面，进一步放宽宽度限制 */
+  .page-gallery .postlist-container {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+  }
+  
+  /* 如果瀑布流需要更多空间，调整容器宽度 */
+  @media (min-width: 1200px) {
+    .page-gallery .col-lg-10 {
+      width: 83.33333333%;
+    }
+  }
+  
+  @media (min-width: 1600px) {
+    .page-gallery .col-lg-10 {
+      width: 90%;
+    }
+    .page-gallery .postlist-container {
+      max-width: 1600px;
+    }
+  }
+</style>
+
+<script>
+  // 给 body 添加标识类，方便样式定位
+  document.body.classList.add('page-gallery');
+</script>
+
+{% if site.page-mathjax %}
+<!-- MathJax 支持（如果不需要可以删除） -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true,
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+{% endif %}
