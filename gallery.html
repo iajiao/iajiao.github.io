@@ -5,6 +5,12 @@ description: "「喜欢的，热爱的，欣赏的……」"
 permalink: /gallery/
 ---
 
+---
+layout: gallery
+title: 光影集
+permalink: /gallery/
+---
+
 <style>
   /* ========== 变量 ========== */
   :root {
@@ -16,32 +22,42 @@ permalink: /gallery/
     --border: #e5e5e5;
   }
 
-  /* ========== 右侧垂直时间轴 ========== */
+  /* ========== 右侧垂直时间轴（点击跳转版） ========== */
   .timeline-sidebar {
     position: fixed;
-    right: 12px;
+    right: 16px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 200;
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(8px);
-    border-radius: 40px;
-    padding: 10px 6px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-radius: 32px;
+    padding: 12px 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
     gap: 6px;
     max-height: 70vh;
     overflow-y: auto;
-    scrollbar-width: none;
+    scrollbar-width: thin;
   }
-  
+
   .timeline-sidebar::-webkit-scrollbar {
-    display: none;
+    width: 3px;
   }
-  
+
+  .timeline-sidebar::-webkit-scrollbar-track {
+    background: #e5e5e5;
+    border-radius: 10px;
+  }
+
+  .timeline-sidebar::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+  }
+
   .timeline-sidebar-item {
-    width: 44px;
+    width: 52px;
     text-align: center;
     padding: 8px 0;
     font-size: 12px;
@@ -51,67 +67,70 @@ permalink: /gallery/
     border-radius: 30px;
     transition: all 0.2s ease;
     font-family: monospace;
-    letter-spacing: 0;
   }
-  
+
   .timeline-sidebar-item:hover {
     background: rgba(0,122,255,0.1);
     color: var(--primary);
     transform: scale(1.05);
   }
-  
+
   .timeline-sidebar-item.active {
     background: var(--primary);
     color: white;
     box-shadow: 0 2px 8px rgba(0,122,255,0.3);
   }
-  
-  /* 拖拽时的样式 */
-  .timeline-sidebar.dragging {
-    cursor: grabbing;
+
+  /* 顶部特殊按钮 */
+  .timeline-sidebar-item.top {
+    background: #f0f0f0;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
   }
-  
-  .timeline-sidebar.dragging .timeline-sidebar-item {
-    pointer-events: none;
+
+  .timeline-sidebar-item.top:hover {
+    background: var(--primary);
+    color: white;
   }
-  
-  /* ========== 主内容区域（右侧留出空间给时间轴） ========== */
+
+  /* ========== 主内容区域 ========== */
   .gallery-main-content {
-    max-width: calc(100% - 80px);
+    max-width: calc(100% - 90px);
     padding-right: 20px;
   }
-  
+
   /* ========== 年份分组 ========== */
   .year-group {
-    scroll-margin-top: 20px;
+    scroll-margin-top: 80px;
   }
-  
+
   .year-header {
     display: flex;
     align-items: baseline;
     gap: 12px;
-    margin: 32px 0 20px 0;
+    margin: 40px 0 20px 0;
     padding-left: 8px;
     border-left: 4px solid var(--primary);
   }
-  
+
   .year-number {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 700;
     color: var(--text-dark);
   }
-  
+
   .year-count {
     font-size: 13px;
     color: var(--text-light);
   }
-  
+
   /* ========== 月份分组 ========== */
   .month-group {
-    scroll-margin-top: 20px;
+    scroll-margin-top: 80px;
     margin-bottom: 32px;
   }
-  
+
   .month-header {
     display: flex;
     align-items: baseline;
@@ -119,24 +138,24 @@ permalink: /gallery/
     margin-bottom: 16px;
     padding-left: 12px;
   }
-  
+
   .month-name {
     font-size: 18px;
     font-weight: 600;
     color: #333;
   }
-  
+
   .month-count {
     font-size: 12px;
     color: var(--text-light);
   }
-  
+
   /* ========== 瀑布流 ========== */
   .waterfall {
     column-count: 4;
     column-gap: 16px;
   }
-  
+
   .waterfall-item {
     break-inside: avoid;
     margin-bottom: 16px;
@@ -147,31 +166,17 @@ permalink: /gallery/
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     transition: all 0.25s ease;
   }
-  
+
   .waterfall-item:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);
   }
-  
+
   .waterfall-item img {
     width: 100%;
     display: block;
   }
-  
-  .image-info {
-    padding: 8px 10px;
-    background: white;
-    border-top: 1px solid #f0f0f0;
-  }
-  
-  .image-date {
-    font-size: 11px;
-    color: var(--text-light);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  
+
   /* ========== Lightbox ========== */
   .lightbox {
     display: none;
@@ -202,8 +207,8 @@ permalink: /gallery/
     border: none;
     cursor: pointer;
   }
-  
-  /* ========== 回到顶部 ========== */
+
+  /* ========== 回到顶部按钮 ========== */
   .scroll-top {
     position: fixed;
     bottom: 24px;
@@ -222,6 +227,7 @@ permalink: /gallery/
     transition: all 0.25s;
     box-shadow: 0 2px 12px rgba(0,122,255,0.3);
     z-index: 99;
+    font-size: 20px;
   }
   .scroll-top.show {
     opacity: 1;
@@ -230,30 +236,29 @@ permalink: /gallery/
   .scroll-top:hover {
     transform: translateY(-2px);
   }
-  
+
   /* ========== 空状态 ========== */
   .empty-state {
     text-align: center;
     padding: 80px 20px;
     color: var(--text-light);
   }
-  
+
   /* ========== 响应式 ========== */
   @media (max-width: 1200px) { .waterfall { column-count: 3; } }
   @media (max-width: 768px) { 
     .waterfall { column-count: 2; }
-    .timeline-sidebar { right: 6px; padding: 6px 4px; }
-    .timeline-sidebar-item { width: 36px; font-size: 10px; padding: 6px 0; }
-    .gallery-main-content { max-width: calc(100% - 50px); }
+    .timeline-sidebar { right: 6px; padding: 8px 4px; }
+    .timeline-sidebar-item { width: 40px; font-size: 10px; padding: 6px 0; }
+    .gallery-main-content { max-width: calc(100% - 60px); }
     .year-number { font-size: 22px; }
+    .month-name { font-size: 16px; }
   }
   @media (max-width: 480px) { .waterfall { column-count: 1; } }
 </style>
 
 <!-- 右侧垂直时间轴 -->
-<div class="timeline-sidebar" id="timelineSidebar">
-  <div class="timeline-sidebar-item" data-key="top">⬆️</div>
-</div>
+<div class="timeline-sidebar" id="timelineSidebar"></div>
 
 <!-- 主内容 -->
 <div class="gallery-main-content" id="galleryContainer"></div>
@@ -268,7 +273,7 @@ permalink: /gallery/
 <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</div>
 
 <script>
-  // ========== 数据 ==========
+  // ========== 数据注入（Jekyll 自动生成）==========
   const galleryData = [
     {% if site.data.gallery.size > 0 %}
       {% for photo in site.data.gallery %}
@@ -282,10 +287,7 @@ permalink: /gallery/
     {% endif %}
   ];
 
-  // 分组数据存储
-  let timelineItems = [];
-  let groupsData = {};
-
+  // ========== 工具函数 ==========
   function formatDate(dateStr) {
     if (!dateStr || dateStr === '') return null;
     const parts = dateStr.split('-');
@@ -298,7 +300,7 @@ permalink: /gallery/
     return months[parseInt(monthNum) - 1];
   }
 
-  // 分组
+  // ========== 按年月分组 ==========
   function groupPhotos() {
     const groups = {};
     const unknown = [];
@@ -320,10 +322,12 @@ permalink: /gallery/
     return { groups, sortedKeys, unknown };
   }
 
-  // 渲染右侧时间轴
+  // ========== 渲染右侧时间轴 ==========
+  let timelineItems = [];
+
   function renderTimelineSidebar(sortedKeys, hasUnknown) {
     const container = document.getElementById('timelineSidebar');
-    let html = '<div class="timeline-sidebar-item" data-key="top">⬆️</div>';
+    let html = '<div class="timeline-sidebar-item top" data-key="top">⬆️<br><span style="font-size:10px;">顶部</span></div>';
     
     timelineItems = [];
     sortedKeys.forEach(key => {
@@ -334,7 +338,7 @@ permalink: /gallery/
     });
     
     if (hasUnknown) {
-      html += `<div class="timeline-sidebar-item" data-key="unknown">📅</div>`;
+      html += `<div class="timeline-sidebar-item" data-key="unknown">📅<br><span style="font-size:10px;">其他</span></div>`;
       timelineItems.push('unknown');
     }
     
@@ -364,7 +368,7 @@ permalink: /gallery/
     }
   }
 
-  // 更新右侧高亮
+  // 更新右侧高亮（基于滚动位置）
   function updateHighlight() {
     const groups = document.querySelectorAll('[id^="group-"]');
     let currentKey = null;
@@ -380,40 +384,10 @@ permalink: /gallery/
       const key = item.dataset.key;
       if (key === currentKey) {
         item.classList.add('active');
-        // 让当前激活项滚动到时间轴可视区域
         item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       } else {
         item.classList.remove('active');
       }
-    });
-  }
-
-  // ========== 鼠标拖拽滚动 ==========
-  let isDragging = false;
-  let startY = 0;
-  let startScrollY = 0;
-
-  function initDragScroll() {
-    const sidebar = document.getElementById('timelineSidebar');
-    
-    sidebar.addEventListener('mousedown', (e) => {
-      if (e.target.classList.contains('timeline-sidebar-item')) return;
-      isDragging = true;
-      startY = e.clientY;
-      startScrollY = window.scrollY;
-      sidebar.classList.add('dragging');
-      e.preventDefault();
-    });
-    
-    window.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      const delta = (e.clientY - startY) * 2;
-      window.scrollTo({ top: startScrollY - delta });
-    });
-    
-    window.addEventListener('mouseup', () => {
-      isDragging = false;
-      sidebar.classList.remove('dragging');
     });
   }
 
@@ -422,7 +396,7 @@ permalink: /gallery/
     const container = document.getElementById('galleryContainer');
     
     if (!galleryData.length) {
-      container.innerHTML = '<div class="empty-state">📷<p>暂无照片</p></div>';
+      container.innerHTML = '<div class="empty-state">📷<p>暂无照片，请在 R2 上传图片后运行 Workflow</p></div>';
       return;
     }
     
@@ -447,7 +421,7 @@ permalink: /gallery/
         currentYear = year;
       } else {
         html += `<div class="year-group" id="${groupId}">`;
-        html += `<div class="year-header" style="margin-top: 0;"><span class="year-number" style="font-size: 20px;">${year}</span><span class="year-count">${photos.length}张</span></div>`;
+        html += `<div class="year-header" style="margin-top: 0;"><span class="year-number" style="font-size: 20px; color: #666;">${year}</span><span class="year-count">${photos.length}张</span></div>`;
       }
       
       html += `<div class="month-group"><div class="month-header"><span class="month-name">📅 ${monthName}</span><span class="month-count">${photos.length}张</span></div>`;
@@ -457,7 +431,6 @@ permalink: /gallery/
         html += `
           <div class="waterfall-item" onclick="openLightbox('${photo.image}')">
             <img src="${photo.image}" alt="${photo.title}" loading="lazy">
-            <div class="image-info"><div class="image-date">📅 ${photo.date || ''}</div></div>
           </div>
         `;
       });
@@ -466,12 +439,15 @@ permalink: /gallery/
     
     html += `</div>`;
     
-    // 未知日期
     if (unknown.length > 0) {
-      html += `<div class="year-group" id="group-unknown"><div class="year-header"><span class="year-number">📅 其他</span><span class="year-count">${unknown.length}张</span></div>`;
+      html += `<div class="year-group" id="group-unknown"><div class="year-header"><span class="year-number">📅 其他日期</span><span class="year-count">${unknown.length}张</span></div>`;
       html += `<div class="waterfall">`;
       unknown.forEach(photo => {
-        html += `<div class="waterfall-item" onclick="openLightbox('${photo.image}')"><img src="${photo.image}" loading="lazy"><div class="image-info"><div class="image-date">日期未知</div></div></div>`;
+        html += `
+          <div class="waterfall-item" onclick="openLightbox('${photo.image}')">
+            <img src="${photo.image}" loading="lazy">
+          </div>
+        `;
       });
       html += `</div></div>`;
     }
@@ -479,7 +455,7 @@ permalink: /gallery/
     container.innerHTML = html;
   }
 
-  // Lightbox
+  // ========== Lightbox ==========
   function openLightbox(url) {
     const lb = document.getElementById('lightbox');
     const img = document.getElementById('lightboxImg');
@@ -487,27 +463,33 @@ permalink: /gallery/
     lb.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
+  
   function closeLightbox() {
     document.getElementById('lightbox').classList.remove('active');
     document.body.style.overflow = '';
   }
   
+  // ========== 回到顶部 ==========
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   
-  // 滚动事件
+  // ========== 监听滚动 ==========
   window.addEventListener('scroll', () => {
     const scrollTop = document.getElementById('scrollTop');
-    if (window.scrollY > 300) scrollTop.classList.add('show');
-    else scrollTop.classList.remove('show');
+    if (window.scrollY > 300) {
+      scrollTop.classList.add('show');
+    } else {
+      scrollTop.classList.remove('show');
+    }
     updateHighlight();
   });
   
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    renderGallery();
-    initDragScroll();
+  // ESC 关闭 Lightbox
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
   });
+  
+  // 页面加载
+  document.addEventListener('DOMContentLoaded', renderGallery);
 </script>
