@@ -1,6 +1,7 @@
 ---
 layout: page
-title: 光影集
+title: "记录美好"
+description: "「Ajiao喜欢的，热爱的，欣赏的……」"
 permalink: /gallery/
 ---
 
