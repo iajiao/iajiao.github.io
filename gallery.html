@@ -5,312 +5,89 @@ description: "「喜欢的，热爱的，欣赏的……」"
 permalink: /gallery/
 ---
 
-
 <style>
-  /* ========== 变量 ========== */
-  :root {
-    --primary: #007aff;
-    --text-dark: #1a1a1a;
-    --text-light: #888;
-    --border: #e5e5e5;
-  }
-
-  /* ========== 主内容 ========== */
-  .gallery-main-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px 24px;
-  }
-
-  /* ========== 年份分组 ========== */
-  .year-group {
-    scroll-margin-top: 20px;
-  }
-
-  .year-header {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin: 40px 0 20px 0;
-    padding-left: 8px;
-    border-left: 4px solid var(--primary);
-  }
-
-  .year-number {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text-dark);
-  }
-
-  .year-count {
-    font-size: 13px;
-    color: var(--text-light);
-  }
-
-  /* ========== 月份分组 ========== */
-  .month-group {
-    scroll-margin-top: 20px;
-    margin-bottom: 32px;
-  }
-
-  .month-header {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: 16px;
-    padding-left: 12px;
-  }
-
-  .month-name {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-  }
-
-  .month-count {
-    font-size: 12px;
-    color: var(--text-light);
-  }
-
-  /* ========== 瀑布流 ========== */
-  .waterfall {
-    column-count: 4;
-    column-gap: 16px;
-  }
-
-  .waterfall-item {
-    break-inside: avoid;
-    margin-bottom: 16px;
-    cursor: pointer;
-    border-radius: 14px;
-    overflow: hidden;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    transition: all 0.25s ease;
-  }
-
-  .waterfall-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  }
-
-  .waterfall-item img {
-    width: 100%;
-    display: block;
-  }
-
-  /* ========== Lightbox ========== */
-  .lightbox {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.92);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-  }
-  .lightbox.active { display: flex; }
-  .lightbox img {
-    max-width: 90%;
-    max-height: 90%;
-    border-radius: 12px;
-  }
-  .lightbox-close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    font-size: 44px;
-    color: white;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-
-  /* ========== 回到顶部按钮 ========== */
-  .scroll-top {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.25s;
-    box-shadow: 0 2px 12px rgba(0,122,255,0.3);
-    z-index: 99;
-    font-size: 20px;
-  }
-  .scroll-top.show {
-    opacity: 1;
-    visibility: visible;
-  }
-  .scroll-top:hover {
-    transform: translateY(-2px);
-  }
-
-  /* ========== 空状态 ========== */
-  .empty-state {
-    text-align: center;
-    padding: 80px 20px;
-    color: var(--text-light);
-  }
-
-  /* ========== 响应式 ========== */
-  @media (max-width: 1200px) { .waterfall { column-count: 3; } }
-  @media (max-width: 768px) { 
-    .waterfall { column-count: 2; }
-    .gallery-main-content { padding: 12px 16px; }
-    .year-number { font-size: 22px; }
-    .month-name { font-size: 16px; }
-  }
-  @media (max-width: 480px) { .waterfall { column-count: 1; } }
+.waterfall {
+  column-count: 3;
+  column-gap: 20px;
+  margin-top: 20px;
+}
+.waterfall-item {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+.waterfall-item img {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+}
+.lightbox {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+.lightbox.active {
+  display: flex;
+}
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 4px;
+}
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+@media (max-width: 768px) {
+  .waterfall { column-count: 2; }
+}
+@media (max-width: 480px) {
+  .waterfall { column-count: 1; }
+}
+  
 </style>
 
-<!-- 主内容 -->
-<div class="gallery-main-content" id="galleryContainer"></div>
+<div class="waterfall">
+  {% if site.data.gallery.size > 0 %}
+    {% for photo in site.data.gallery %}
+    <div class="waterfall-item" onclick="openLightbox('{{ photo.image }}')">
+      <img src="{{ photo.image }}" alt="{{ photo.title }}" loading="lazy">
+    </div>
+    {% endfor %}
+  {% else %}
+    <p style="text-align:center;">📷 暂无照片</p>
+  {% endif %}
+</div>
 
-<!-- Lightbox -->
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
   <img id="lightboxImg" src="" alt="">
 </div>
 
-<!-- 回到顶部 -->
-<div class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</div>
-
 <script>
-  const galleryData = [
-    {% if site.data.gallery.size > 0 %}
-      {% for photo in site.data.gallery %}
-      {
-        title: "{{ photo.title | escape }}",
-        image: "{{ photo.image }}",
-        key: "{{ photo.key }}",
-        date: "{{ photo.date }}"
-      }{% unless forloop.last %},{% endunless %}
-      {% endfor %}
-    {% endif %}
-  ];
-
-  function formatDate(dateStr) {
-    if (!dateStr || dateStr === '') return null;
-    const parts = dateStr.split('-');
-    if (parts.length < 2) return null;
-    return { year: parts[0], month: parts[1] };
-  }
-
-  function getMonthName(monthNum) {
-    const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-    return months[parseInt(monthNum) - 1];
-  }
-
-  function groupPhotos() {
-    const groups = {};
-    const unknown = [];
-    galleryData.forEach(photo => {
-      const dateInfo = formatDate(photo.date);
-      if (!dateInfo) { unknown.push(photo); return; }
-      const key = `${dateInfo.year}-${dateInfo.month}`;
-      if (!groups[key]) groups[key] = { year: dateInfo.year, month: dateInfo.month, photos: [] };
-      groups[key].photos.push(photo);
-    });
-    const sortedKeys = Object.keys(groups).sort((a, b) => b.localeCompare(a));
-    return { groups, sortedKeys, unknown };
-  }
-
-  function renderGallery() {
-    const container = document.getElementById('galleryContainer');
-    if (!galleryData.length) {
-      container.innerHTML = '<div class="empty-state">📷<p>暂无照片，请在 R2 上传图片后运行 Workflow</p></div>';
-      return;
-    }
-    const { groups, sortedKeys, unknown } = groupPhotos();
-    let html = '';
-    let currentYear = '';
-    
-    sortedKeys.forEach(key => {
-      const g = groups[key];
-      const monthName = getMonthName(g.month);
-      
-      if (currentYear !== g.year) {
-        if (currentYear !== '') html += `</div>`;
-        html += `<div class="year-group"><div class="year-header"><span class="year-number">${g.year}</span><span class="year-count">${g.photos.length}张</span></div>`;
-        currentYear = g.year;
-      } else {
-        html += `<div class="year-group"><div class="year-header" style="margin-top:0;"><span class="year-number" style="font-size:20px;color:#666;">${g.year}</span><span class="year-count">${g.photos.length}张</span></div>`;
-      }
-      
-      html += `<div class="month-group"><div class="month-header"><span class="month-name">📅 ${monthName}</span><span class="month-count">${g.photos.length}张</span></div>`;
-      html += `<div class="waterfall">`;
-      
-      g.photos.forEach(photo => {
-        html += `
-          <div class="waterfall-item" onclick="openLightbox('${photo.image}')">
-            <img src="${photo.image}" alt="${photo.title}" loading="lazy">
-          </div>
-        `;
-      });
-      html += `</div></div>`;
-    });
-    
-    html += `</div>`;
-    
-    if (unknown.length > 0) {
-      html += `<div class="year-group"><div class="year-header"><span class="year-number">📅 其他日期</span><span class="year-count">${unknown.length}张</span></div>`;
-      html += `<div class="waterfall">`;
-      unknown.forEach(photo => {
-        html += `
-          <div class="waterfall-item" onclick="openLightbox('${photo.image}')">
-            <img src="${photo.image}" loading="lazy">
-          </div>
-        `;
-      });
-      html += `</div></div>`;
-    }
-    
-    container.innerHTML = html;
-  }
-
-  function openLightbox(url) {
-    const lb = document.getElementById('lightbox');
-    const img = document.getElementById('lightboxImg');
-    img.src = url;
-    lb.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-  
-  function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('active');
-    document.body.style.overflow = '';
-  }
-  
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  window.addEventListener('scroll', () => {
-    const scrollTop = document.getElementById('scrollTop');
-    if (window.scrollY > 300) {
-      scrollTop.classList.add('show');
-    } else {
-      scrollTop.classList.remove('show');
-    }
-  });
-  
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeLightbox();
-  });
-  
-  document.addEventListener('DOMContentLoaded', renderGallery);
+function openLightbox(url) {
+  document.getElementById('lightboxImg').src = url;
+  document.getElementById('lightbox').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
 </script>
