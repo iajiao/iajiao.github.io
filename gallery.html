@@ -4,3 +4,56 @@ title: "Pics"
 description: "「喜欢的，热爱的，欣赏的……」"
 permalink: /gallery/
 ---
+
+<style>
+.waterfall {
+  column-count: 3;
+  column-gap: 20px;
+  margin-top: 20px;
+}
+.waterfall-item {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+.waterfall-item img {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+}
+.lightbox {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+.lightbox.active {
+  display: flex;
+}
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 4px;
+}
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+@media (max-width: 768px) {
+  .waterfall { column-count: 2; }
+}
+@media (max-width: 480px) {
+  .waterfall { column-count: 1; }
+}
