@@ -2,11 +2,11 @@ name: Build and Deploy Jekyll with R2 Gallery
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ["master"]
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -43,8 +45,15 @@ jobs:
           AWS_DEFAULT_REGION: auto
         run: |
           chmod +x scripts/generate-gallery-r2.sh
-          mkdir -p _data
           bash scripts/generate-gallery-r2.sh
+
+      - name: Commit and push gallery data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _data/gallery.yml
+          git diff --staged --quiet || git commit -m "Auto update gallery data from R2"
+          git push
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
