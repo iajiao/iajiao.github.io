@@ -47,7 +47,7 @@ aws s3api list-objects-v2 \
 
 # 使用 Python 处理并追加到 YAML 文件
 python3 << EOF >> "$OUTPUT"
-import json, re, os
+import json, re, sys
 from datetime import datetime
 
 with open('$TEMP_JSON', 'r') as f:
@@ -55,7 +55,7 @@ with open('$TEMP_JSON', 'r') as f:
 
 if not data:
     print('# 没有找到任何图片')
-    exit(0)
+    sys.exit(0)
 
 ext_pattern = re.compile(r'\.($SUPPORTED_EXT)$', re.IGNORECASE)
 photos = [item for item in data if ext_pattern.search(item['Key'])]
