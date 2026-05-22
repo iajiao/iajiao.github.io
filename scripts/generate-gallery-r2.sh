@@ -1,79 +1,68 @@
-name: Build and Deploy Jekyll with R2 Gallery
+#!/bin/bash
+# 从 Cloudflare R2 自动获取图片列表，生成 _data/gallery.yml
 
-on:
-  push:
-    branches: ["master"]
-  workflow_dispatch:
+set -euo pipefail
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
+# 从 _config.yml 读取默认值（如果环境变量未设置）
+CONFIG_FILE="_config.yml"
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+R2_PUBLIC_URL="${R2_PUBLIC_URL:-$(grep -A5 'r2_gallery:' "$CONFIG_FILE" \
+  | grep 'public_url:' | sed 's/.*public_url: *"\(.*\)"/\1/' | tr -d ' ')}"
+R2_PREFIX="${R2_PREFIX:-$(grep -A5 'r2_gallery:' "$CONFIG_FILE" \
+  | grep 'prefix:' | sed 's/.*prefix: *"\(.*\)"/\1/' | tr -d ' ')}"
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+# 必须的环境变量检查
+: "${R2_ACCOUNT_ID:?请设置 R2_ACCOUNT_ID 环境变量}"
+: "${R2_ACCESS_KEY_ID:?请设置 R2_ACCESS_KEY_ID 环境变量}"
+: "${R2_SECRET_ACCESS_KEY:?请设置 R2_SECRET_ACCESS_KEY 环境变量}"
+: "${R2_BUCKET_NAME:?请设置 R2_BUCKET_NAME 环境变量}"
+: "${R2_PUBLIC_URL:?请设置 R2_PUBLIC_URL 环境变量或在 _config.yml 中配置}"
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+OUTPUT="_data/gallery.yml"
+ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+SUPPORTED_EXT="jpg|jpeg|png|gif|webp|avif"
 
-      - name: Install AWS CLI
-        run: |
-          python -m pip install --upgrade pip
-          pip install awscli
+mkdir -p _data
 
-      - name: Generate gallery from R2
-        env:
-          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
-          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
-          R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: auto
-        run: |
-          chmod +x scripts/generate-gallery-r2.sh
-          bash scripts/generate-gallery-r2.sh
+echo "# 此文件由 scripts/generate-gallery-r2.sh 自动生成，请勿手动编辑" > "$OUTPUT"
+echo "# 图片来源: ${R2_PUBLIC_URL}/${R2_PREFIX}" >> "$OUTPUT"
+echo "" >> "$OUTPUT"
 
-      - name: Commit and push gallery data
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add _data/gallery.yml
-          git diff --staged --quiet || git commit -m "Auto update gallery data from R2"
-          git push
+echo "正在从 R2 获取图片列表..."
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+# 使用 AWS CLI（S3 兼容）列出对象
+aws s3api list-objects-v2 \
+  --bucket "$R2_BUCKET_NAME" \
+  --prefix "$R2_PREFIX" \
+  --endpoint-url "$ENDPOINT" \
+  --query "Contents[].{Key: Key, LastModified: LastModified}" \
+  --output json 2>/dev/null | \
+python3 -c "
+import json, sys, re
 
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./
-          destination: ./_site
+data = json.load(sys.stdin)
+if not data:
+    sys.exit(0)
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+ext_pattern = re.compile(r'\.($SUPPORTED_EXT)$', re.IGNORECASE)
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+photos = [item for item in data if ext_pattern.search(item['Key'])]
+photos.sort(key=lambda x: x['LastModified'], reverse=True)
+
+for photo in photos:
+    key = photo['Key']
+    filename = key.rsplit('/', 1)[-1]
+    name = filename.rsplit('.', 1)[0]
+    title = name.replace('-', ' ').replace('_', ' ')
+    url = '${R2_PUBLIC_URL}/' + key
+
+    print(f'- title: \"{title}\"')
+    print(f'  image: \"{url}\"')
+    print(f'  key: \"{key}\"')
+    print()
+
+print(f'# 共 {len(photos)} 张照片', file=sys.stderr)
+" >> "$OUTPUT" 2>&1
+
+COUNT=$(grep -c '^- title:' "$OUTPUT" 2>/dev/null || echo "0")
+echo "Gallery 生成完成: 共 ${COUNT} 张照片"
