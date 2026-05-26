@@ -1,4 +1,4 @@
-name: Build and Deploy Jekyll with R2 Gallery
+name:  R2 Gallery
 
 on:
   push:
