@@ -15,88 +15,6 @@ permalink: /gallery/
   --text-light: #888;
 }
 
-/* ========== 最新上传区域 ========== */
-.latest-section {
-  margin-bottom: 40px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-}
-
-.latest-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.latest-title {
-  font-size: 24px;
-  font-weight: 700;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.latest-subtitle {
-  display: block;
-  font-size: 13px;
-  color: #aaa;
-  margin-top: 6px;
-}
-
-.latest-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 12px;
-}
-
-.latest-item {
-  cursor: pointer;
-  border-radius: 12px;
-  overflow: hidden;
-  aspect-ratio: 1;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: all 0.25s ease;
-}
-
-.latest-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-}
-
-.latest-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ========== 分割线 ========== */
-.divider {
-  text-align: center;
-  margin: 40px 0 30px;
-  position: relative;
-}
-
-.divider::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #ddd, transparent);
-}
-
-.divider span {
-  background: white;
-  padding: 0 20px;
-  position: relative;
-  font-size: 14px;
-  color: #999;
-  letter-spacing: 2px;
-}
-
 /* ========== 瀑布流 ========== */
 .waterfall {
   column-count: 3;
@@ -242,23 +160,11 @@ permalink: /gallery/
 /* ========== 响应式 ========== */
 @media (max-width: 768px) {
   .waterfall { column-count: 2; gap: 12px; }
-  .latest-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .latest-section { padding: 16px; }
-  .latest-title { font-size: 20px; }
-  .lightbox-prev, .lightbox-next { width: 20%; }
-  .nav-arrow { font-size: 36px; opacity: 0.5; }
 }
 @media (max-width: 480px) {
   .waterfall { column-count: 1; }
-  .latest-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
-
-<!-- 最新上传区域（动态渲染） -->
-<div id="latestSection" class="latest-section" style="display: none;"></div>
-
-<!-- 分割线 -->
-<div class="divider"><span>📸 全部照片</span></div>
 
 <!-- 瀑布流容器 -->
 <div id="waterfallContainer" class="waterfall"></div>
@@ -285,9 +191,9 @@ permalink: /gallery/
 
 <script>
 // ========== 数据存储 ==========
-let allPhotos = [];      // 所有照片数据
+let allPhotos = [];      // 所有照片数据（已按时间倒序排列）
 let currentPage = 1;     // 当前页码
-const pageSize = 30;      // 每页显示数量
+const pageSize = 20;      // 每页显示数量
 let isLoading = false;    // 是否正在加载
 let hasMore = true;       // 是否还有更多
 
@@ -310,40 +216,7 @@ function initPhotoData() {
   allPhotos = allImagesArray;
 }
 
-// ========== 渲染最新上传区域（前6张） ==========
-function renderLatestSection() {
-  const container = document.getElementById('latestSection');
-  if (!container) return;
-  
-  if (allPhotos.length === 0) return;
-  
-  const latestPhotos = allPhotos.slice(0, 6);
-  
-  container.innerHTML = `
-    <div class="latest-header">
-      <span class="latest-title">✨ 最新上传</span>
-      <span class="latest-subtitle">刚刚更新的精彩瞬间</span>
-    </div>
-    <div class="latest-grid" id="latestGrid"></div>
-  `;
-  
-  const grid = document.getElementById('latestGrid');
-  latestPhotos.forEach((photo, idx) => {
-    const item = document.createElement('div');
-    item.className = 'latest-item';
-    item.onclick = () => openLightbox(photo.image, idx);
-    const img = document.createElement('img');
-    img.src = photo.image;
-    img.alt = photo.title;
-    img.loading = 'lazy';
-    item.appendChild(img);
-    grid.appendChild(item);
-  });
-  
-  container.style.display = 'block';
-}
-
-// ========== 渲染瀑布流（分页） ==========
+// ========== 渲染瀑布流（分页，从新到旧） ==========
 function renderWaterfall(page) {
   const end = page * pageSize;
   const photosToShow = allPhotos.slice(0, end);
@@ -463,10 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
   
-  // 渲染最新上传区域
-  renderLatestSection();
-  
-  // 渲染瀑布流（第一页）
+  // 直接渲染瀑布流（第一页，从新到旧）
   renderWaterfall(1);
 });
 </script>
