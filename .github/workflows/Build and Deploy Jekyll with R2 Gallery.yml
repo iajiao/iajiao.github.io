@@ -1,14 +1,14 @@
-name:  R2 Gallery
+name: R2 Gallery
 
 on:
   push:
     branches: ["master"]
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'   # 每天 UTC 0:00 运行（北京时间 8:00）
+    - cron: '0 0 * * *'
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -35,12 +37,21 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
           R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
+          R2_PREFIX: "Pic/"
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: auto
         run: |
           pip install awscli --quiet
           bash scripts/generate-gallery-r2.sh
+
+      - name: Commit and push gallery data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _data/gallery.yml
+          git diff --staged --quiet || git commit -m "Auto update gallery data"
+          git push
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
