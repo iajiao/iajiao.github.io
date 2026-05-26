@@ -1,7 +1,7 @@
 #!/bin/bash
 # 从 Cloudflare R2 自动获取图片列表，生成 _data/gallery.yml
 
-set -euo pipefail
+set -euxo pipefailx
 
 # 从 _config.yml 读取默认值（如果环境变量未设置）
 CONFIG_FILE="_config.yml"
