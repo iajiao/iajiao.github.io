@@ -99,4 +99,4 @@ r2_gallery:
   public_url: "https://img.ajiao.eu.org"
   r2_gallery:
   public_url: "https://img.ajiao.eu.org"
-  prefix: "Pic/"          # 只读取 Pic 文件夹
+  prefix: "Pic"          # 只读取 Pic 文件夹
