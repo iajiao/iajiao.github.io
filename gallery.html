@@ -28,15 +28,31 @@ permalink: /gallery/
   transition: all 0.25s ease;
 }
 
-.waterfall-item img {
+.waterfall-item img,
+.waterfall-item video {
   width: 100%;
   border-radius: 8px;
   display: block;
   transition: transform 0.2s;
 }
 
-.waterfall-item:hover img {
+.waterfall-item:hover img,
+.waterfall-item:hover video {
   transform: scale(1.02);
+}
+
+/* 视频静音指示器（可选） */
+.video-mute-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 20px;
+  padding: 4px 8px;
+  font-size: 10px;
+  color: white;
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* ========== 加载更多按钮 ========== */
@@ -86,9 +102,10 @@ permalink: /gallery/
 
 .lightbox.active { display: flex; }
 
-.lightbox img {
-  max-width: 85%;
-  max-height: 85%;
+.lightbox img,
+.lightbox video {
+  max-width: 90%;
+  max-height: 90%;
   border-radius: 8px;
   z-index: 1002;
   box-shadow: 0 8px 30px rgba(0,0,0,0.4);
@@ -160,6 +177,8 @@ permalink: /gallery/
 /* ========== 响应式 ========== */
 @media (max-width: 768px) {
   .waterfall { column-count: 2; gap: 12px; margin-top: 20px; }
+  .lightbox-prev, .lightbox-next { width: 20%; }
+  .nav-arrow { font-size: 36px; opacity: 0.5; }
 }
 @media (max-width: 480px) {
   .waterfall { column-count: 1; margin-top: 20px; }
@@ -182,7 +201,9 @@ permalink: /gallery/
   <div class="lightbox-prev" onclick="event.stopPropagation(); prevImage()">
     <span class="nav-arrow">‹</span>
   </div>
-  <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
+  <div id="lightboxContent" class="lightbox-content">
+    <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
+  </div>
   <div class="lightbox-next" onclick="event.stopPropagation(); nextImage()">
     <span class="nav-arrow">›</span>
   </div>
@@ -191,15 +212,20 @@ permalink: /gallery/
 
 <script>
 // ========== 数据存储 ==========
-let allPhotos = [];      // 所有照片数据（已按时间倒序排列）
-let currentPage = 1;     // 当前页码
-const pageSize = 20;      // 每页显示数量
-let isLoading = false;    // 是否正在加载
-let hasMore = true;       // 是否还有更多
+let allPhotos = [];
+let currentPage = 1;
+const pageSize = 20;
+let isLoading = false;
+let hasMore = true;
 
-// Lightbox 相关
 let currentImageIndex = 0;
 let allImagesArray = [];
+let currentMediaIsVideo = false;
+
+// ========== 判断是否为视频 ==========
+function isVideoUrl(url) {
+  return /\.(mp4|mov|webm|m4v|avi|mkv)$/i.test(url);
+}
 
 // ========== 从 Jekyll 获取数据 ==========
 function initPhotoData() {
@@ -216,7 +242,7 @@ function initPhotoData() {
   allPhotos = allImagesArray;
 }
 
-// ========== 渲染瀑布流（分页，从新到旧） ==========
+// ========== 渲染瀑布流 ==========
 function renderWaterfall(page) {
   const end = page * pageSize;
   const photosToShow = allPhotos.slice(0, end);
@@ -227,12 +253,38 @@ function renderWaterfall(page) {
   photosToShow.forEach((photo, idx) => {
     const item = document.createElement('div');
     item.className = 'waterfall-item';
-    item.onclick = () => openLightbox(photo.image, idx);
-    const img = document.createElement('img');
-    img.src = photo.image;
-    img.alt = photo.title;
-    img.loading = 'lazy';
-    item.appendChild(img);
+    const url = photo.image;
+    const isVideo = isVideoUrl(url);
+    
+    if (isVideo) {
+      // 视频：静音循环自动播放
+      const video = document.createElement('video');
+      video.src = url;
+      video.autoplay = true;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.preload = 'metadata';
+      video.style.width = '100%';
+      video.style.display = 'block';
+      // 点击视频打开 Lightbox
+      item.onclick = (e) => {
+        e.stopPropagation();
+        openLightbox(url, idx);
+      };
+      item.appendChild(video);
+    } else {
+      // 图片
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = photo.title;
+      img.loading = 'lazy';
+      img.style.width = '100%';
+      img.style.display = 'block';
+      item.onclick = () => openLightbox(url, idx);
+      item.appendChild(img);
+    }
+    
     container.appendChild(item);
   });
   
@@ -267,14 +319,39 @@ function loadMore() {
   }, 200);
 }
 
-// ========== Lightbox 功能 ==========
+// ========== Lightbox 功能（支持视频） ==========
 function openLightbox(url, index) {
   const lb = document.getElementById('lightbox');
-  const img = document.getElementById('lightboxImg');
+  const contentDiv = document.getElementById('lightboxContent');
   const counter = document.getElementById('imageCounter');
   
-  img.src = url;
   currentImageIndex = index;
+  const isVideo = isVideoUrl(url);
+  currentMediaIsVideo = isVideo;
+  
+  // 清空内容，根据类型创建新元素
+  contentDiv.innerHTML = '';
+  
+  if (isVideo) {
+    const video = document.createElement('video');
+    video.src = url;
+    video.controls = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.style.maxWidth = '90%';
+    video.style.maxHeight = '90%';
+    video.style.borderRadius = '8px';
+    contentDiv.appendChild(video);
+  } else {
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = '';
+    img.style.maxWidth = '90%';
+    img.style.maxHeight = '90%';
+    img.style.borderRadius = '8px';
+    img.style.cursor = 'default';
+    contentDiv.appendChild(img);
+  }
   
   if (counter && allImagesArray.length > 0) {
     counter.textContent = `${index + 1} / ${allImagesArray.length}`;
@@ -285,31 +362,32 @@ function openLightbox(url, index) {
 }
 
 function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('active');
+  const lb = document.getElementById('lightbox');
+  const contentDiv = document.getElementById('lightboxContent');
+  
+  // 停止视频播放
+  const video = contentDiv.querySelector('video');
+  if (video) {
+    video.pause();
+  }
+  
+  lb.classList.remove('active');
   document.body.style.overflow = '';
 }
 
 function nextImage() {
   if (currentImageIndex < allImagesArray.length - 1) {
     currentImageIndex++;
-    const img = document.getElementById('lightboxImg');
-    const counter = document.getElementById('imageCounter');
-    img.src = allImagesArray[currentImageIndex].image;
-    if (counter) {
-      counter.textContent = `${currentImageIndex + 1} / ${allImagesArray.length}`;
-    }
+    const nextUrl = allImagesArray[currentImageIndex].image;
+    openLightbox(nextUrl, currentImageIndex);
   }
 }
 
 function prevImage() {
   if (currentImageIndex > 0) {
     currentImageIndex--;
-    const img = document.getElementById('lightboxImg');
-    const counter = document.getElementById('imageCounter');
-    img.src = allImagesArray[currentImageIndex].image;
-    if (counter) {
-      counter.textContent = `${currentImageIndex + 1} / ${allImagesArray.length}`;
-    }
+    const prevUrl = allImagesArray[currentImageIndex].image;
+    openLightbox(prevUrl, currentImageIndex);
   }
 }
 
@@ -332,11 +410,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initPhotoData();
   
   if (allPhotos.length === 0) {
-    document.getElementById('waterfallContainer').innerHTML = '<p style="text-align:center;">📷 暂无照片，请在 R2 上传图片后运行 Workflow</p>';
+    document.getElementById('waterfallContainer').innerHTML = '<p style="text-align:center;">📷 暂无照片或视频，请在 R2 上传后运行 Workflow</p>';
     return;
   }
   
-  // 直接渲染瀑布流（第一页，从新到旧）
   renderWaterfall(1);
 });
 </script>
