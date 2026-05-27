@@ -20,7 +20,7 @@ R2_PREFIX="${R2_PREFIX:-$(grep -A5 'r2_gallery:' "$CONFIG_FILE" \
 
 OUTPUT="_data/gallery.yml"
 ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
-SUPPORTED_EXT="jpg|jpeg|png|gif|webp|avif"
+SUPPORTED_EXT="jpg|jpeg|png|gif|webp|avif|mp4|mov|webm|m4v"
 
 echo "# 此文件由 scripts/generate-gallery-r2.sh 自动生成，请勿手动编辑" > "$OUTPUT"
 echo "# 图片来源: ${R2_PUBLIC_URL}/${R2_PREFIX}" >> "$OUTPUT"
