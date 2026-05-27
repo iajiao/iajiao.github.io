@@ -26,6 +26,7 @@ permalink: /gallery/
   margin-bottom: 20px;
   cursor: pointer;
   transition: all 0.25s ease;
+  position: relative;
 }
 
 .waterfall-item img,
@@ -39,20 +40,6 @@ permalink: /gallery/
 .waterfall-item:hover img,
 .waterfall-item:hover video {
   transform: scale(1.02);
-}
-
-/* 视频静音指示器（可选） */
-.video-mute-icon {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  background: rgba(0,0,0,0.6);
-  border-radius: 20px;
-  padding: 4px 8px;
-  font-size: 10px;
-  color: white;
-  pointer-events: none;
-  z-index: 1;
 }
 
 /* ========== 加载更多按钮 ========== */
@@ -102,12 +89,24 @@ permalink: /gallery/
 
 .lightbox.active { display: flex; }
 
-.lightbox img,
-.lightbox video {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 8px;
+/* Lightbox 内容容器 - 居中且限制尺寸 */
+.lightbox-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 90vw;
+  max-height: 90vh;
   z-index: 1002;
+}
+
+.lightbox-content img,
+.lightbox-content video {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.4);
   cursor: default;
 }
@@ -179,6 +178,9 @@ permalink: /gallery/
   .waterfall { column-count: 2; gap: 12px; margin-top: 20px; }
   .lightbox-prev, .lightbox-next { width: 20%; }
   .nav-arrow { font-size: 36px; opacity: 0.5; }
+  .lightbox-content { max-width: 95vw; max-height: 95vh; }
+  .lightbox-content img,
+  .lightbox-content video { max-width: 95vw; max-height: 95vh; }
 }
 @media (max-width: 480px) {
   .waterfall { column-count: 1; margin-top: 20px; }
@@ -201,9 +203,7 @@ permalink: /gallery/
   <div class="lightbox-prev" onclick="event.stopPropagation(); prevImage()">
     <span class="nav-arrow">‹</span>
   </div>
-  <div id="lightboxContent" class="lightbox-content">
-    <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
-  </div>
+  <div id="lightboxContent" class="lightbox-content"></div>
   <div class="lightbox-next" onclick="event.stopPropagation(); nextImage()">
     <span class="nav-arrow">›</span>
   </div>
@@ -220,7 +220,6 @@ let hasMore = true;
 
 let currentImageIndex = 0;
 let allImagesArray = [];
-let currentMediaIsVideo = false;
 
 // ========== 判断是否为视频 ==========
 function isVideoUrl(url) {
@@ -267,7 +266,7 @@ function renderWaterfall(page) {
       video.preload = 'metadata';
       video.style.width = '100%';
       video.style.display = 'block';
-      // 点击视频打开 Lightbox
+      video.setAttribute('playsinline', '');
       item.onclick = (e) => {
         e.stopPropagation();
         openLightbox(url, idx);
@@ -319,7 +318,7 @@ function loadMore() {
   }, 200);
 }
 
-// ========== Lightbox 功能（支持视频） ==========
+// ========== Lightbox 功能 ==========
 function openLightbox(url, index) {
   const lb = document.getElementById('lightbox');
   const contentDiv = document.getElementById('lightboxContent');
@@ -327,27 +326,32 @@ function openLightbox(url, index) {
   
   currentImageIndex = index;
   const isVideo = isVideoUrl(url);
-  currentMediaIsVideo = isVideo;
   
-  // 清空内容，根据类型创建新元素
+  // 清空内容
   contentDiv.innerHTML = '';
   
   if (isVideo) {
+    // 视频：带控制条、有声
     const video = document.createElement('video');
     video.src = url;
     video.controls = true;
     video.autoplay = true;
     video.playsInline = true;
-    video.style.maxWidth = '90%';
-    video.style.maxHeight = '90%';
+    video.style.maxWidth = '90vw';
+    video.style.maxHeight = '90vh';
+    video.style.width = 'auto';
+    video.style.height = 'auto';
     video.style.borderRadius = '8px';
     contentDiv.appendChild(video);
   } else {
+    // 图片
     const img = document.createElement('img');
     img.src = url;
     img.alt = '';
-    img.style.maxWidth = '90%';
-    img.style.maxHeight = '90%';
+    img.style.maxWidth = '90vw';
+    img.style.maxHeight = '90vh';
+    img.style.width = 'auto';
+    img.style.height = 'auto';
     img.style.borderRadius = '8px';
     img.style.cursor = 'default';
     contentDiv.appendChild(img);
