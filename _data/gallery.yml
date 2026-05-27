@@ -1,7 +1,15 @@
 # 此文件由 scripts/generate-gallery-r2.sh 自动生成，请勿手动编辑
 # 图片来源: https://img.ajiao.eu.org/Pic/
 
-# 共 15 张照片
+# 共 14 张照片
+- title: " 6   "
+  image: "https://img.ajiao.eu.org/Pic/_6_-_.jpg"
+  key: "Pic/_6_-_.jpg"
+
+- title: "1040g3k831uae3h5mio3g5n2g1dt66prccbdkoq0 nd dft wlteh webp 3"
+  image: "https://img.ajiao.eu.org/Pic/1040g3k831uae3h5mio3g5n2g1dt66prccbdkoq0-nd_dft_wlteh_webp_3.webp"
+  key: "Pic/1040g3k831uae3h5mio3g5n2g1dt66prccbdkoq0-nd_dft_wlteh_webp_3.webp"
+
 - title: "壁纸湖网bizihucom   手机壁纸"
   image: "https://img.ajiao.eu.org/Pic/壁纸湖网bizihucom - 手机壁纸.jpg"
   key: "Pic/壁纸湖网bizihucom - 手机壁纸.jpg"
@@ -34,17 +42,9 @@
   image: "https://img.ajiao.eu.org/Pic/1040g00831qm6eem2no1g4bo6blce01l.jpg"
   key: "Pic/1040g00831qm6eem2no1g4bo6blce01l.jpg"
 
-- title: "1040g00831p7lebciig005q11o422nlv"
-  image: "https://img.ajiao.eu.org/Pic/1040g00831p7lebciig005q11o422nlv.jpg"
-  key: "Pic/1040g00831p7lebciig005q11o422nlv.jpg"
-
 - title: "1040g3k831mipe8nh5ia049mdf31nruvlcl5ama8!nd dft wlteh webp 3"
   image: "https://img.ajiao.eu.org/Pic/1040g3k831mipe8nh5ia049mdf31nruvlcl5ama8!nd_dft_wlteh_webp_3.webp"
   key: "Pic/1040g3k831mipe8nh5ia049mdf31nruvlcl5ama8!nd_dft_wlteh_webp_3.webp"
-
-- title: "7fe92725cf3e9c3c46ce262af720f6ee w 967 h 726 "
-  image: "https://img.ajiao.eu.org/Pic/7fe92725cf3e9c3c46ce262af720f6ee_w_967_h_726_.webp"
-  key: "Pic/7fe92725cf3e9c3c46ce262af720f6ee_w_967_h_726_.webp"
 
 - title: "1040g3k031pbl53qt3c3g5pk23jlhond"
   image: "https://img.ajiao.eu.org/Pic/1040g3k031pbl53qt3c3g5pk23jlhond.jpg"
@@ -57,8 +57,4 @@
 - title: "1000g00825aasglsfc00g4a1btgvd7pu"
   image: "https://img.ajiao.eu.org/Pic/1000g00825aasglsfc00g4a1btgvd7pu.jpg"
   key: "Pic/1000g00825aasglsfc00g4a1btgvd7pu.jpg"
-
-- title: " cgi bin mmwebwx bin webwxgetmsgimg  &MsgID=3651598279831927830&skey=@crypt 3f7e07a6 7dfe57f207ed53eaeb53e8d4d29eddbb&mmweb appid=wx webfilehelper"
-  image: "https://img.ajiao.eu.org/Pic/_cgi-bin_mmwebwx-bin_webwxgetmsgimg__&MsgID=3651598279831927830&skey=@crypt_3f7e07a6_7dfe57f207ed53eaeb53e8d4d29eddbb&mmweb_appid=wx_webfilehelper.jpg"
-  key: "Pic/_cgi-bin_mmwebwx-bin_webwxgetmsgimg__&MsgID=3651598279831927830&skey=@crypt_3f7e07a6_7dfe57f207ed53eaeb53e8d4d29eddbb&mmweb_appid=wx_webfilehelper.jpg"
 
