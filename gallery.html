@@ -85,7 +85,6 @@ permalink: /gallery/
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  padding-bottom: 40px;  /* 只加这一行，为计数器留空间 */
 }
 
 .lightbox.active { display: flex; }
@@ -159,18 +158,17 @@ permalink: /gallery/
 
 .lightbox-close:hover { opacity: 1; }
 
-.image-counter {
+ .image-counter {
   position: absolute;
-  bottom: -30px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  color: rgba(255,255,255,0.8);
-  font-size: 14px;
-  font-weight: 450;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  background: transparent;
-  padding: 0;
-  white-space: nowrap;
+  background: rgba(0,0,0,0.6);
+  padding: 6px 14px;
+  border-radius: 30px;
+  color: white;
+  font-size: 13px;
+ font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", sans-serif;
   z-index: 1002;
   pointer-events: none;
 }
