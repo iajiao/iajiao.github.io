@@ -1,7 +1,15 @@
 # 此文件由 scripts/generate-gallery-r2.sh 自动生成，请勿手动编辑
 # 图片来源: https://img.ajiao.eu.org/Pic/
 
-# 共 16 张照片
+# 共 18 张照片
+- title: "0089JD2uly1hsf5gexseqj316o23sqv5"
+  image: "https://img.ajiao.eu.org/Pic/0089JD2uly1hsf5gexseqj316o23sqv5.jpg"
+  key: "Pic/0089JD2uly1hsf5gexseqj316o23sqv5.jpg"
+
+- title: "0089JD2uly1h9bi8yqvivj30u01uo7kc"
+  image: "https://img.ajiao.eu.org/Pic/0089JD2uly1h9bi8yqvivj30u01uo7kc.jpg"
+  key: "Pic/0089JD2uly1h9bi8yqvivj30u01uo7kc.jpg"
+
 - title: " 6   "
   image: "https://img.ajiao.eu.org/Pic/_6_-_.jpg"
   key: "Pic/_6_-_.jpg"
