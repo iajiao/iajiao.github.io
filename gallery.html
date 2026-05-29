@@ -15,26 +15,18 @@ permalink: /gallery/
   --text-light: #888;
 }
 
-/* ========== 瀑布流容器 ========== */
+/* ========== 瀑布流 ========== */
 .waterfall {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-.waterfall-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  column-count: 3;
+  column-gap: 20px;
 }
 
 .waterfall-item {
   break-inside: avoid;
+  margin-bottom: 20px;
   cursor: pointer;
   transition: all 0.25s ease;
-  width: 100%;
+  position: relative;
 }
 
 .waterfall-item img,
@@ -97,43 +89,26 @@ permalink: /gallery/
 
 .lightbox.active { display: flex; }
 
-.lightbox-container {
+/* Lightbox 内容容器 - 居中且限制尺寸 */
+.lightbox-content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   max-width: 90vw;
   max-height: 90vh;
   z-index: 1002;
 }
 
-.lightbox-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .lightbox-content img,
 .lightbox-content video {
-  max-width: 85vw;
-  max-height: 80vh;
+  max-width: 90vw;
+  max-height: 90vh;
   width: auto;
   height: auto;
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.4);
   cursor: default;
-}
-
-/* 计数器 - 在图片正下方外部 */
-.image-counter {
-  margin-top: 16px;
-  color: rgba(255,255,255,0.7);
-  font-size: 13px;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", sans-serif;
-  text-align: center;
-  background: transparent;
-  padding: 0;
 }
 
 /* 左右导航区域 */
@@ -183,35 +158,30 @@ permalink: /gallery/
 
 .lightbox-close:hover { opacity: 1; }
 
-/* ========== 响应式 ========== */
-@media (max-width: 768px) {
-  .waterfall {
-    gap: 12px;
-  }
-  .waterfall-col {
-    gap: 12px;
-  }
-  .lightbox-prev, .lightbox-next {
-    width: 20%;
-  }
-  .nav-arrow {
-    font-size: 36px;
-    opacity: 0.5;
-  }
-  .lightbox-content img,
-  .lightbox-content video {
-    max-height: 70vh;
-  }
-  .image-counter {
-    margin-top: 12px;
-    font-size: 12px;
-  }
+.image-counter {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+  z-index: 1002;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
+/* ========== 响应式 ========== */
+@media (max-width: 768px) {
+  .waterfall { column-count: 2; gap: 12px; margin-top: 20px; }
+  .lightbox-prev, .lightbox-next { width: 20%; }
+  .nav-arrow { font-size: 36px; opacity: 0.5; }
+  .lightbox-content { max-width: 95vw; max-height: 95vh; }
+  .lightbox-content img,
+  .lightbox-content video { max-width: 95vw; max-height: 95vh; }
+}
 @media (max-width: 480px) {
-  .waterfall {
-    flex-direction: column;
-  }
+  .waterfall { column-count: 1; margin-top: 20px; }
 }
 </style>
 
@@ -231,20 +201,18 @@ permalink: /gallery/
   <div class="lightbox-prev" onclick="event.stopPropagation(); prevImage()">
     <span class="nav-arrow">‹</span>
   </div>
-  <div class="lightbox-container">
-    <div id="lightboxContent" class="lightbox-content"></div>
-    <div id="imageCounter" class="image-counter"></div>
-  </div>
+  <div id="lightboxContent" class="lightbox-content"></div>
   <div class="lightbox-next" onclick="event.stopPropagation(); nextImage()">
     <span class="nav-arrow">›</span>
   </div>
+  <div id="imageCounter" class="image-counter"></div>
 </div>
 
 <script>
 // ========== 数据存储 ==========
 let allPhotos = [];
 let currentPage = 1;
-const pageSize = 15;
+const pageSize = 16;
 let isLoading = false;
 let hasMore = true;
 
@@ -271,55 +239,13 @@ function initPhotoData() {
   allPhotos = allImagesArray;
 }
 
-// ========== 渲染瀑布流（动态分配到最短列） ==========
+// ========== 渲染瀑布流 ==========
 function renderWaterfall(page) {
   const end = page * pageSize;
   const photosToShow = allPhotos.slice(0, end);
   const container = document.getElementById('waterfallContainer');
   
   container.innerHTML = '';
-  
-  if (photosToShow.length === 0) return;
-  
-  // 获取列数（响应式）
-  let columnCount = 3;
-  if (window.innerWidth <= 480) {
-    columnCount = 1;
-  } else if (window.innerWidth <= 768) {
-    columnCount = 2;
-  }
-  
-  // 创建列容器
-  const columns = [];
-  const columnHeights = new Array(columnCount).fill(0);
-  
-  for (let i = 0; i < columnCount; i++) {
-    const col = document.createElement('div');
-    col.className = 'waterfall-col';
-    columns.push(col);
-    container.appendChild(col);
-  }
-  
-  // 找到当前总高度最短的列
-  function getShortestColumnIndex() {
-    let shortest = 0;
-    for (let i = 1; i < columnCount; i++) {
-      if (columnHeights[i] < columnHeights[shortest]) {
-        shortest = i;
-      }
-    }
-    return shortest;
-  }
-  
-  // 分配元素到最短列
-  function assignToColumn(item, height) {
-    const colIndex = getShortestColumnIndex();
-    columns[colIndex].appendChild(item);
-    columnHeights[colIndex] += height;
-  }
-  
-  let pendingCount = photosToShow.length;
-  let processedCount = 0;
   
   photosToShow.forEach((photo, idx) => {
     const item = document.createElement('div');
@@ -328,6 +254,7 @@ function renderWaterfall(page) {
     const isVideo = isVideoUrl(url);
     
     if (isVideo) {
+      // 视频：静音循环自动播放
       const video = document.createElement('video');
       video.src = url;
       video.autoplay = true;
@@ -337,18 +264,14 @@ function renderWaterfall(page) {
       video.preload = 'metadata';
       video.style.width = '100%';
       video.style.display = 'block';
+      video.setAttribute('playsinline', '');
       item.onclick = (e) => {
         e.stopPropagation();
         openLightbox(url, idx);
       };
       item.appendChild(video);
-      // 视频预估高度 300px
-      assignToColumn(item, 300);
-      processedCount++;
-      if (processedCount === pendingCount) {
-        updateButtonState(photosToShow.length, allPhotos.length);
-      }
     } else {
+      // 图片
       const img = document.createElement('img');
       img.src = url;
       img.alt = photo.title;
@@ -357,37 +280,23 @@ function renderWaterfall(page) {
       img.style.display = 'block';
       item.onclick = () => openLightbox(url, idx);
       item.appendChild(img);
-      
-      const onLoad = () => {
-        const height = img.offsetHeight;
-        assignToColumn(item, height);
-        processedCount++;
-        if (processedCount === pendingCount) {
-          updateButtonState(photosToShow.length, allPhotos.length);
-        }
-      };
-      if (img.complete) {
-        onLoad();
-      } else {
-        img.addEventListener('load', onLoad);
-        img.addEventListener('error', onLoad);
-      }
     }
+    
+    container.appendChild(item);
   });
   
-  function updateButtonState(currentCount, totalCount) {
-    const loadMoreBtn = document.getElementById('loadMoreBtn');
-    const endMessage = document.getElementById('endMessage');
-    
-    if (currentCount >= totalCount) {
-      hasMore = false;
-      loadMoreBtn.style.display = 'none';
-      endMessage.style.display = 'block';
-    } else {
-      hasMore = true;
-      loadMoreBtn.style.display = 'block';
-      endMessage.style.display = 'none';
-    }
+  // 更新按钮状态
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+  const endMessage = document.getElementById('endMessage');
+  
+  if (photosToShow.length >= allPhotos.length) {
+    hasMore = false;
+    loadMoreBtn.style.display = 'none';
+    endMessage.style.display = 'block';
+  } else {
+    hasMore = true;
+    loadMoreBtn.style.display = 'block';
+    endMessage.style.display = 'none';
   }
 }
 
@@ -416,26 +325,29 @@ function openLightbox(url, index) {
   currentImageIndex = index;
   const isVideo = isVideoUrl(url);
   
+  // 清空内容
   contentDiv.innerHTML = '';
   
   if (isVideo) {
+    // 视频：带控制条、有声
     const video = document.createElement('video');
     video.src = url;
     video.controls = true;
     video.autoplay = true;
     video.playsInline = true;
-    video.style.maxWidth = '85vw';
-    video.style.maxHeight = '80vh';
+    video.style.maxWidth = '90vw';
+    video.style.maxHeight = '90vh';
     video.style.width = 'auto';
     video.style.height = 'auto';
     video.style.borderRadius = '8px';
     contentDiv.appendChild(video);
   } else {
+    // 图片
     const img = document.createElement('img');
     img.src = url;
     img.alt = '';
-    img.style.maxWidth = '85vw';
-    img.style.maxHeight = '80vh';
+    img.style.maxWidth = '90vw';
+    img.style.maxHeight = '90vh';
     img.style.width = 'auto';
     img.style.height = 'auto';
     img.style.borderRadius = '8px';
@@ -455,6 +367,7 @@ function closeLightbox() {
   const lb = document.getElementById('lightbox');
   const contentDiv = document.getElementById('lightboxContent');
   
+  // 停止视频播放
   const video = contentDiv.querySelector('video');
   if (video) {
     video.pause();
@@ -492,17 +405,6 @@ document.addEventListener('keydown', (e) => {
   } else if (e.key === 'ArrowRight') {
     nextImage();
   }
-});
-
-// ========== 窗口大小改变时重新布局 ==========
-let resizeTimer;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    if (document.getElementById('waterfallContainer').children.length > 0) {
-      renderWaterfall(currentPage);
-    }
-  }, 250);
 });
 
 // ========== 初始化 ==========
