@@ -21,6 +21,14 @@ permalink: /gallery/
   column-gap: 20px;
 }
 
+/* 添加这一段：底部补白，让最后一行更整齐 */
+.waterfall::after {
+  content: '';
+  display: block;
+  height: 30px;
+  width: 100%;
+}
+
 .waterfall-item {
   break-inside: avoid;
   margin-bottom: 20px;
