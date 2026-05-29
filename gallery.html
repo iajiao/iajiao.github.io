@@ -248,24 +248,9 @@ function renderWaterfall(page) {
   container.innerHTML = '';
   
   photosToShow.forEach((photo, idx) => {
-    // ... 中间一大段创建图片/视频的代码保持不变 ...
+    // ... 中间一大段创建图片/视频的代码 ...
     container.appendChild(item);
   });
-  
-  // ========== 新增：平衡底部间距 ==========
-  setTimeout(() => {
-    const items = document.querySelectorAll('.waterfall-item');
-    const columnCount = getComputedStyle(container).columnCount;
-    const lastRowCount = items.length % columnCount;
-    
-    if (lastRowCount !== 0 && items.length > columnCount) {
-      const lastRowItems = Array.from(items).slice(-lastRowCount);
-      const maxHeight = Math.max(...lastRowItems.map(item => item.offsetHeight));
-      lastRowItems.forEach(item => {
-        item.style.marginBottom = (maxHeight - item.offsetHeight) + 'px';
-      });
-    }
-  }, 100);
   
   // 更新按钮状态
   const loadMoreBtn = document.getElementById('loadMoreBtn');
