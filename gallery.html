@@ -248,7 +248,40 @@ function renderWaterfall(page) {
   container.innerHTML = '';
   
   photosToShow.forEach((photo, idx) => {
-    // ... 中间一大段创建图片/视频的代码 ...
+    const item = document.createElement('div');
+    item.className = 'waterfall-item';
+    const url = photo.image;
+    const isVideo = isVideoUrl(url);
+    
+    if (isVideo) {
+      // 视频：静音循环自动播放
+      const video = document.createElement('video');
+      video.src = url;
+      video.autoplay = true;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.preload = 'metadata';
+      video.style.width = '100%';
+      video.style.display = 'block';
+      video.setAttribute('playsinline', '');
+      item.onclick = (e) => {
+        e.stopPropagation();
+        openLightbox(url, idx);
+      };
+      item.appendChild(video);
+    } else {
+      // 图片
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = photo.title;
+      img.loading = 'lazy';
+      img.style.width = '100%';
+      img.style.display = 'block';
+      item.onclick = () => openLightbox(url, idx);
+      item.appendChild(img);
+    }
+    
     container.appendChild(item);
   });
   
