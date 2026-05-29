@@ -4,6 +4,8 @@ on:
   push:
     branches: ["master"]
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'   # 每天北京时间 08:00 执行
 
 permissions:
   contents: write
