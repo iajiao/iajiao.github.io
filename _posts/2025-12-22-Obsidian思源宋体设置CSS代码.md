@@ -8,7 +8,7 @@ notion_id: 2d17d276-8542-8175-9450-cdf0db388b99
 subtitle: 大爱思源宋体
 tags:
 - 网络
-title: Obsidian思源宋体设置CSS代码
+title: Obsidian思源宋体CSS设置
 ---
 
 思源宋体是我近两年比较钟爱的字体，个人网站和Obsidian都是思源宋体。
