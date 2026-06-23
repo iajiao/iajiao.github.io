@@ -1695,24 +1695,3 @@ img::-moz-selection {
   overflow-y: hidden;
 }
 
-
-/* =========================================
-  解决 Obsidian 换行不显示问题（前端强制保留换行）
-========================================= */
-
-/* 针对文章正文区域，保留源码中的换行符，并正常折行 */
-.post-container {
-    white-space: pre-wrap !important;
-}
-
-/* 防止“保留换行”的规则污染到【代码块】，给代码块单独恢复为 pre */
-.post-container pre, 
-.post-container code.highlighter-rouge {
-    white-space: pre !important;
-}
-
-/* 防止“保留换行”导致【有序/无序列表】出现奇怪的纵向空隙 */
-.post-container ul, 
-.post-container ol {
-    white-space: normal !important;
-}
