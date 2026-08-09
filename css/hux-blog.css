@@ -1694,8 +1694,5 @@ img::-moz-selection {
 .no-scroll {
   overflow-y: hidden;
 }
-.container br
-{
- margin: 1.2em 0;
-}
+
 
