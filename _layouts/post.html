@@ -27,6 +27,23 @@ layout: default
 
 				{{ content }}
 
+
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const articleBox = document.querySelector('.post-container');
+  if(!articleBox) return;
+  let htmlText = articleBox.innerHTML;
+  // 匹配所有<br>、<br/>、<br />
+  const contentList = htmlText.split(/<br\s*\/?>/gi);
+  let newContent = "";
+  contentList.forEach(text=>{
+      const trimStr = text.trim();
+      if (trimStr) newContent += `<p>${trimStr}</p>`;
+  })
+  articleBox.innerHTML = newContent;
+})
+</script>
+
                 <hr style="visibility: hidden;">
                 <ul class="pager">
                     {% if page.previous.url %}
